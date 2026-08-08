@@ -222,7 +222,7 @@
             font-weight: 700;
             color: #ffeb3b;
             text-shadow: 0 0 20px #f39c12, 0 0 10px #ffffff;
-            animation: pulseCount 0.8s ease-in-out infinite;
+            animation: pulseCount 0.95s ease-in-out infinite;
         }
         @keyframes pulseCount {
             0% { transform: scale(0.6); opacity: 0.3; }
@@ -323,7 +323,6 @@
             color: #5a3d31;
         }
 
-        /* Level Grid Select Styles */
         .level-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -475,9 +474,7 @@
         <h1>🎯 เลือกด่านเล่น</h1>
         <p style="margin:0; color:#5a3d31;">ด่านที่ผ่านแล้วหรือกำลังเล่นจะสามารถกดเข้าเล่นได้ค่ะ</p>
         
-        <div class="level-grid" id="levelGrid">
-            <!-- ด่านจะถูกสร้างโดย JavaScript -->
-        </div>
+        <div class="level-grid" id="levelGrid"></div>
 
         <button class="btn-gray" onclick="goToStartScreen()">◀ ย้อนกลับหน้าแรก</button>
     </div>
@@ -544,7 +541,6 @@
         <div class="game-container">
             <div id="correctOverlay" class="correct-overlay">ถูกต้อง! 🎉</div>
             
-            <!-- Countdown Overlay -->
             <div id="countdownOverlay" class="countdown-overlay">
                 <div id="countdownText" class="countdown-text">3</div>
             </div>
@@ -620,46 +616,46 @@
             {
                 level: 3,
                 title: "ด่านที่ 3: มือขวา ชูโป้ง ➔ สลับชูก้อย",
-                desc: "ใช้ 'มือขวา' ชูนิ้วโป้ง แล้วสลับไป ชูนิ้วก้อย นับเป็น 1 คะแนน",
+                desc: "ใช้ 'มือขวา' ชูนิ้วโป้ง แล้วสลับไปชูนิ้วก้อย ได้ 1 คะแนน (ชูโป้ง ➔ ก้อย ทุกๆ 1 รอบ ได้ 1 คะแนน)",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "<img src='1st-rt-hand.png' alt='ชูโป้ง'>",
                 labelLeft: "1. ชูโป้ง",
                 emojiRight: "<img src='5th-rt-hand.png' alt='ชูก้อย'>",
-                labelRight: "2. สลับชูก้อย"
+                labelRight: "2. สลับชูก้อย (=1คะแนน)"
             },
             {
                 level: 4,
                 title: "ด่านที่ 4: มือซ้าย ชูโป้ง ➔ สลับชูก้อย",
-                desc: "ใช้ 'มือซ้าย' ชูนิ้วโป้ง แล้วสลับไป ชูนิ้วก้อย นับเป็น 1 คะแนน",
+                desc: "ใช้ 'มือซ้าย' ชูนิ้วโป้ง แล้วสลับไปชูนิ้วก้อย ได้ 1 คะแนน (ชูโป้ง ➔ ก้อย ทุกๆ 1 รอบ ได้ 1 คะแนน)",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "<img src='1st-lt-hand.png' alt='ชูโป้ง'>",
                 labelLeft: "1. ชูโป้ง",
                 emojiRight: "<img src='5th-lt-hand.png' alt='ชูก้อย'>",
-                labelRight: "2. สลับชูก้อย"
+                labelRight: "2. สลับชูก้อย (=1คะแนน)"
             },
             {
                 level: 5,
                 title: "ด่านที่ 5: มือขวา จีบ สลับ ตัวแอล (L)",
-                desc: "ใช้ 'มือขวา' ทำท่าจีบ สลับกับ ท่าตัวแอล (L) นับเป็น 1 คะแนน",
+                desc: "ใช้ 'มือขวา' ทำท่าจีบ แล้วสลับไปทำตัว L ได้ 1 คะแนน (จีบ ➔ ตัว L ทุกๆ 1 รอบ ได้ 1 คะแนน)",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "<img src='ok-rt-hand.png' alt='จีบ'>",
-                labelLeft: "จีบ",
+                labelLeft: "1. จีบ",
                 emojiRight: "<img src='L-rt-hand.png' alt='แอล'>",
-                labelRight: "ตัว L"
+                labelRight: "2. ตัว L (=1คะแนน)"
             },
             {
                 level: 6,
                 title: "ด่านที่ 6: มือซ้าย จีบ สลับ ตัวแอล (L)",
-                desc: "ใช้ 'มือซ้าย' ทำท่าจีบ สลับกับ ท่าตัวแอล (L) นับเป็น 1 คะแนน",
+                desc: "ใช้ 'มือซ้าย' ทำท่าจีบ แล้วสลับไปทำตัว L ได้ 1 คะแนน (จีบ ➔ ตัว L ทุกๆ 1 รอบ ได้ 1 คะแนน)",
                 targetScore: 5,
                 timeLimit: 20,
                 emojiLeft: "<img src='ok-lt-hand.png' alt='จีบ'>",
-                labelLeft: "จีบ",
+                labelLeft: "1. จีบ",
                 emojiRight: "<img src='L-lt-hand.png' alt='แอล'>",
-                labelRight: "ตัว L"
+                labelRight: "2. ตัว L (=1คะแนน)"
             },
             {
                 level: 7,
@@ -726,7 +722,8 @@
 
         let tapSeqStep = 0;           
         let toggleSubState = null;     
-        let holdStartTime = null;     
+        let holdStartTime = null; 
+        let lastPoseSeenTime = 0; 
 
         let audioCtx = null;
 
@@ -761,7 +758,6 @@
         }
         document.body.addEventListener('click', startBGM);
 
-        // Sound synthesizer for 3-2-1 Beep
         function playBeep(freq = 440, duration = 0.15) {
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -890,6 +886,7 @@
             tapSeqStep = 0;
             toggleSubState = null;
             holdStartTime = null;
+            lastPoseSeenTime = 0;
             lastScoreTime = 0;
 
             document.getElementById('levelBadge').innerText = `ด่านที่ ${lvl.level}/${LEVELS.length}`;
@@ -924,23 +921,23 @@
             let count = 3;
 
             countdownText.innerText = count;
-            playBeep(440, 0.15); // Beep for 3
+            playBeep(440, 0.15); 
 
             const countInterval = setInterval(() => {
                 count--;
                 if (count > 0) {
                     countdownText.innerText = count;
-                    playBeep(440, 0.15); // Beep for 2, 1
+                    playBeep(440, 0.15); 
                 } else if (count === 0) {
                     countdownText.innerText = "เริ่มเลย!";
-                    playBeep(880, 0.3); // Higher pitch Beep for START!
+                    playBeep(880, 0.3); 
                 } else {
                     clearInterval(countInterval);
                     countdownOverlay.style.display = 'none';
                     isCountingDown = false;
                     if (onComplete) onComplete();
                 }
-            }, 850);
+            }, 1000); // 4 วินาทีเต็ม (1.0 วินาที x 4 จังหวะ)
         }
 
         function startTimer() {
@@ -1138,7 +1135,7 @@
                     break;
                 }
 
-                // ด่าน 3: มือขวา ชูโป้ง ➔ สลับชูก้อย
+                // ด่าน 3: มือขวา (ชูโป้ง ➔ สลับชูก้อย = 1 คะแนน)
                 case 2: {
                     const rHand = detectedHands.find(h => h.hand === 'Right');
                     if (!rHand) {
@@ -1148,21 +1145,26 @@
                     const isT = isThumbUp(rHand.landmarks);
                     const isP = isPinkyUp(rHand.landmarks);
 
-                    if (toggleSubState === null) {
-                        if (isT) { toggleSubState = 'THUMB'; document.getElementById('feedbackText').innerText = "เยี่ยม! ตอนนี้สลับไปชูก้อยค่ะ"; }
-                        else if (isP) { toggleSubState = 'PINKY'; document.getElementById('feedbackText').innerText = "เยี่ยม! ตอนนี้สลับไปชูโป้งค่ะ"; }
-                        else { document.getElementById('feedbackText').innerText = "ชูนิ้วโป้ง หรือ นิ้วก้อย มือขวาค่ะ"; }
-                    } else if (toggleSubState === 'THUMB' && isP) {
-                        addPoint();
-                        toggleSubState = 'PINKY';
-                    } else if (toggleSubState === 'PINKY' && isT) {
-                        addPoint();
-                        toggleSubState = 'THUMB';
+                    if (toggleSubState !== 'READY_FOR_PINKY') {
+                        if (isT) {
+                            toggleSubState = 'READY_FOR_PINKY';
+                            document.getElementById('feedbackText').innerText = "ชูโป้งแล้ว! ต่อไปสลับไป 'ชูก้อย' ค่ะ";
+                        } else {
+                            document.getElementById('feedbackText').innerText = "เริ่มต้นด้วยการ 'ชูนิ้วโป้ง' มือขวาค่ะ";
+                        }
+                    } else {
+                        if (isP) {
+                            addPoint();
+                            toggleSubState = null; // รีเซ็ตเพื่อรอเริ่มชูโป้งรอบใหม่
+                            document.getElementById('feedbackText').innerText = "เก่งมาก! ชูนิ้วโป้งเพื่อเริ่มรอบถัดไปค่ะ";
+                        } else {
+                            document.getElementById('feedbackText').innerText = "ชูโป้งแล้ว! ต่อไปสลับไป 'ชูก้อย' ค่ะ";
+                        }
                     }
                     break;
                 }
 
-                // ด่าน 4: มือซ้าย ชูโป้ง ➔ สลับชูก้อย
+                // ด่าน 4: มือซ้าย (ชูโป้ง ➔ สลับชูก้อย = 1 คะแนน)
                 case 3: {
                     const lHand = detectedHands.find(h => h.hand === 'Left');
                     if (!lHand) {
@@ -1172,21 +1174,26 @@
                     const isT = isThumbUp(lHand.landmarks);
                     const isP = isPinkyUp(lHand.landmarks);
 
-                    if (toggleSubState === null) {
-                        if (isT) { toggleSubState = 'THUMB'; document.getElementById('feedbackText').innerText = "เยี่ยม! ตอนนี้สลับไปชูก้อยค่ะ"; }
-                        else if (isP) { toggleSubState = 'PINKY'; document.getElementById('feedbackText').innerText = "เยี่ยม! ตอนนี้สลับไปชูโป้งค่ะ"; }
-                        else { document.getElementById('feedbackText').innerText = "ชูนิ้วโป้ง หรือ นิ้วก้อย มือซ้ายค่ะ"; }
-                    } else if (toggleSubState === 'THUMB' && isP) {
-                        addPoint();
-                        toggleSubState = 'PINKY';
-                    } else if (toggleSubState === 'PINKY' && isT) {
-                        addPoint();
-                        toggleSubState = 'THUMB';
+                    if (toggleSubState !== 'READY_FOR_PINKY') {
+                        if (isT) {
+                            toggleSubState = 'READY_FOR_PINKY';
+                            document.getElementById('feedbackText').innerText = "ชูโป้งแล้ว! ต่อไปสลับไป 'ชูก้อย' ค่ะ";
+                        } else {
+                            document.getElementById('feedbackText').innerText = "เริ่มต้นด้วยการ 'ชูนิ้วโป้ง' มือซ้ายค่ะ";
+                        }
+                    } else {
+                        if (isP) {
+                            addPoint();
+                            toggleSubState = null; 
+                            document.getElementById('feedbackText').innerText = "เก่งมาก! ชูนิ้วโป้งเพื่อเริ่มรอบถัดไปค่ะ";
+                        } else {
+                            document.getElementById('feedbackText').innerText = "ชูโป้งแล้ว! ต่อไปสลับไป 'ชูก้อย' ค่ะ";
+                        }
                     }
                     break;
                 }
 
-                // ด่าน 5: มือขวา จีบ สลับ ตัวแอล (L)
+                // ด่าน 5: มือขวา (จีบ ➔ สลับตัว L = 1 คะแนน)
                 case 4: {
                     const rHand = detectedHands.find(h => h.hand === 'Right');
                     if (!rHand) {
@@ -1196,21 +1203,26 @@
                     const isJ = isJeeb(rHand.landmarks);
                     const isL = isLShape(rHand.landmarks);
 
-                    if (toggleSubState === null) {
-                        if (isJ) { toggleSubState = 'JEEB'; document.getElementById('feedbackText').innerText = "จีบแล้ว! ต่อไปทำท่าตัว L ค่ะ"; }
-                        else if (isL) { toggleSubState = 'L'; document.getElementById('feedbackText').innerText = "ทำตัว L แล้ว! ต่อไปทำท่าจีบค่ะ"; }
-                        else { document.getElementById('feedbackText').innerText = "ทำท่าจีบ หรือ ท่าตัว L ด้วยมือขวาค่ะ"; }
-                    } else if (toggleSubState === 'JEEB' && isL) {
-                        addPoint();
-                        toggleSubState = 'L';
-                    } else if (toggleSubState === 'L' && isJ) {
-                        addPoint();
-                        toggleSubState = 'JEEB';
+                    if (toggleSubState !== 'READY_FOR_L') {
+                        if (isJ) {
+                            toggleSubState = 'READY_FOR_L';
+                            document.getElementById('feedbackText').innerText = "ทำท่าจีบแล้ว! ต่อไปสลับไปทำ 'ตัว L' ค่ะ";
+                        } else {
+                            document.getElementById('feedbackText').innerText = "เริ่มต้นด้วยการทำ 'ท่าจีบ' มือขวาค่ะ";
+                        }
+                    } else {
+                        if (isL) {
+                            addPoint();
+                            toggleSubState = null; 
+                            document.getElementById('feedbackText').innerText = "เก่งมาก! ทำท่าจีบเพื่อเริ่มรอบถัดไปค่ะ";
+                        } else {
+                            document.getElementById('feedbackText').innerText = "ทำท่าจีบแล้ว! ต่อไปสลับไปทำ 'ตัว L' ค่ะ";
+                        }
                     }
                     break;
                 }
 
-                // ด่าน 6: มือซ้าย จีบ สลับ ตัวแอล (L)
+                // ด่าน 6: มือซ้าย (จีบ ➔ สลับตัว L = 1 คะแนน)
                 case 5: {
                     const lHand = detectedHands.find(h => h.hand === 'Left');
                     if (!lHand) {
@@ -1220,16 +1232,21 @@
                     const isJ = isJeeb(lHand.landmarks);
                     const isL = isLShape(lHand.landmarks);
 
-                    if (toggleSubState === null) {
-                        if (isJ) { toggleSubState = 'JEEB'; document.getElementById('feedbackText').innerText = "จีบแล้ว! ต่อไปทำท่าตัว L ค่ะ"; }
-                        else if (isL) { toggleSubState = 'L'; document.getElementById('feedbackText').innerText = "ทำตัว L แล้ว! ต่อไปทำท่าจีบค่ะ"; }
-                        else { document.getElementById('feedbackText').innerText = "ทำท่าจีบ หรือ ท่าตัว L ด้วยมือซ้ายค่ะ"; }
-                    } else if (toggleSubState === 'JEEB' && isL) {
-                        addPoint();
-                        toggleSubState = 'L';
-                    } else if (toggleSubState === 'L' && isJ) {
-                        addPoint();
-                        toggleSubState = 'JEEB';
+                    if (toggleSubState !== 'READY_FOR_L') {
+                        if (isJ) {
+                            toggleSubState = 'READY_FOR_L';
+                            document.getElementById('feedbackText').innerText = "ทำท่าจีบแล้ว! ต่อไปสลับไปทำ 'ตัว L' ค่ะ";
+                        } else {
+                            document.getElementById('feedbackText').innerText = "เริ่มต้นด้วยการทำ 'ท่าจีบ' มือซ้ายค่ะ";
+                        }
+                    } else {
+                        if (isL) {
+                            addPoint();
+                            toggleSubState = null; 
+                            document.getElementById('feedbackText').innerText = "เก่งมาก! ทำท่าจีบเพื่อเริ่มรอบถัดไปค่ะ";
+                        } else {
+                            document.getElementById('feedbackText').innerText = "ทำท่าจีบแล้ว! ต่อไปสลับไปทำ 'ตัว L' ค่ะ";
+                        }
                     }
                     break;
                 }
@@ -1262,13 +1279,13 @@
                     break;
                 }
 
-                // ด่าน 8: มือสองข้าง โป้ง-ก้อย สลับฝั่ง (ปรับเพิ่มตรวจค้างไว้ 0.5 วินาที)
+                // ด่าน 8: มือสองข้าง โป้ง-ก้อย สลับฝั่ง (ค้าง 0.5 วินาที)
                 case 7: {
                     const lHand = detectedHands.find(h => h.hand === 'Left');
                     const rHand = detectedHands.find(h => h.hand === 'Right');
                     if (!lHand || !rHand) {
                         document.getElementById('feedbackText').innerText = "ชูมือทั้ง 2 ข้างให้กล้องเห็นนะคะ";
-                        holdStartTime = null;
+                        if (now - lastPoseSeenTime > 200) holdStartTime = null;
                         return;
                     }
                     const isPoseA = isPinkyUp(lHand.landmarks) && isThumbUp(rHand.landmarks);
@@ -1279,23 +1296,26 @@
                     else if (isPoseB) currentPose = 'B';
 
                     if (currentPose && currentPose !== toggleSubState) {
+                        lastPoseSeenTime = now;
                         if (!holdStartTime) {
-                            holdStartTime = Date.now();
-                        } else if (Date.now() - holdStartTime >= 500) {
+                            holdStartTime = now;
+                        } else if (now - holdStartTime >= 500) {
                             addPoint();
                             toggleSubState = currentPose;
                             holdStartTime = null;
                             document.getElementById('feedbackText').innerText = "สลับฝั่งต่อไปได้เลยค่ะ!";
                         } else {
-                            const remaining = ((500 - (Date.now() - holdStartTime)) / 1000).toFixed(1);
+                            const remaining = ((500 - (now - holdStartTime)) / 1000).toFixed(1);
                             document.getElementById('feedbackText').innerText = `ค้างไว้แป๊บนึง... (${remaining}s)`;
                         }
                     } else {
-                        holdStartTime = null;
-                        if (toggleSubState) {
-                            document.getElementById('feedbackText').innerText = "สลับฝั่งแล้วค้างไว้ 0.5 วินาทีค่ะ";
-                        } else {
-                            document.getElementById('feedbackText').innerText = "ทำท่า ซ้ายก้อย-ขวาโป้ง (หรือตรงข้าม) ค้างไว้ 0.5 วินาทีค่ะ";
+                        if (now - lastPoseSeenTime > 200) {
+                            holdStartTime = null;
+                            if (toggleSubState) {
+                                document.getElementById('feedbackText').innerText = "สลับฝั่งแล้วค้างไว้ 0.5 วินาทีค่ะ";
+                            } else {
+                                document.getElementById('feedbackText').innerText = "ทำท่า ซ้ายก้อย-ขวาโป้ง (หรือตรงข้าม) ค้างไว้ 0.5 วินาทีค่ะ";
+                            }
                         }
                     }
                     break;
@@ -1308,7 +1328,7 @@
                     const rHand = detectedHands.find(h => h.hand === 'Right');
                     if (!lHand || !rHand) {
                         document.getElementById('feedbackText').innerText = "ชูมือทั้ง 2 ข้างให้กล้องเห็นนะคะ";
-                        holdStartTime = null;
+                        if (now - lastPoseSeenTime > 200) holdStartTime = null;
                         return;
                     }
 
@@ -1320,23 +1340,26 @@
                     else if (isPoseB) currentPose = 'B';
 
                     if (currentPose && currentPose !== toggleSubState) {
+                        lastPoseSeenTime = now;
                         if (!holdStartTime) {
-                            holdStartTime = Date.now();
-                        } else if (Date.now() - holdStartTime >= 500) {
+                            holdStartTime = now;
+                        } else if (now - holdStartTime >= 500) {
                             addPoint();
                             toggleSubState = currentPose;
                             holdStartTime = null;
                             document.getElementById('feedbackText').innerText = "สลับฝั่งต่อไปได้เลยค่ะ!";
                         } else {
-                            const remaining = ((500 - (Date.now() - holdStartTime)) / 1000).toFixed(1);
+                            const remaining = ((500 - (now - holdStartTime)) / 1000).toFixed(1);
                             document.getElementById('feedbackText').innerText = `ค้างไว้แป๊บนึง... (${remaining}s)`;
                         }
                     } else {
-                        holdStartTime = null;
-                        if (toggleSubState) {
-                            document.getElementById('feedbackText').innerText = "สลับท่า (ซ้ายจีบ/ขวาL หรือ ซ้ายL/ขวาจีบ) ค้างไว้ 0.5 วินาทีค่ะ";
-                        } else {
-                            document.getElementById('feedbackText').innerText = "ทำท่า ซ้ายจีบ - ขวาตัว L (หรือตรงข้าม) ค้างไว้ 0.5 วินาทีค่ะ";
+                        if (now - lastPoseSeenTime > 200) {
+                            holdStartTime = null;
+                            if (toggleSubState) {
+                                document.getElementById('feedbackText').innerText = "สลับท่า (ซ้ายจีบ/ขวาL หรือ ซ้ายL/ขวาจีบ) ค้างไว้ 0.5 วินาทีค่ะ";
+                            } else {
+                                document.getElementById('feedbackText').innerText = "ทำท่า ซ้ายจีบ - ขวาตัว L (หรือตรงข้าม) ค้างไว้ 0.5 วินาทีค่ะ";
+                            }
                         }
                     }
                     break;
@@ -1375,7 +1398,6 @@
             gameActive = false;
             clearInterval(timerInterval);
 
-            // ปลดล็อคด่านถัดไป
             if (currentLevelIdx + 1 > maxUnlockedLevel) {
                 maxUnlockedLevel = Math.min(currentLevelIdx + 1, LEVELS.length - 1);
                 saveUnlockedLevels();
@@ -1387,7 +1409,6 @@
             const lvl = LEVELS[currentLevelIdx];
             document.getElementById('clearLevelName').innerText = `คุณผ่าน ${lvl.title} แล้ว!`;
             
-            // แสดงคะแนนประจำด่านที่ทำได้
             document.getElementById('clearLevelScore').innerText = levelScore;
             document.getElementById('clearTargetScore').innerText = lvl.targetScore;
             document.getElementById('clearTotalScore').innerText = totalScore;
