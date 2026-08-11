@@ -205,7 +205,6 @@
             transform: translateX(-50%) scale(1);
         }
 
-        /* Countdown Overlay Style */
         .countdown-overlay {
             display: none;
             position: absolute;
@@ -438,110 +437,6 @@
             button { font-size: 14px; padding: 8px 12px; }
             .action-btns-group button { font-size: 11px; padding: 5px 6px; height: 30px; }
         }
-       /* สำหรับ Tablet / iPad แนวนอน */
-@media (min-width: 768px) and (orientation: landscape) {
-    /* 1. จัดให้หน้าต่างแอปอยู่กึ่งกลางจอภาพเสมอ (ทั้งแนวตั้งและแนวนอน) */
-    body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        margin: 0;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
-    /* 2. ขยายขนาดกล่องเกมให้กว้างขึ้นและเต็มพื้นที่ */
-    #game-screen.active-screen {
-        display: grid;
-        width: 100%;
-        max-width: 1100px; /* ขยายจาก 900px เป็น 1100px ให้กว้างขึ้น */
-        grid-template-columns: 1fr 1.5fr; 
-        grid-template-rows: auto auto 1fr;
-        gap: 25px; /* เพิ่มระยะห่างระหว่างซ้ายขวาให้ดูไม่อึดอัด */
-        align-items: center; /* จัดให้เนื้อหาด้านในอยู่กึ่งกลางแนวตั้ง */
-        margin: 0 auto;
-    }
-
-    /* จัดกลุ่มฝั่งซ้าย (คำอธิบาย) */
-    #game-screen .info-bar { 
-        grid-column: 1; 
-        grid-row: 1; 
-        margin-bottom: 0; 
-    }
-    #game-screen .example-box { 
-        grid-column: 1; 
-        grid-row: 2; 
-    }
-    #game-screen .feedback { 
-        grid-column: 1; 
-        grid-row: 3; 
-    }
-
-    /* จัดกลุ่มฝั่งขวา (กล้อง) */
-    #game-screen .game-container {
-        grid-column: 2;
-        grid-row: 1 / span 3;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-    }
-
-    /* ทำให้ภาพจากกล้องขยายเต็มพื้นที่ที่เหลืออยู่ */
-    #game-screen canvas {
-        width: 100%;
-        height: auto;
-        max-height: 75vh; /* ควบคุมไม่ให้ภาพกล้องล้นทะลุจอบน-ล่าง */
-        border-radius: 15px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* เพิ่มเงาให้กล้องดูมีมิติขึ้นนิดหน่อย */
-    }
-}
-/* สำหรับหน้าจอคอมพิวเตอร์ (Desktop / Laptop) */
-@media (min-width: 1024px) {
-    /* ขยายความกว้างให้เกือบเต็มหน้าจอ (95% ของความกว้างจอ) */
-    #game-screen.active-screen {
-        max-width: 95vw; 
-        grid-template-columns: 1fr 2.5fr; /* ปรับสัดส่วนให้ฝั่งกล้อง (ขวา) ใหญ่กว่าฝั่งคำอธิบายมากๆ */
-        gap: 30px;
-        padding: 30px;
-    }
-
-    /* ขยายขนาดกล้องให้สูงเกือบเต็มจอแนวตั้ง */
-    #game-screen canvas {
-        max-height: 85vh; 
-        object-fit: contain; /* ช่วยรักษาสัดส่วนภาพไม่ให้บิดเบี้ยว */
-    }
-
-    /* --- ปรับขนาดตัวหนังสือและปุ่มต่างๆ ให้ใหญ่ขึ้นสมกับจอคอม --- */
-    .emoji-card .emoji {
-        font-size: 70px;
-        min-height: 100px;
-    }
-    
-    .emoji-card .label {
-        font-size: 20px;
-    }
-    
-    .feedback {
-        font-size: 26px;
-        padding: 15px;
-        min-height: 40px;
-    }
-    
-    .action-btns-group button {
-        font-size: 18px;
-        padding: 8px 16px;
-        height: auto;
-    }
-    
-    .timer-hud, .score-hud {
-        font-size: 26px;
-        padding: 10px 20px;
-        top: 20px;
-    }
-}
-
     </style>
 </head>
 <body>
@@ -560,7 +455,7 @@
         <div id="resumeInfo" class="resume-box"></div>
         <button class="btn-blue" id="resumeBtn" style="display:none;" onclick="resumeGameSession()">▶ เล่นต่อจากด่านที่ค้างไว้</button>
         <br>
-        <button class="btn-green" onclick="goToLevelSelect()">🎮 เลือกด่าน / เริ่มเล่น ➔</button>
+        <button class="btn-green" onclick="goToPrepScreen()">🎮 เริ่มเล่น / เช็กกล้อง ➔</button>
         
         <div class="leaderboard">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -573,6 +468,29 @@
         </div>
     </div>
 
+    <!-- หน้าเตรียมความพร้อมก่อนเข้าเลือกด่าน (เพิ่มใหม่) -->
+    <div id="prep-screen" class="screen">
+        <h1>📸 เตรียมความพร้อมก่อนเล่น</h1>
+        <p style="margin-top: -5px; color: #5a3d31;">ลองชูมือให้กล้องเห็นและจัดตำแหน่งตามคำแนะนำค่ะ</p>
+        
+        <div class="instruction-box" style="margin: 10px 0; padding: 12px 16px;">
+            <ul style="padding-left: 10px; margin: 0; list-style: none;">
+                <li>💡 <b>1. นั่งในที่สว่าง</b> ให้แสงส่องเข้าด้านหน้า (หลีกเลี่ยงการนั่งย้อนแสง)</li>
+                <li>📏 <b>2. นั่งห่างกล้องประมาณ 0.5–1 เมตร</b> ให้เห็นมือชัดเจนทั้งสองข้าง</li>
+                <li>🖼️ <b>3. ฉากหลังเรียบ:</b> นั่งหน้าผนังสีเรียบ และไม่มีคนอื่นเดินผ่านข้างหลัง</li>
+                <li>📷 <b>4. กล้องนิ่งและสะอาด</b> และตั้งกล้องให้อยู่ในระดับอก/สายตา</li>
+            </ul>
+        </div>
+
+        <div class="game-container" style="margin-bottom: 15px;">
+            <canvas id="prep_canvas" width="640" height="480"></canvas>
+        </div>
+
+        <button class="btn-green" onclick="goToLevelSelect()">พร้อมแล้ว! เข้าสู่หน้าเลือกด่าน ➔</button>
+        <br>
+        <button class="btn-gray" style="font-size: 16px; padding: 6px 16px;" onclick="goToStartScreen()">◀ ย้อนกลับหน้าแรก</button>
+    </div>
+
     <!-- หน้าเลือกด่าน -->
     <div id="level-select-screen" class="screen">
         <h1>🎯 เลือกด่านเล่น</h1>
@@ -580,7 +498,7 @@
         
         <div class="level-grid" id="levelGrid"></div>
 
-        <button class="btn-gray" onclick="goToStartScreen()">◀ ย้อนกลับหน้าแรก</button>
+        <button class="btn-gray" onclick="goToPrepScreen()">◀ ย้อนกลับหน้าเช็กกล้อง</button>
     </div>
 
     <!-- หน้าคำอธิบายด่าน -->
@@ -669,7 +587,7 @@
         
         <div class="instruction-box" style="text-align: center;">
             <p style="font-size: 20px; margin: 5px 0;">คะแนนประจำด่านนี้: <b id="clearLevelScore" style="color: #27ae60; font-size: 28px;">0</b> / <span id="clearTargetScore">0</span> ⭐</p>
-            <p style="font-size: 20px; color: #7f8c8d; margin-top: 5px;">(คะแนนรวมทั้งหมด: <span id="clearTotalScore">0</span> ⭐)</p>
+            <p style="font-size: 16px; color: #7f8c8d; margin-top: 5px;">(คะแนนรวมทั้งหมด: <span id="clearTotalScore">0</span> ⭐)</p>
         </div>
 
         <button class="btn-green" id="nextLevelBtn" onclick="proceedToNextLevelInstruction()">ไปด่านถัดไป ➔</button>
@@ -690,7 +608,7 @@
         <br>
         <button class="btn-gray" onclick="goToLevelSelect()">เลือกด่านอื่น</button>
         <br>
-        <button class="btn-red"  onclick="goToStartScreen()">ย้อนกลับหน้าลงทะเบียน</button>
+        <button class="btn-gray" style="font-size: 14px;" onclick="goToStartScreen()">ย้อนกลับหน้าลงทะเบียน</button>
     </div>
 
     <script>
@@ -816,6 +734,7 @@
         let gameActive = false;
         let isCountingDown = false;
         let isPaused = false; 
+        let isPrepActive = false; 
         let timerInterval;
         let isBGMPlaying = false; 
         let cameraInitialized = false;
@@ -832,6 +751,7 @@
         let audioCtx = null;
 
         const startScreen = document.getElementById('start-screen');
+        const prepScreen = document.getElementById('prep-screen');
         const levelSelectScreen = document.getElementById('level-select-screen');
         const levelInstructionScreen = document.getElementById('level-instruction-screen');
         const gameScreen = document.getElementById('game-screen');
@@ -893,6 +813,7 @@
 
         function showScreen(targetScreen) {
             startScreen.classList.remove('active-screen');
+            prepScreen.classList.remove('active-screen');
             levelSelectScreen.classList.remove('active-screen');
             levelInstructionScreen.classList.remove('active-screen');
             gameScreen.classList.remove('active-screen');
@@ -911,6 +832,7 @@
             gameActive = false;
             isCountingDown = false;
             isPaused = false;
+            isPrepActive = false;
             clearInterval(timerInterval);
             bgm.pause();
             isBGMPlaying = false;
@@ -923,8 +845,20 @@
             checkResumeAvailable();
         }
 
+        function goToPrepScreen() {
+            startBGM();
+            playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
+            isPrepActive = true;
+            showScreen(prepScreen);
+
+            if (!cameraInitialized) {
+                initCameraAndMediaPipe();
+            }
+        }
+
         function goToLevelSelect() {
             startBGM();
+            isPrepActive = false;
             playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
             renderLevelGrid();
             showScreen(levelSelectScreen);
@@ -983,6 +917,7 @@
 
         async function startCurrentLevel() {
             startBGM(); 
+            isPrepActive = false;
             const lvl = LEVELS[currentLevelIdx];
 
             levelScore = 0;
@@ -1041,7 +976,7 @@
                     isCountingDown = false;
                     if (onComplete) onComplete();
                 }
-            }, 1000); // 4 วินาทีเต็ม (1.0 วินาที x 4 จังหวะ)
+            }, 1000);
         }
 
         function startTimer() {
@@ -1086,7 +1021,7 @@
 
             const camera = new Camera(videoElement, {
                 onFrame: async () => {
-                    if ((gameActive || isCountingDown) && !isPaused) {
+                    if ((gameActive || isCountingDown || isPrepActive) && !isPaused) {
                         await hands.send({ image: videoElement });
                     }
                 },
@@ -1099,6 +1034,24 @@
         }
 
         function onResults(results) {
+            if (isPrepActive) {
+                const prepCanvas = document.getElementById('prep_canvas');
+                const prepCtx = prepCanvas.getContext('2d');
+                prepCtx.save();
+                prepCtx.clearRect(0, 0, prepCanvas.width, prepCanvas.height);
+                prepCtx.drawImage(results.image, 0, 0, prepCanvas.width, prepCanvas.height);
+
+                if (results.multiHandLandmarks) {
+                    for (let i = 0; i < results.multiHandLandmarks.length; i++) {
+                        const landmarks = results.multiHandLandmarks[i];
+                        drawConnectors(prepCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 3 });
+                        drawLandmarks(prepCtx, landmarks, { color: '#FF0000', lineWidth: 1, radius: 3 });
+                    }
+                }
+                prepCtx.restore();
+                return;
+            }
+
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
@@ -1189,7 +1142,6 @@
             const fingerNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
 
             switch (currentLevelIdx) {
-                // ด่าน 1: มือขวาแตะนิ้ว
                 case 0: {
                     const rHand = detectedHands.find(h => h.hand === 'Right');
                     if (!rHand) {
@@ -1214,7 +1166,6 @@
                     break;
                 }
 
-                // ด่าน 2: มือซ้ายแตะนิ้ว
                 case 1: {
                     const lHand = detectedHands.find(h => h.hand === 'Left');
                     if (!lHand) {
@@ -1239,7 +1190,6 @@
                     break;
                 }
 
-                // ด่าน 3: มือขวา (ชูโป้ง ➔ สลับชูก้อย = 1 คะแนน)
                 case 2: {
                     const rHand = detectedHands.find(h => h.hand === 'Right');
                     if (!rHand) {
@@ -1259,7 +1209,7 @@
                     } else {
                         if (isP) {
                             addPoint();
-                            toggleSubState = null; // รีเซ็ตเพื่อรอเริ่มชูโป้งรอบใหม่
+                            toggleSubState = null; 
                             document.getElementById('feedbackText').innerText = "เก่งมาก! ชูนิ้วโป้งเพื่อเริ่มรอบถัดไปค่ะ";
                         } else {
                             document.getElementById('feedbackText').innerText = "ชูโป้งแล้ว! ต่อไปสลับไป 'ชูก้อย' ค่ะ";
@@ -1268,7 +1218,6 @@
                     break;
                 }
 
-                // ด่าน 4: มือซ้าย (ชูโป้ง ➔ สลับชูก้อย = 1 คะแนน)
                 case 3: {
                     const lHand = detectedHands.find(h => h.hand === 'Left');
                     if (!lHand) {
@@ -1297,7 +1246,6 @@
                     break;
                 }
 
-                // ด่าน 5: มือขวา (จีบ ➔ สลับตัว L = 1 คะแนน)
                 case 4: {
                     const rHand = detectedHands.find(h => h.hand === 'Right');
                     if (!rHand) {
@@ -1326,7 +1274,6 @@
                     break;
                 }
 
-                // ด่าน 6: มือซ้าย (จีบ ➔ สลับตัว L = 1 คะแนน)
                 case 5: {
                     const lHand = detectedHands.find(h => h.hand === 'Left');
                     if (!lHand) {
@@ -1355,7 +1302,6 @@
                     break;
                 }
 
-                // ด่าน 7: สองมือแตะนิ้วพร้อมกัน
                 case 6: {
                     const lHand = detectedHands.find(h => h.hand === 'Left');
                     const rHand = detectedHands.find(h => h.hand === 'Right');
@@ -1383,7 +1329,6 @@
                     break;
                 }
 
-                // ด่าน 8: มือสองข้าง โป้ง-ก้อย สลับฝั่ง (ค้าง 0.5 วินาที)
                 case 7: {
                     const lHand = detectedHands.find(h => h.hand === 'Left');
                     const rHand = detectedHands.find(h => h.hand === 'Right');
@@ -1425,7 +1370,6 @@
                     break;
                 }
 
-                // ด่าน 9 & 10: จีบ จุ้ม ขยุ้มหัวใจ (สลับสองมือ ค้าง 0.5 วินาที)
                 case 8:
                 case 9: {
                     const lHand = detectedHands.find(h => h.hand === 'Left');
