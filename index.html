@@ -304,10 +304,11 @@
         }
         .instruction-box ul {
             margin: 5px 0 0 0;
-            padding-left: 20px;
+            padding-left: 10px;
+            list-style: none;
         }
         .instruction-box li {
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .resume-box {
@@ -468,17 +469,17 @@
         </div>
     </div>
 
-    <!-- หน้าเตรียมความพร้อมก่อนเข้าเลือกด่าน (เพิ่มใหม่) -->
+    <!-- หน้าเตรียมความพร้อมก่อนเข้าเลือกด่าน -->
     <div id="prep-screen" class="screen">
         <h1>📸 เตรียมความพร้อมก่อนเล่น</h1>
         <p style="margin-top: -5px; color: #5a3d31;">ลองชูมือให้กล้องเห็นและจัดตำแหน่งตามคำแนะนำค่ะ</p>
         
         <div class="instruction-box" style="margin: 10px 0; padding: 12px 16px;">
-            <ul style="padding-left: 10px; margin: 0; list-style: none;">
-                <li>💡 <b>1. นั่งในที่สว่าง</b> ให้แสงส่องเข้าด้านหน้า (หลีกเลี่ยงการนั่งย้อนแสง)</li>
-                <li>📏 <b>2. นั่งห่างกล้องประมาณ 0.5–1 เมตร</b> ให้เห็นมือชัดเจนทั้งสองข้าง</li>
-                <li>🖼️ <b>3. ฉากหลังเรียบ:</b> นั่งหน้าผนังสีเรียบ และไม่มีคนอื่นเดินผ่านข้างหลัง</li>
-                <li>📷 <b>4. กล้องนิ่งและสะอาด</b> และตั้งกล้องให้อยู่ในระดับอก/สายตา</li>
+            <ul>
+                <li>💡 1. นั่งในที่สว่าง : ให้แสงส่องเข้าด้านหน้า (หลีกเลี่ยงการนั่งย้อนแสง)</li>
+                <li>📏 2. นั่งห่างกล้อง : ให้เห็นมือชัดเจนทั้งสองข้าง</li>
+                <li>🖼️ 3. ฉากหลังเรียบ ไม่มีคนอื่นเดินผ่านข้างหลัง</li>
+                <li>📷 4. กล้องนิ่งและสะอาด และตั้งกล้องให้อยู่ในระดับอก/สายตา</li>
             </ul>
         </div>
 
@@ -507,7 +508,7 @@
         <div class="instruction-box">
             <p style="margin: 0; font-weight: bold; color: #d87093; font-size: 20px;">ภารกิจด่านนี้:</p>
             <p id="instLevelDesc" style="font-size: 18px; color: #5a3d31; font-weight: bold; margin: 8px 0;"></p>
-            <ul>
+            <ul style="list-style: disc; padding-left: 20px;">
                 <li>เป้าหมาย: สะสมให้ได้ <b id="instTargetScore">5</b> คะแนน</li>
                 <li>เวลาจำกัด: <b id="instTimeLimit">20</b> วินาที</li>
             </ul>
