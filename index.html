@@ -1,1690 +1,1468 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ม่วนมือ - ตะลุย 10 ด่าน</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-    
-    <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-            background-color: #fff0f5; 
-            margin: 0;
-            padding: 10px;
-            text-align: center;
-            color: #5a3d31; 
-        }
-        .screen {
-            display: none; 
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            background: #ffe4e1;
-            border: 4px solid #ffb6c1;
-            border-radius: 20px;
-            padding: 20px;
-            box-sizing: border-box;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        }
-        .active-screen { display: block; }
-        h1 { color: #d87093; font-size: 30px; text-shadow: 1px 1px 2px #fff; margin-top: 5px; }
-        h2 { color: #cd5c5c; }
-        
-        button {
-            font-family: 'Kanit', sans-serif;
-            font-size: 20px;
-            padding: 10px 24px;
-            margin: 6px;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-sizing: border-box;
-        }
-        button:active { transform: translateY(3px); box-shadow: none; }
-        .btn-green { background-color: #4CAF50; border-bottom: 4px solid #2E8B57; }
-        .btn-blue { background-color: #5DADE2; border-bottom: 4px solid #2874A6; }
-        .btn-gray { background-color: #95a5a6; border-bottom: 4px solid #7f8c8d; font-size: 18px; } 
-        .btn-red { background-color: #e74c3c; border-bottom: 4px solid #c0392b; }
-        .btn-yellow { background-color: #f39c12; border-bottom: 4px solid #d35400; font-size: 18px; }
-
-        input[type="text"] {
-            font-family: 'Kanit', sans-serif;
-            font-size: 20px;
-            padding: 10px;
-            border-radius: 10px;
-            border: 2px solid #ffb6c1;
-            width: 80%;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .info-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .level-badge {
-            background: #d87093;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 4px 12px;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .action-btns-group {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-        .action-btns-group button {
-            padding: 6px 12px;
-            margin: 0;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 12px;
-            height: 38px;
-        }
-
-        .feedback { 
-            font-size: 19px; 
-            color: #d35400; 
-            min-height: 32px; 
-            margin-bottom: 10px; 
-            font-weight: bold;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 6px 12px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
-        }
-        
-        .example-box {
-            background: #ffffff;
-            border: 2px dashed #d87093;
-            border-radius: 15px;
-            padding: 12px;
-            margin-bottom: 15px;
-        }
-        .example-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #5a3d31;
-            margin-bottom: 8px;
-        }
-        .emoji-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            background: #fff5f8;
-            border: 2px solid #ffc0cb;
-            border-radius: 15px;
-            padding: 8px 10px;
-        }
-        .emoji-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-        }
-        .emoji-card .emoji {
-            font-size: 48px;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: auto !important;
-            min-height: 80px;
-            padding: 15px 10px;
-        }
-        .emoji-card .label {
-            font-size: 15px;
-            font-weight: bold;
-            color: #d87093;
-            margin-top: 4px;
-        }
-        .emoji-divider {
-            width: 2px;
-            height: 55px;
-            background-color: #ffb6c1;
-            border-radius: 2px;
-        }
-
-        .emoji-card img {
-            max-width: 200px;
-            max-height: 100px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
-        }
-
-        .game-container { 
-            position: relative; 
-            width: 100%; 
-        }
-
-        .correct-overlay {
-            position: absolute;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%) scale(0.8);
-            z-index: 20;
-            background: #2ecc71;
-            color: white;
-            font-size: 30px;
-            font-weight: bold;
-            padding: 6px 24px;
-            border-radius: 50px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-            border: 3px solid #ffffff;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .correct-overlay.show {
-            opacity: 1;
-            transform: translateX(-50%) scale(1);
-        }
-
-        /* Countdown Overlay Style */
-        .countdown-overlay {
-            display: none;
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.65);
-            border-radius: 15px;
-            z-index: 30;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        .countdown-text {
-            font-size: 90px;
-            font-weight: 700;
-            color: #ffeb3b;
-            text-shadow: 0 0 20px #f39c12, 0 0 10px #ffffff;
-            animation: pulseCount 0.95s ease-in-out infinite;
-        }
-        @keyframes pulseCount {
-            0% { transform: scale(0.6); opacity: 0.3; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.9; }
-        }
-
-        .timer-hud {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.95);
-            border: 3px solid #e74c3c;
-            border-radius: 15px;
-            padding: 6px 14px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #e74c3c;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .score-hud {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.95);
-            border: 3px solid #f39c12;
-            border-radius: 15px;
-            padding: 6px 14px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #d35400;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        canvas {
-            width: 100%;
-            height: auto;
-            border-radius: 15px;
-            transform: scaleX(-1);
-            background-color: #000;
-            display: block;
-        }
-        #video { display: none; }
-        
-        .leaderboard {
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: left;
-            margin-top: 20px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .leaderboard h3 { margin: 0; color: #d87093; }
-        .score-item {
-            font-size: 18px;
-            padding: 5px 0;
-            border-bottom: 1px dashed #eee;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .instruction-box {
-            background: white;
-            border-radius: 15px;
-            padding: 15px 20px;
-            margin: 15px 0;
-            text-align: left;
-            font-size: 18px;
-            line-height: 1.6;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .instruction-box ul {
-            margin: 5px 0 0 0;
-            padding-left: 20px;
-        }
-        .instruction-box li {
-            margin-bottom: 6px;
-        }
-
-        .resume-box {
-            display: none;
-            background: #fffdf0;
-            border: 2px solid #f39c12;
-            border-radius: 12px;
-            padding: 10px 14px;
-            margin-bottom: 12px;
-            text-align: left;
-            font-size: 16px;
-            color: #5a3d31;
-        }
-
-        .level-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-            max-height: 380px;
-            overflow-y: auto;
-            padding: 5px;
-        }
-        .level-card {
-            background: white;
-            border: 2px solid #ffb6c1;
-            border-radius: 12px;
-            padding: 12px 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
-        }
-        .level-card.unlocked {
-            border-color: #2ecc71;
-            background: #f0fff4;
-        }
-        .level-card.unlocked:hover {
-            transform: scale(1.02);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
-        }
-        .level-card.locked {
-            background: #f0f0f0;
-            border-color: #ccc;
-            color: #aaa;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        .level-card-num {
-            font-size: 18px;
-            font-weight: bold;
-            color: #d87093;
-        }
-        .level-card.locked .level-card-num { color: #888; }
-        .level-card-title {
-            font-size: 13px;
-            margin-top: 4px;
-            color: #5a3d31;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        @media (max-width: 480px) {
-            body { padding: 6px; }
-            .screen { padding: 12px; border-width: 3px; border-radius: 14px; }
-            h1 { font-size: 22px; }
-            h2 { font-size: 17px; }
-
-            button { font-size: 16px; padding: 9px 16px; margin: 4px; }
-            .btn-gray { font-size: 14px; padding: 6px 12px; }
-            .btn-yellow { font-size: 14px; }
-
-            input[type="text"] { font-size: 16px; padding: 8px; width: 90%; }
-
-            .info-bar { margin-bottom: 8px; }
-            .action-btns-group { width: 100%; justify-content: center; }
-            .action-btns-group button {
-                flex: 1 1 auto;
-                font-size: 12px;
-                padding: 6px 8px;
-                height: 34px;
-                white-space: nowrap;
-            }
-            .level-badge { font-size: 14px; padding: 3px 10px; }
-
-            .example-box { padding: 8px; margin-bottom: 10px; }
-            .example-title { font-size: 15px; margin-bottom: 4px; }
-            .emoji-card .emoji { font-size: 36px; height: 40px; }
-            .emoji-card .label { font-size: 12px; }
-            .emoji-divider { height: 42px; }
-
-            .feedback { font-size: 15px; padding: 5px 10px; min-height: 26px; }
-
-            .timer-hud, .score-hud { font-size: 14px; padding: 4px 10px; border-width: 2px; }
-
-            .instruction-box { font-size: 15px; padding: 10px 14px; }
-            .instruction-box li { margin-bottom: 4px; }
-
-            .leaderboard { padding: 10px; }
-            .leaderboard h3 { font-size: 16px; }
-            .score-item { font-size: 15px; }
-
-            .resume-box { font-size: 14px; padding: 8px 10px; }
-
-            .emoji-card img {
-                max-width: 100% !important;
-                height: auto !important;
-                max-height: 100px !important;
-                object-fit: contain;
-            }
-
-            .emoji-card > div { 
-                flex: 1;
-                min-width: 0;
-                max-width: 50%;
-                padding: 0 5px;
-            }
-            
-            .emoji-card {
-                font-size: 20px;
-            }
-        }
-
-        @media (max-width: 360px) {
-            h1 { font-size: 19px; }
-            button { font-size: 14px; padding: 8px 12px; }
-            .action-btns-group button { font-size: 11px; padding: 5px 6px; height: 30px; }
-        }
-
-        /* สำหรับ Tablet / iPad แนวนอน */
-        @media (min-width: 768px) and (orientation: landscape) {
-            body {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 100vh;
-                margin: 0;
-                padding: 20px;
-                box-sizing: border-box;
-            }
-
-            #game-screen.active-screen {
-                display: grid;
-                width: 100%;
-                max-width: 1100px;
-                grid-template-columns: 1fr 1.5fr; 
-                grid-template-rows: auto auto 1fr;
-                gap: 25px;
-                align-items: center;
-                margin: 0 auto;
-            }
-
-            #game-screen .info-bar { 
-                grid-column: 1; 
-                grid-row: 1; 
-                margin-bottom: 0; 
-            }
-            #game-screen .example-box { 
-                grid-column: 1; 
-                grid-row: 2; 
-            }
-            #game-screen .feedback { 
-                grid-column: 1; 
-                grid-row: 3; 
-            }
-
-            #game-screen .game-container {
-                grid-column: 2;
-                grid-row: 1 / span 3;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
-            }
-
-            #game-screen canvas {
-                width: 100%;
-                height: auto;
-                max-height: 75vh;
-                border-radius: 15px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-        }
-
-        /* สำหรับหน้าจอคอมพิวเตอร์ (Desktop / Laptop) */
-        @media (min-width: 1024px) {
-            #game-screen.active-screen {
-                max-width: 95vw; 
-                grid-template-columns: 1fr 2.5fr;
-                gap: 30px;
-                padding: 30px;
-            }
-
-            #game-screen canvas {
-                max-height: 85vh; 
-                object-fit: contain;
-            }
-
-            .emoji-card .emoji {
-                font-size: 70px;
-                min-height: 100px;
-            }
-            
-            .emoji-card .label {
-                font-size: 20px;
-            }
-            
-            .feedback {
-                font-size: 26px;
-                padding: 15px;
-                min-height: 40px;
-            }
-            
-            .action-btns-group button {
-                font-size: 18px;
-                padding: 8px 16px;
-                height: auto;
-            }
-            
-            .timer-hud, .score-hud {
-                font-size: 26px;
-                padding: 10px 20px;
-                top: 20px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ม่วนมือ - ตะลุย 10 ด่าน</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<style>
+body {
+  font-family: 'Kanit', sans-serif;
+  background-color: #fff0f5;
+  margin: 0;
+  padding: 10px;
+  text-align: center;
+  color: #5a3d31;
+}
+.screen {
+  display: none;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  background: #ffe4e1;
+  border: 4px solid #ffb6c1;
+  border-radius: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+.active-screen { display: block; }
+h1 { color: #d87093; font-size: 30px; text-shadow: 1px 1px 2px #fff; margin-top: 5px; }
+h2 { color: #cd5c5c; }
+button {
+  font-family: 'Kanit', sans-serif;
+  font-size: 20px;
+  padding: 10px 24px;
+  margin: 6px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+button:active { transform: translateY(3px); box-shadow: none; }
+.btn-green { background-color: #4CAF50; border-bottom: 4px solid #2E8B57; }
+.btn-blue { background-color: #5DADE2; border-bottom: 4px solid #2874A6; }
+.btn-gray { background-color: #95a5a6; border-bottom: 4px solid #7f8c8d; font-size: 18px; }
+.btn-red { background-color: #e74c3c; border-bottom: 4px solid #c0392b; }
+.btn-yellow { background-color: #f39c12; border-bottom: 4px solid #d35400; font-size: 18px; }
+input[type="text"] {
+  font-family: 'Kanit', sans-serif;
+  font-size: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #ffb6c1;
+  width: 80%;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.info-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.level-badge {
+  background: #d87093;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.action-btns-group {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.action-btns-group button {
+  padding: 6px 12px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 12px;
+  height: 38px;
+}
+.feedback {
+  font-size: 19px;
+  color: #d35400;
+  min-height: 32px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 6px 12px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+.example-box {
+  background: #ffffff;
+  border: 2px dashed #d87093;
+  border-radius: 15px;
+  padding: 12px;
+  margin-bottom: 15px;
+}
+.example-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #5a3d31;
+  margin-bottom: 8px;
+}
+.emoji-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #fff5f8;
+  border: 2px solid #ffc0cb;
+  border-radius: 15px;
+  padding: 8px 10px;
+}
+.emoji-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.emoji-card .emoji {
+  font-size: 48px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto !important;
+  min-height: 80px;
+  padding: 15px 10px;
+}
+.emoji-card .label {
+  font-size: 15px;
+  font-weight: bold;
+  color: #d87093;
+  margin-top: 4px;
+}
+.emoji-divider {
+  width: 2px;
+  height: 55px;
+  background-color: #ffb6c1;
+  border-radius: 2px;
+}
+.emoji-card img {
+  max-width: 200px;
+  max-height: 100px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+.game-container {
+  position: relative;
+  width: 100%;
+}
+.correct-overlay {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  z-index: 20;
+  background: #2ecc71;
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  padding: 6px 24px;
+  border-radius: 50px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  border: 3px solid #ffffff;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.correct-overlay.show {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+.countdown-overlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 15px;
+  z-index: 30;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.countdown-text {
+  font-size: 90px;
+  font-weight: 700;
+  color: #ffeb3b;
+  text-shadow: 0 0 20px #f39c12, 0 0 10px #ffffff;
+  animation: pulseCount 0.95s ease-in-out infinite;
+}
+@keyframes pulseCount {
+  0% { transform: scale(0.6); opacity: 0.3; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+.timer-hud {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid #e74c3c;
+  border-radius: 15px;
+  padding: 6px 14px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #e74c3c;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.score-hud {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid #f39c12;
+  border-radius: 15px;
+  padding: 6px 14px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #d35400;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+canvas {
+  width: 100%;
+  height: auto;
+  border-radius: 15px;
+  transform: scaleX(-1);
+  background-color: #000;
+  display: block;
+}
+#video { display: none; }
+.leaderboard {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: left;
+  margin-top: 20px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+.leaderboard h3 { margin: 0; color: #d87093; }
+.score-item {
+  font-size: 18px;
+  padding: 5px 0;
+  border-bottom: 1px dashed #eee;
+  display: flex;
+  justify-content: space-between;
+}
+.instruction-box {
+  background: white;
+  border-radius: 15px;
+  padding: 15px 20px;
+  margin: 15px 0;
+  text-align: left;
+  font-size: 18px;
+  line-height: 1.6;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+.instruction-box ul {
+  margin: 5px 0 0 0;
+  padding-left: 20px;
+}
+.instruction-box li {
+  margin-bottom: 6px;
+}
+.resume-box {
+  display: none;
+  background: #fffdf0;
+  border: 2px solid #f39c12;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  text-align: left;
+  font-size: 16px;
+  color: #5a3d31;
+}
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 15px 0;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 5px;
+}
+.level-card {
+  background: white;
+  border: 2px solid #ffb6c1;
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+}
+.level-card.unlocked {
+  border-color: #2ecc71;
+  background: #f0fff4;
+}
+.level-card.unlocked:hover {
+  transform: scale(1.02);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+}
+.level-card.locked {
+  background: #f0f0f0;
+  border-color: #ccc;
+  color: #aaa;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.level-card-num {
+  font-size: 18px;
+  font-weight: bold;
+  color: #d87093;
+}
+.level-card.locked .level-card-num { color: #888; }
+.level-card-title {
+  font-size: 13px;
+  margin-top: 4px;
+  color: #5a3d31;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 480px) {
+  body { padding: 6px; }
+  .screen { padding: 12px; border-width: 3px; border-radius: 14px; }
+  h1 { font-size: 22px; }
+  h2 { font-size: 17px; }
+  button { font-size: 16px; padding: 9px 16px; margin: 4px; }
+  .btn-gray { font-size: 14px; padding: 6px 12px; }
+  .btn-yellow { font-size: 14px; }
+  input[type="text"] { font-size: 16px; padding: 8px; width: 90%; }
+  .info-bar { margin-bottom: 8px; }
+  .action-btns-group { width: 100%; justify-content: center; }
+  .action-btns-group button {
+    flex: 1 1 auto;
+    font-size: 12px;
+    padding: 6px 8px;
+    height: 34px;
+    white-space: nowrap;
+  }
+  .level-badge { font-size: 14px; padding: 3px 10px; }
+  .example-box { padding: 8px; margin-bottom: 10px; }
+  .example-title { font-size: 15px; margin-bottom: 4px; }
+  .emoji-card .emoji { font-size: 36px; height: 40px; }
+  .emoji-card .label { font-size: 12px; }
+  .emoji-divider { height: 42px; }
+  .feedback { font-size: 15px; padding: 5px 10px; min-height: 26px; }
+  .timer-hud, .score-hud { font-size: 14px; padding: 4px 10px; border-width: 2px; }
+  .instruction-box { font-size: 15px; padding: 10px 14px; }
+  .instruction-box li { margin-bottom: 4px; }
+  .leaderboard { padding: 10px; }
+  .leaderboard h3 { font-size: 16px; }
+  .score-item { font-size: 15px; }
+  .resume-box { font-size: 14px; padding: 8px 10px; }
+  .emoji-card img {
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 100px !important;
+    object-fit: contain;
+  }
+  .emoji-card > div {
+    flex: 1;
+    min-width: 0;
+    max-width: 50%;
+    padding: 0 5px;
+  }
+  .emoji-card {
+    font-size: 20px;
+  }
+}
+@media (max-width: 360px) {
+  h1 { font-size: 19px; }
+  button { font-size: 14px; padding: 8px 12px; }
+  .action-btns-group button { font-size: 11px; padding: 5px 6px; height: 30px; }
+}
+@media (min-width: 768px) and (orientation: landscape) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #game-screen.active-screen {
+    display: grid;
+    width: 100%;
+    max-width: 1100px;
+    grid-template-columns: 1fr 1.5fr;
+    grid-template-rows: auto auto 1fr;
+    gap: 25px;
+    align-items: center;
+    margin: 0 auto;
+  }
+  #game-screen .info-bar {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: 0;
+  }
+  #game-screen .example-box {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  #game-screen .feedback {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  #game-screen .game-container {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  #game-screen canvas {
+    width: 100%;
+    height: auto;
+    max-height: 75vh;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+}
+@media (min-width: 1024px) {
+  #game-screen.active-screen {
+    max-width: 95vw;
+    grid-template-columns: 1fr 2.5fr;
+    gap: 30px;
+    padding: 30px;
+  }
+  #game-screen canvas {
+    max-height: 85vh;
+    object-fit: contain;
+  }
+  .emoji-card .emoji {
+    font-size: 70px;
+    min-height: 100px;
+  }
+  .emoji-card .label {
+    font-size: 20px;
+  }
+  .feedback {
+    font-size: 26px;
+    padding: 15px;
+    min-height: 40px;
+  }
+  .action-btns-group button {
+    font-size: 18px;
+    padding: 8px 16px;
+    height: auto;
+  }
+  .timer-hud, .score-hud {
+    font-size: 26px;
+    padding: 10px 20px;
+    top: 20px;
+  }
+}
+</style>
 </head>
 <body>
 
-    <audio id="bgm" src="bgm.mp3" loop></audio>
-    <audio id="snd-correct" src="correct.mp3"></audio>
-    <audio id="snd-wrong" src="wrong.mp3"></audio>
+<audio id="bgm" src="bgm.mp3" loop></audio>
+<audio id="snd-correct" src="correct.mp3"></audio>
+<audio id="snd-wrong" src="wrong.mp3"></audio>
 
-    <!-- หน้าแรก -->
-    <div id="start-screen" class="screen active-screen">
-        <h1>ม่วนมือ❤️</h1>
-        <p>กรุณาใส่ชื่อของคุณตา/คุณยาย เพื่อเริ่มเล่นค่ะ</p>
-        <input type="text" id="playerName" placeholder="พิมพ์ชื่อที่นี่..." onclick="startBGM()">
-        <br>
-
-        <div id="resumeInfo" class="resume-box"></div>
-        <button class="btn-blue" id="resumeBtn" style="display:none;" onclick="resumeGameSession()">▶ เล่นต่อจากด่านที่ค้างไว้</button>
-        <br>
-        <button class="btn-green" onclick="goToCameraGuide()">🎮 เลือกด่าน / เริ่มเล่น ➔</button>
-        
-        <div class="leaderboard">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3>🏆 อันดับคะแนนสูงสุดประจำสัปดาห์</h3>
-                <button class="btn-red" style="margin: 0; padding: 5px 10px; font-size: 14px; border-radius: 8px;" onclick="resetLeaderboard()">ล้างคะแนนทั้งหมด</button>
-            </div>
-            <div id="leaderboard-list">
-                <p style="color:#aaa; text-align:center;">ยังไม่มีประวัติการเล่น</p>
-            </div>
-        </div>
+<!-- หน้าแรก -->
+<div id="start-screen" class="screen active-screen">
+  <h1>ม่วนมือ❤️</h1>
+  <p>กรุณาใส่ชื่อของคุณตา/คุณยาย เพื่อเริ่มเล่นค่ะ</p>
+  <input type="text" id="playerName" placeholder="พิมพ์ชื่อที่นี่..." onclick="startBGM()">
+  <br>
+  <div id="resumeInfo" class="resume-box"></div>
+  <button class="btn-blue" id="resumeBtn" style="display:none;" onclick="resumeGameSession()">▶ เล่นต่อจากด่านที่ค้างไว้</button>
+  <br>
+  <button class="btn-green" onclick="goToCameraGuide()">🎮 เลือกด่าน / เริ่มเล่น ➔</button>
+  <div class="leaderboard">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <h3>🏆 อันดับคะแนนสูงสุดประจำสัปดาห์</h3>
+      <button class="btn-red" style="margin: 0; padding: 5px 10px; font-size: 14px; border-radius: 8px;" onclick="resetLeaderboard()">ล้างคะแนนทั้งหมด</button>
     </div>
-
-    <!-- หน้าคำแนะนำและลองตั้งกล้อง (อยู่ก่อนหน้าเลือกด่าน) -->
-    <div id="camera-guide-screen" class="screen">
-        <h1>📸 ข้อแนะนำการเตรียมตัว</h1>
-        <p style="margin-bottom: 10px; color: #5a3d31;">ลองจัดตำแหน่งกล้องและท่านั่งให้เห็นมือชัดเจนก่อนเริ่มเล่นนะคะ</p>
-
-        <!-- กล้องสำหรับให้ผู้เล่นดูตัวเอง -->
-        <div style="position: relative; width: 100%; max-width: 480px; margin: 0 auto 15px auto;">
-            <video id="guideVideo" autoplay playsinline style="width: 100%; height: auto; border-radius: 15px; transform: scaleX(-1); background: #000; border: 3px solid #ffb6c1; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"></video>
-        </div>
-
-        <div class="instruction-box" style="margin-top: 10px;">
-            <p style="margin: 0 0 8px 0; font-weight: bold; color: #d87093; font-size: 20px;">💡 คคำแนะนำก่อนเล่นเกม :</p>
-            <ul style="list-style: none; padding-left: 0; margin: 0;">
-                <li style="margin-bottom: 8px;">💡 <b>1. นั่งในที่สว่าง :</b> ให้แสงส่องเข้าด้านหน้า (หลีกเลี่ยงการนั่งย้อนแสง)</li>
-                <li style="margin-bottom: 8px;">📏 <b>2. นั่งห่างกล้อง :</b> ให้เห็นมือชัดเจนทั้งสองข้าง</li>
-                <li style="margin-bottom: 8px;">🖼️ <b>3. ฉากหลังเรียบ :</b> ไม่มีคนอื่นเดินผ่านข้างหลัง</li>
-                <li style="margin-bottom: 8px;">📷 <b>4. ตั้งกล้องให้นิ่งที่ระดับอก หรือสายตา และเช็ดหรือทำความสะอาดกล้องให้สะอาด</li>
-            </ul>
-        </div>
-
-        <button class="btn-green" onclick="goToLevelSelectFromGuide()">พร้อมแล้ว! ไปเลือกด่าน ➔</button>
-        <br>
-        <button class="btn-gray" onclick="goToStartScreen()">◀ ย้อนกลับหน้าแรก</button>
+    <div id="leaderboard-list">
+      <p style="color:#aaa; text-align:center;">ยังไม่มีประวัติการเล่น</p>
     </div>
+  </div>
+</div>
 
-    <!-- หน้าเลือกด่าน -->
-    <div id="level-select-screen" class="screen">
-        <h1>🎯 เลือกด่านเล่น</h1>
-        <p style="margin:0; color:#5a3d31;">ด่านที่ผ่านแล้วหรือกำลังเล่นจะสามารถกดเข้าเล่นได้ค่ะ</p>
-        
-        <div class="level-grid" id="levelGrid"></div>
+<!-- หน้าคำแนะนำและลองตั้งกล้อง (อยู่ก่อนหน้าเลือกด่าน) -->
+<div id="camera-guide-screen" class="screen">
+  <!-- กล้องสำหรับให้ผู้เล่นดูตัวเอง (ขยายขนาดทดแทนส่วนหัวข้อที่ตัดออก) -->
+  <div style="position: relative; width: 100%; margin: 0 auto 15px auto;">
+    <video id="guideVideo" autoplay playsinline style="width: 100%; height: auto; max-height: 380px; object-fit: cover; border-radius: 15px; transform: scaleX(-1); background: #000; border: 3px solid #ffb6c1; display: block; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"></video>
+  </div>
+  <div class="instruction-box" style="margin-top: 10px;">
+    <p style="margin: 0 0 8px 0; font-weight: bold; color: #d87093; font-size: 20px;">💡 คำแนะนำก่อนเล่นเกม :</p>
+    <ul style="list-style: none; padding-left: 0; margin: 0;">
+      <li style="margin-bottom: 8px;">💡 <b>1. นั่งในที่สว่าง :</b> ให้แสงส่องเข้าด้านหน้า (หลีกเลี่ยงการนั่งย้อนแสง)</li>
+      <li style="margin-bottom: 8px;">📏 <b>2. นั่งห่างกล้อง :</b> ให้เห็นมือชัดเจนทั้งสองข้าง</li>
+      <li style="margin-bottom: 8px;">🖼️ <b>3. ฉากหลังเรียบ :</b> ไม่มีคนอื่นเดินผ่านข้างหลัง</li>
+      <li style="margin-bottom: 8px;">📷 <b>4. ตั้งกล้องให้นิ่งที่ระดับอก หรือสายตา และเช็ดหรือทำความสะอาดกล้องให้สะอาด</b></li>
+    </ul>
+  </div>
+  <button class="btn-green" onclick="goToLevelSelectFromGuide()">พร้อมแล้ว! ไปเลือกด่าน ➔</button>
+  <br>
+  <button class="btn-gray" onclick="goToStartScreen()">◀ ย้อนกลับหน้าแรก</button>
+</div>
 
-        <button class="btn-gray" onclick="goToStartScreen()">◀ ย้อนกลับหน้าแรก</button>
+<!-- หน้าเลือกด่าน -->
+<div id="level-select-screen" class="screen">
+  <h1>🎯 เลือกด่านเล่น</h1>
+  <p style="margin:0; color:#5a3d31;">ด่านที่ผ่านแล้วหรือกำลังเล่นจะสามารถกดเข้าเล่นได้ค่ะ</p>
+  <div class="level-grid" id="levelGrid"></div>
+  <button class="btn-gray" onclick="goToStartScreen()">◀ ย้อนกลับหน้าแรก</button>
+</div>
+
+<!-- หน้าคำอธิบายด่าน -->
+<div id="level-instruction-screen" class="screen">
+  <h1 id="instLevelTitle">คำอธิบายด่านที่ 1</h1>
+  <div class="instruction-box">
+    <p style="margin: 0; font-weight: bold; color: #d87093; font-size: 20px;">ภารกิจด่านนี้:</p>
+    <p id="instLevelDesc" style="font-size: 18px; color: #5a3d31; font-weight: bold; margin: 8px 0;"></p>
+    <ul>
+      <li>เป้าหมาย: สะสมให้ได้ <b id="instTargetScore">5</b> คะแนน</li>
+      <li>เวลาจำกัด: <b id="instTimeLimit">20</b> วินาที</li>
+    </ul>
+  </div>
+  <div class="example-box">
+    <div class="example-title">ตัวอย่างท่าทางที่ต้องทำ:</div>
+    <div class="emoji-container">
+      <div class="emoji-card">
+        <span class="emoji" id="instEmojiLeft">✋</span>
+        <span class="label" id="instLabelLeft">-</span>
+      </div>
+      <div class="emoji-divider"></div>
+      <div class="emoji-card">
+        <span class="emoji" id="instEmojiRight">👌</span>
+        <span class="label" id="instLabelRight">-</span>
+      </div>
     </div>
+  </div>
+  <button class="btn-green" onclick="startCurrentLevel()">พร้อมแล้ว! เริ่มด่านนี้เลย</button>
+  <br>
+  <button class="btn-gray" style="font-size: 16px; padding: 5px 15px;" onclick="goToLevelSelect()">◀ ย้อนกลับเลือกด่าน</button>
+</div>
 
-    <!-- หน้าคำอธิบายด่าน -->
-    <div id="level-instruction-screen" class="screen">
-        <h1 id="instLevelTitle">คำอธิบายด่านที่ 1</h1>
-        <div class="instruction-box">
-            <p style="margin: 0; font-weight: bold; color: #d87093; font-size: 20px;">ภารกิจด่านนี้:</p>
-            <p id="instLevelDesc" style="font-size: 18px; color: #5a3d31; font-weight: bold; margin: 8px 0;"></p>
-            <ul>
-                <li>เป้าหมาย: สะสมให้ได้ <b id="instTargetScore">5</b> คะแนน</li>
-                <li>เวลาจำกัด: <b id="instTimeLimit">20</b> วินาที</li>
-            </ul>
-        </div>
-        
-        <div class="example-box">
-            <div class="example-title">ตัวอย่างท่าทางที่ต้องทำ:</div>
-            <div class="emoji-container">
-                <div class="emoji-card">
-                    <span class="emoji" id="instEmojiLeft">✋</span>
-                    <span class="label" id="instLabelLeft">-</span>
-                </div>
-                <div class="emoji-divider"></div>
-                <div class="emoji-card">
-                    <span class="emoji" id="instEmojiRight">👌</span>
-                    <span class="label" id="instLabelRight">-</span>
-                </div>
-            </div>
-        </div>
-
-        <button class="btn-green" onclick="startCurrentLevel()">พร้อมแล้ว! เริ่มด่านนี้เลย</button>
-        <br>
-        <button class="btn-gray" style="font-size: 16px; padding: 5px 15px;" onclick="goToLevelSelect()">◀ ย้อนกลับเลือกด่าน</button>
+<!-- หน้าเล่นเกม -->
+<div id="game-screen" class="screen">
+  <div class="info-bar">
+    <div id="levelBadge" class="level-badge">ด่านที่ 1/10</div>
+    <div class="action-btns-group">
+      <button class="btn-blue" onclick="toggleHandSwap()" title="กดหากระบบตรวจสลับมือกัน">🔄 มือแสดงผิดฝั่ง?</button>
+      <button class="btn-yellow" id="pauseBtn" onclick="togglePause()">⏸️ พัก</button>
+      <button class="btn-red" id="backBtn" onclick="goToStartScreen()" title="กลับหน้าหลัก">✖</button>
     </div>
-
-    <!-- หน้าเล่นเกม -->
-    <div id="game-screen" class="screen">
-        <div class="info-bar">
-            <div id="levelBadge" class="level-badge">ด่านที่ 1/10</div>
-            <div class="action-btns-group">
-                <button class="btn-blue" onclick="toggleHandSwap()" title="กดหากระบบตรวจสลับมือกัน">🔄 มือแสดงผิดฝั่ง?</button>
-                <button class="btn-yellow" id="pauseBtn" onclick="togglePause()">⏸️ พัก</button>
-                <button class="btn-red" id="backBtn" onclick="goToStartScreen()" title="กลับหน้าหลัก">✖</button>
-            </div>
-        </div>
-        
-        <div class="example-box" style="padding: 6px; margin-bottom: 8px;">
-            <div class="emoji-container" style="padding: 4px;">
-                <div class="emoji-card">
-                    <span class="emoji" id="gameEmojiLeft" style="font-size: 40px;">✋</span>
-                    <span class="label" id="gameLabelLeft" style="font-size: 14px;">-</span>
-                </div>
-                <div class="emoji-divider" style="height: 45px;"></div>
-                <div class="emoji-card">
-                    <span class="emoji" id="gameEmojiRight" style="font-size: 40px;">👌</span>
-                    <span class="label" id="gameLabelRight" style="font-size: 14px;">-</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="feedback" id="feedbackText">เตรียมพร้อม...</div>
-
-        <div class="game-container">
-            <div id="correctOverlay" class="correct-overlay">ถูกต้อง! 🎉</div>
-            
-            <div id="countdownOverlay" class="countdown-overlay">
-                <div id="countdownText" class="countdown-text">3</div>
-            </div>
-
-            <div class="timer-hud">
-                ⏱️ <span id="timeDisplay">20</span>s
-            </div>
-
-            <div class="score-hud">
-                ⭐ <span id="scoreDisplay">0</span>/<span id="targetDisplay">5</span>
-            </div>
-
-            <video id="video" width="640" height="480" autoplay playsinline></video>
-            <canvas id="output_canvas" width="640" height="480"></canvas>
-        </div>
+  </div>
+  <div class="example-box" style="padding: 6px; margin-bottom: 8px;">
+    <div class="emoji-container" style="padding: 4px;">
+      <div class="emoji-card">
+        <span class="emoji" id="gameEmojiLeft" style="font-size: 40px;">✋</span>
+        <span class="label" id="gameLabelLeft" style="font-size: 14px;">-</span>
+      </div>
+      <div class="emoji-divider" style="height: 45px;"></div>
+      <div class="emoji-card">
+        <span class="emoji" id="gameEmojiRight" style="font-size: 40px;">👌</span>
+        <span class="label" id="gameLabelRight" style="font-size: 14px;">-</span>
+      </div>
     </div>
-
-    <!-- หน้าผ่านด่าน -->
-    <div id="level-clear-screen" class="screen">
-        <h1>🎉 ผ่านด่านแล้ว!</h1>
-        <h2 id="clearLevelName" style="color: #27ae60;">คุณผ่านด่านเรียบร้อย</h2>
-        
-        <div class="instruction-box" style="text-align: center;">
-            <p style="font-size: 20px; margin: 5px 0;">คะแนนประจำด่านนี้: <b id="clearLevelScore" style="color: #27ae60; font-size: 28px;">0</b> / <span id="clearTargetScore">0</span> ⭐</p>
-            <p style="font-size: 20px; color: #7f8c8d; margin-top: 5px;">(คะแนนรวมทั้งหมด: <span id="clearTotalScore">0</span> ⭐)</p>
-        </div>
-
-        <button class="btn-green" id="nextLevelBtn" onclick="proceedToNextLevelInstruction()">ไปด่านถัดไป ➔</button>
-        <br>
-        <button class="btn-blue" onclick="retryCurrentLevel()">เล่นด่านนี้อีกครั้ง 🔄</button>
-        <br>
-        <button class="btn-gray" onclick="goToLevelSelect()">ย้อนกลับเลือกด่าน</button>
+  </div>
+  <div class="feedback" id="feedbackText">เตรียมพร้อม...</div>
+  <div class="game-container">
+    <div id="correctOverlay" class="correct-overlay">ถูกต้อง! 🎉</div>
+    <div id="countdownOverlay" class="countdown-overlay">
+      <div id="countdownText" class="countdown-text">3</div>
     </div>
-
-    <!-- หน้าสรุปผลลัพธ์ (หมดเวลา) -->
-    <div id="result-screen" class="screen">
-        <h1 id="resTitle">หมดเวลา! ⏰</h1>
-        <h2>คุณ <span id="resName"></span> ทำคะแนนด่านนี้ได้</h2>
-        <h1 style="font-size: 50px; color: #e74c3c; margin: 10px 0;"><span id="resScore"></span> ⭐</h1>
-        <p id="resFeedback"></p>
-        
-        <button class="btn-blue" id="resRetryBtn" onclick="retryCurrentLevel()">เล่นด่านนี้อีกครั้ง 🔄</button>
-        <br>
-        <button class="btn-gray" onclick="goToLevelSelect()">เลือกด่านอื่น</button>
-        <br>
-        <button class="btn-red"  onclick="goToStartScreen()">ย้อนกลับหน้าลงทะเบียน</button>
+    <div class="timer-hud">
+      ⏱️ <span id="timeDisplay">20</span>s
     </div>
+    <div class="score-hud">
+      ⭐ <span id="scoreDisplay">0</span>/<span id="targetDisplay">5</span>
+    </div>
+    <video id="video" width="640" height="480" autoplay playsinline></video>
+    <canvas id="output_canvas" width="640" height="480"></canvas>
+  </div>
+</div>
 
-    <script>
-        const LEVELS = [
-            {
-                level: 1,
-                title: "ด่านที่ 1: มือขวาแตะนิ้ว (ชี้➜กลาง➜นาง➜ก้อย)",
-                desc: "ใช้ 'มือขวา' นำนิ้วโป้งแตะ นิ้วชี้ ➔ นิ้วกลาง ➔ นิ้วนาง ➔ นิ้วก้อย ตามลำดับ เมื่อทำครบ 4 นิ้ว จะได้ 1 คะแนน",
-                targetScore: 5,
-                timeLimit: 20,
-                emojiLeft: "<img src='Rt-hand.png' alt='มือขวา'>",
-                labelLeft: "มือขวาจริง",
-                emojiRight: "<img src='lt-hand-4touch.png' alt='แตะนิ้ว'>",
-                labelRight: "ชี้➜กลาง➜นาง➜ก้อย"
-            },
-            {
-                level: 2,
-                title: "ด่านที่ 2: มือซ้ายแตะนิ้ว (ชี้➜กลาง➜นาง➜ก้อย)",
-                desc: "ใช้ 'มือซ้าย' นำนิ้วโป้งแตะ นิ้วชี้ ➔ นิ้วกลาง ➔ นิ้วนาง ➔ นิ้วก้อย ตามลำดับ เมื่อทำครบ 4 นิ้ว จะได้ 1 คะแนน",
-                targetScore: 5,
-                timeLimit: 20,
-                emojiLeft: "<img src='rt-hand-4touch.png' alt='แตะนิ้ว'>",
-                labelLeft: "ชี้➜กลาง➜นาง➜ก้อย",
-                emojiRight: "<img src='Lt-hand.png' alt='มือซ้าย'>",
-                labelRight: "มือซ้ายจริง"
-            },
-            {
-                level: 3,
-                title: "ด่านที่ 3: มือขวา ชูโป้ง ➔ สลับชูก้อย",
-                desc: "ใช้ 'มือขวา' ชูนิ้วโป้ง แล้วสลับไปชูนิ้วก้อย ได้ 1 คะแนน (ชูโป้ง ➔ ก้อย ทุกๆ 1 รอบ ได้ 1 คะแนน)",
-                targetScore: 5,
-                timeLimit: 20,
-                emojiLeft: "<img src='1st-rt-hand.png' alt='ชูโป้ง'>",
-                labelLeft: "1. ชูโป้ง",
-                emojiRight: "<img src='5th-rt-hand.png' alt='ชูก้อย'>",
-                labelRight: "2. สลับชูก้อย (=1คะแนน)"
-            },
-            {
-                level: 4,
-                title: "ด่านที่ 4: มือซ้าย ชูโป้ง ➔ สลับชูก้อย",
-                desc: "ใช้ 'มือซ้าย' ชูนิ้วโป้ง แล้วสลับไปชูนิ้วก้อย ได้ 1 คะแนน (ชูโป้ง ➔ ก้อย ทุกๆ 1 รอบ ได้ 1 คะแนน)",
-                targetScore: 5,
-                timeLimit: 20,
-                emojiLeft: "<img src='1st-lt-hand.png' alt='ชูโป้ง'>",
-                labelLeft: "1. ชูโป้ง",
-                emojiRight: "<img src='5th-lt-hand.png' alt='ชูก้อย'>",
-                labelRight: "2. สลับชูก้อย (=1คะแนน)"
-            },
-            {
-                level: 5,
-                title: "ด่านที่ 5: มือขวา จีบ สลับ ตัวแอล (L)",
-                desc: "ใช้ 'มือขวา' ทำท่าจีบ แล้วสลับไปทำตัว L ได้ 1 คะแนน (จีบ ➔ ตัว L ทุกๆ 1 รอบ ได้ 1 คะแนน)",
-                targetScore: 5,
-                timeLimit: 20,
-                emojiLeft: "<img src='ok-rt-hand.png' alt='จีบ'>",
-                labelLeft: "1. จีบ",
-                emojiRight: "<img src='L-rt-hand.png' alt='แอล'>",
-                labelRight: "2. ตัว L (=1คะแนน)"
-            },
-            {
-                level: 6,
-                title: "ด่านที่ 6: มือซ้าย จีบ สลับ ตัวแอล (L)",
-                desc: "ใช้ 'มือซ้าย' ทำท่าจีบ แล้วสลับไปทำตัว L ได้ 1 คะแนน (จีบ ➔ ตัว L ทุกๆ 1 รอบ ได้ 1 คะแนน)",
-                targetScore: 5,
-                timeLimit: 20,
-                emojiLeft: "<img src='ok-lt-hand.png' alt='จีบ'>",
-                labelLeft: "1. จีบ",
-                emojiRight: "<img src='L-lt-hand.png' alt='แอล'>",
-                labelRight: "2. ตัว L (=1คะแนน)"
-            },
-            {
-                level: 7,
-                title: "ด่านที่ 7: สองมือแตะนิ้วพร้อมกัน (ชี้➜กลาง➜นาง➜ก้อย)",
-                desc: "ใช้มือสองข้าง นำนิ้วโป้งแตะ นิ้วชี้ ➔ นิ้วกลาง ➔ นิ้วนาง ➔ นิ้วก้อย ตามลำดับ ทำทั้งสองข้างพร้อมกัน 1 ครั้งได้ 1 คะแนน",
-                targetScore: 5,
-                timeLimit: 20,
-                emojiLeft: "<img src='lt-hand-4touch.png' alt='แตะนิ้ว'>",
-                labelLeft: "มือซ้าย",
-                emojiRight: "<img src='rt-hand-4touch.png' alt='แตะนิ้ว'>",
-                labelRight: "มือขวา"
-            },
-            {
-                level: 8,
-                title: "ด่านที่ 8: มือสองข้าง โป้ง-ก้อย สลับฝั่ง (ค้าง 0.5 วินาที)",
-                desc: "ใช้มือสองข้าง ขวาชูนิ้วโป้ง ซ้ายชูนิ้วก้อย ค้างไว้ 0.5 วินาที แล้วสลับฝั่งกัน สะสมให้ได้ 5 คะแนน",
-                targetScore: 5,
-                timeLimit: 20,
-                emojiLeft: "<img src='5th-lt-hand.png' alt='ชูก้อย'>",
-                labelLeft: "มือซ้าย (ก้อย)",
-                emojiRight: "<img src='1st-rt-hand.png' alt='ชูโป้ง'>",
-                labelRight: "มือขวา (โป้ง)"
-            },
-            {
-                level: 9,
-                title: "ด่านที่ 9: จีบ จุ้ม ขยุ้มหัวใจ (สลับสองมือ - 5 คะแนน)",
-                desc: "ชูมือ 2 ข้าง มือซ้ายจีบ-มือขวาแอล L ค้างไว้ 0.5 วินาที แล้วสลับฝั่ง สะสม 5 คะแนน",
-                targetScore: 5,
-                timeLimit: 20,
-                emojiLeft: "<img src='ok-lt-hand.png' alt='จีบ'>",
-                labelLeft: "มือซ้าย (จีบ)",
-                emojiRight: "<img src='L-rt-hand.png' alt='แอล'>",
-                labelRight: "มือขวา (ตัว L)"
-            },
-            {
-                level: 10,
-                title: "ด่านที่ 10: จีบ จุ้ม ขยุ้มหัวใจ (สลับสองมือ - 10 คะแนน)",
-                desc: "ชูมือ 2 ข้าง มือซ้ายจีบ-มือขวาแอล L ค้างไว้ 0.5 วินาที แล้วสลับฝั่ง สะสม 10 คะแนน",
-                targetScore: 10,
-                timeLimit: 20,
-                emojiLeft: "<img src='ok-lt-hand.png' alt='จีบ'>",
-                labelLeft: "มือซ้าย (จีบ)",
-                emojiRight: "<img src='L-rt-hand.png' alt='แอล'>",
-                labelRight: "มือขวา (ตัว L)"
-            }
-        ];
+<!-- หน้าผ่านด่าน -->
+<div id="level-clear-screen" class="screen">
+  <h1>🎉 ผ่านด่านแล้ว!</h1>
+  <h2 id="clearLevelName" style="color: #27ae60;">คุณผ่านด่านเรียบร้อย</h2>
+  <div class="instruction-box" style="text-align: center;">
+    <p style="font-size: 20px; margin: 5px 0;">คะแนนประจำด่านนี้: <b id="clearLevelScore" style="color: #27ae60; font-size: 28px;">0</b> / <span id="clearTargetScore">0</span> ⭐</p>
+    <p style="font-size: 20px; color: #7f8c8d; margin-top: 5px;">(คะแนนรวมทั้งหมด: <span id="clearTotalScore">0</span> ⭐)</p>
+  </div>
+  <button class="btn-green" id="nextLevelBtn" onclick="proceedToNextLevelInstruction()">ไปด่านถัดไป ➔</button>
+  <br>
+  <button class="btn-blue" onclick="retryCurrentLevel()">เล่นด่านนี้อีกครั้ง 🔄</button>
+  <br>
+  <button class="btn-gray" onclick="goToLevelSelect()">ย้อนกลับเลือกด่าน</button>
+</div>
 
-        let currentLevelIdx = 0;
-        let playerName = "";
-        let levelScore = 0;
-        let totalScore = 0;
-        let maxUnlockedLevel = 0; 
-        let timeLeft = 20; 
-        let gameActive = false;
-        let isCountingDown = false;
-        let isPaused = false; 
-        let timerInterval;
-        let isBGMPlaying = false; 
-        let cameraInitialized = false;
-        let guideStream = null;
+<!-- หน้าสรุปผลลัพธ์ (หมดเวลา) -->
+<div id="result-screen" class="screen">
+  <h1 id="resTitle">หมดเวลา! ⏰</h1>
+  <h2>คุณ <span id="resName"></span> ทำคะแนนด่านนี้ได้</h2>
+  <h1 style="font-size: 50px; color: #e74c3c; margin: 10px 0;"><span id="resScore"></span> ⭐</h1>
+  <p id="resFeedback"></p>
+  <button class="btn-blue" id="resRetryBtn" onclick="retryCurrentLevel()">เล่นด่านนี้อีกครั้ง 🔄</button>
+  <br>
+  <button class="btn-gray" onclick="goToLevelSelect()">เลือกด่านอื่น</button>
+  <br>
+  <button class="btn-red" onclick="goToStartScreen()">ย้อนกลับหน้าลงทะเบียน</button>
+</div>
 
-        let invertHandDetection = false;
-        let lastScoreTime = 0;
-        let lastStepTouchTime = 0;
+<script>
+const LEVELS = [
+  {
+    level: 1,
+    title: "ด่านที่ 1: มือขวาแตะนิ้ว (ชี้➜กลาง➜นาง➜ก้อย)",
+    desc: "ใช้ 'มือขวา' นำนิ้วโป้งแตะ นิ้วชี้ ➔ นิ้วกลาง ➔ นิ้วนาง ➔ นิ้วก้อย ตามลำดับ เมื่อทำครบ 4 นิ้ว จะได้ 1 คะแนน",
+    targetScore: 5,
+    timeLimit: 20,
+    emojiLeft: "<img src='Rt-hand.png' alt='มือขวา'>",
+    labelLeft: "มือขวาจริง",
+    emojiRight: "<img src='lt-hand-4touch.png' alt='แตะนิ้ว'>",
+    labelRight: "ชี้➜กลาง➜นาง➜ก้อย"
+  },
+  {
+    level: 2,
+    title: "ด่านที่ 2: มือซ้ายแตะนิ้ว (ชี้➜กลาง➜นาง➜ก้อย)",
+    desc: "ใช้ 'มือซ้าย' นำนิ้วโป้งแตะ นิ้วชี้ ➔ นิ้วกลาง ➔ นิ้วนาง ➔ นิ้วก้อย ตามลำดับ เมื่อทำครบ 4 นิ้ว จะได้ 1 คะแนน",
+    targetScore: 5,
+    timeLimit: 20,
+    emojiLeft: "<img src='rt-hand-4touch.png' alt='แตะนิ้ว'>",
+    labelLeft: "ชี้➜กลาง➜นาง➜ก้อย",
+    emojiRight: "<img src='Lt-hand.png' alt='มือซ้าย'>",
+    labelRight: "มือซ้ายจริง"
+  },
+  {
+    level: 3,
+    title: "ด่านที่ 3: มือขวา ชูโป้ง ➔ สลับชูก้อย",
+    desc: "ใช้ 'มือขวา' ชูนิ้วโป้ง แล้วสลับไปชูนิ้วก้อย ได้ 1 คะแนน (ชูโป้ง ➔ ก้อย ทุกๆ 1 รอบ ได้ 1 คะแนน)",
+    targetScore: 5,
+    timeLimit: 20,
+    emojiLeft: "<img src='1st-rt-hand.png' alt='ชูโป้ง'>",
+    labelLeft: "1. ชูโป้ง",
+    emojiRight: "<img src='5th-rt-hand.png' alt='ชูก้อย'>",
+    labelRight: "2. สลับชูก้อย (=1คะแนน)"
+  },
+  {
+    level: 4,
+    title: "ด่านที่ 4: มือซ้าย ชูโป้ง ➔ สลับชูก้อย",
+    desc: "ใช้ 'มือซ้าย' ชูนิ้วโป้ง แล้วสลับไปชูนิ้วก้อย ได้ 1 คะแนน (ชูโป้ง ➔ ก้อย ทุกๆ 1 รอบ ได้ 1 คะแนน)",
+    targetScore: 5,
+    timeLimit: 20,
+    emojiLeft: "<img src='1st-lt-hand.png' alt='ชูโป้ง'>",
+    labelLeft: "1. ชูโป้ง",
+    emojiRight: "<img src='5th-lt-hand.png' alt='ชูก้อย'>",
+    labelRight: "2. สลับชูก้อย (=1คะแนน)"
+  },
+  {
+    level: 5,
+    title: "ด่านที่ 5: มือขวา จีบ สลับ ตัวแอล (L)",
+    desc: "ใช้ 'มือขวา' ทำท่าจีบ แล้วสลับไปทำตัว L ได้ 1 คะแนน (จีบ ➔ ตัว L ทุกๆ 1 รอบ ได้ 1 คะแนน)",
+    targetScore: 5,
+    timeLimit: 20,
+    emojiLeft: "<img src='ok-rt-hand.png' alt='จีบ'>",
+    labelLeft: "1. จีบ",
+    emojiRight: "<img src='L-rt-hand.png' alt='แอล'>",
+    labelRight: "2. ตัว L (=1คะแนน)"
+  },
+  {
+    level: 6,
+    title: "ด่านที่ 6: มือซ้าย จีบ สลับ ตัวแอล (L)",
+    desc: "ใช้ 'มือซ้าย' ทำท่าจีบ แล้วสลับไปทำตัว L ได้ 1 คะแนน (จีบ ➔ ตัว L ทุกๆ 1 รอบ ได้ 1 คะแนน)",
+    targetScore: 5,
+    timeLimit: 20,
+    emojiLeft: "<img src='ok-lt-hand.png' alt='จีบ'>",
+    labelLeft: "1. จีบ",
+    emojiRight: "<img src='L-lt-hand.png' alt='แอล'>",
+    labelRight: "2. ตัว L (=1คะแนน)"
+  },
+  {
+    level: 7,
+    title: "ด่านที่ 7: สองมือแตะนิ้วพร้อมกัน (ชี้➜กลาง➜นาง➜ก้อย)",
+    desc: "ใช้มือสองข้าง นำนิ้วโป้งแตะ นิ้วชี้ ➔ นิ้วกลาง ➔ นิ้วนาง ➔ นิ้วก้อย ตามลำดับ ทำทั้งสองข้างพร้อมกัน 1 ครั้งได้ 1 คะแนน",
+    targetScore: 5,
+    timeLimit: 20,
+    emojiLeft: "<img src='lt-hand-4touch.png' alt='แตะนิ้ว'>",
+    labelLeft: "มือซ้าย",
+    emojiRight: "<img src='rt-hand-4touch.png' alt='แตะนิ้ว'>",
+    labelRight: "มือขวา"
+  },
+  {
+    level: 8,
+    title: "ด่านที่ 8: มือสองข้าง โป้ง-ก้อย สลับฝั่ง (ค้าง 0.5 วินาที)",
+    desc: "ใช้มือสองข้าง ขวาชูนิ้วโป้ง ซ้ายชูนิ้วก้อย ค้างไว้ 0.5 วินาที แล้วสลับฝั่งกัน สะสมให้ได้ 5 คะแนน",
+    targetScore: 5,
+    timeLimit: 20,
+    emojiLeft: "<img src='5th-lt-hand.png' alt='ชูก้อย'>",
+    labelLeft: "มือซ้าย (ก้อย)",
+    emojiRight: "<img src='1st-rt-hand.png' alt='ชูโป้ง'>",
+    labelRight: "มือขวา (โป้ง)"
+  },
+  {
+    level: 9,
+    title: "ด่านที่ 9: จีบ จุ้ม ขยุ้มหัวใจ (สลับสองมือ - 5 คะแนน)",
+    desc: "ชูมือ 2 ข้าง มือซ้ายจีบ-มือขวาแอล L ค้างไว้ 0.5 วินาที แล้วสลับฝั่ง สะสม 5 คะแนน",
+    targetScore: 5,
+    timeLimit: 20,
+    emojiLeft: "<img src='ok-lt-hand.png' alt='จีบ'>",
+    labelLeft: "มือซ้าย (จีบ)",
+    emojiRight: "<img src='L-rt-hand.png' alt='แอล'>",
+    labelRight: "มือขวา (ตัว L)"
+  },
+  {
+    level: 10,
+    title: "ด่านที่ 10: จีบ จุ้ม ขยุ้มหัวใจ (สลับสองมือ - 10 คะแนน)",
+    desc: "ชูมือ 2 ข้าง มือซ้ายจีบ-มือขวาแอล L ค้างไว้ 0.5 วินาที แล้วสลับฝั่ง สะสม 10 คะแนน",
+    targetScore: 10,
+    timeLimit: 20,
+    emojiLeft: "<img src='ok-lt-hand.png' alt='จีบ'>",
+    labelLeft: "มือซ้าย (จีบ)",
+    emojiRight: "<img src='L-rt-hand.png' alt='แอล'>",
+    labelRight: "มือขวา (ตัว L)"
+  }
+];
 
-        let tapSeqStep = 0;           
-        let toggleSubState = null;     
-        let holdStartTime = null; 
-        let lastPoseSeenTime = 0; 
+let currentLevelIdx = 0;
+let playerName = "";
+let levelScore = 0;
+let totalScore = 0;
+let maxUnlockedLevel = 0;
+let timeLeft = 20;
+let gameActive = false;
+let isCountingDown = false;
+let isPaused = false;
+let timerInterval;
+let isBGMPlaying = false;
+let cameraInitialized = false;
+let guideStream = null;
+let invertHandDetection = false;
+let lastScoreTime = 0;
+let lastStepTouchTime = 0;
+let tapSeqStep = 0;
+let toggleSubState = null;
+let holdStartTime = null;
+let lastPoseSeenTime = 0;
+let audioCtx = null;
 
-        let audioCtx = null;
+const startScreen = document.getElementById('start-screen');
+const cameraGuideScreen = document.getElementById('camera-guide-screen');
+const levelSelectScreen = document.getElementById('level-select-screen');
+const levelInstructionScreen = document.getElementById('level-instruction-screen');
+const gameScreen = document.getElementById('game-screen');
+const levelClearScreen = document.getElementById('level-clear-screen');
+const resultScreen = document.getElementById('result-screen');
+const videoElement = document.getElementById('video');
+const canvasElement = document.getElementById('output_canvas');
+const canvasCtx = canvasElement.getContext('2d');
+const bgm = document.getElementById('bgm');
+const sndCorrect = document.getElementById('snd-correct');
+const sndWrong = document.getElementById('snd-wrong');
+const correctOverlay = document.getElementById('correctOverlay');
+const countdownOverlay = document.getElementById('countdownOverlay');
+const countdownText = document.getElementById('countdownText');
 
-        const startScreen = document.getElementById('start-screen');
-        const cameraGuideScreen = document.getElementById('camera-guide-screen');
-        const levelSelectScreen = document.getElementById('level-select-screen');
-        const levelInstructionScreen = document.getElementById('level-instruction-screen');
-        const gameScreen = document.getElementById('game-screen');
-        const levelClearScreen = document.getElementById('level-clear-screen');
-        const resultScreen = document.getElementById('result-screen');
-        
-        const videoElement = document.getElementById('video');
-        const canvasElement = document.getElementById('output_canvas');
-        const canvasCtx = canvasElement.getContext('2d');
-        const bgm = document.getElementById('bgm');
-        const sndCorrect = document.getElementById('snd-correct');
-        const sndWrong = document.getElementById('snd-wrong');
-        const correctOverlay = document.getElementById('correctOverlay');
-        const countdownOverlay = document.getElementById('countdownOverlay');
-        const countdownText = document.getElementById('countdownText');
+window.onload = function() {
+  loadUnlockedLevels();
+  displayLeaderboard();
+  checkResumeAvailable();
+};
 
-        window.onload = function() {
-            loadUnlockedLevels();
-            displayLeaderboard();
-            checkResumeAvailable();
-        };
+function startBGM() {
+  if (!isBGMPlaying) {
+    bgm.volume = 0.2;
+    bgm.play().then(() => { isBGMPlaying = true; }).catch(e => console.log(e));
+  }
+}
+document.body.addEventListener('click', startBGM);
 
-        function startBGM() {
-            if (!isBGMPlaying) {
-                bgm.volume = 0.2; 
-                bgm.play().then(() => { isBGMPlaying = true; }).catch(e => console.log(e));
-            }
+function playBeep(freq = 440, duration = 0.15) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) { console.log("Audio play error", e); }
+}
+
+function toggleHandSwap() {
+  invertHandDetection = !invertHandDetection;
+  const statusMsg = invertHandDetection ? "🔄 สลับโหมดมือเรียบร้อย!" : "🔄 กลับสู่โหมดมือปกติ (ค่าเริ่มต้น) เรียบร้อย!";
+  alert(statusMsg);
+}
+
+function getRealHand(rawLabel) {
+  const baseHand = (rawLabel === "Left") ? "Right" : "Left";
+  if (!invertHandDetection) return baseHand;
+  return (baseHand === "Left") ? "Right" : "Left";
+}
+
+function showScreen(targetScreen) {
+  startScreen.classList.remove('active-screen');
+  cameraGuideScreen.classList.remove('active-screen');
+  levelSelectScreen.classList.remove('active-screen');
+  levelInstructionScreen.classList.remove('active-screen');
+  gameScreen.classList.remove('active-screen');
+  levelClearScreen.classList.remove('active-screen');
+  resultScreen.classList.remove('active-screen');
+  targetScreen.classList.add('active-screen');
+}
+
+async function startGuideCamera() {
+  try {
+    const guideVideo = document.getElementById('guideVideo');
+    if (guideStream) {
+      guideStream.getTracks().forEach(track => track.stop());
+    }
+    guideStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } } });
+    guideVideo.srcObject = guideStream;
+  } catch (err) {
+    console.log("Guide camera error:", err);
+  }
+}
+
+function stopGuideCamera() {
+  if (guideStream) {
+    guideStream.getTracks().forEach(track => track.stop());
+    guideStream = null;
+  }
+  const guideVideo = document.getElementById('guideVideo');
+  if (guideVideo) guideVideo.srcObject = null;
+}
+
+function goToCameraGuide() {
+  startBGM();
+  playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
+  showScreen(cameraGuideScreen);
+  startGuideCamera();
+}
+
+function goToLevelSelectFromGuide() {
+  stopGuideCamera();
+  renderLevelGrid();
+  showScreen(levelSelectScreen);
+}
+
+function goToStartScreen() {
+  stopGuideCamera();
+  if (gameActive) {
+    saveProgress();
+    if (totalScore > 0) saveScore(playerName, totalScore);
+  }
+  gameActive = false;
+  isCountingDown = false;
+  isPaused = false;
+  clearInterval(timerInterval);
+  bgm.pause();
+  isBGMPlaying = false;
+  bgm.currentTime = 0;
+  correctOverlay.classList.remove('show');
+  countdownOverlay.style.display = 'none';
+  showScreen(startScreen);
+  displayLeaderboard();
+  checkResumeAvailable();
+}
+
+function goToLevelSelect() {
+  stopGuideCamera();
+  startBGM();
+  playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
+  renderLevelGrid();
+  showScreen(levelSelectScreen);
+}
+
+function renderLevelGrid() {
+  const grid = document.getElementById('levelGrid');
+  grid.innerHTML = '';
+  LEVELS.forEach((lvl, idx) => {
+    const card = document.createElement('div');
+    const isUnlocked = idx <= maxUnlockedLevel;
+    card.className = `level-card ${isUnlocked ? 'unlocked' : 'locked'}`;
+    card.innerHTML = `
+      <div class="level-card-num">${isUnlocked ? '⭐ ด่านที่ ' + (idx + 1) : '🔒 ด่านที่ ' + (idx + 1)}</div>
+      <div class="level-card-title">${lvl.title.split(':')[1] || lvl.title}</div>
+    `;
+    if (isUnlocked) {
+      card.onclick = () => {
+        currentLevelIdx = idx;
+        showLevelInstruction(currentLevelIdx);
+      };
+    }
+    grid.appendChild(card);
+  });
+}
+
+function resumeGameSession() {
+  const progress = loadProgress();
+  if (!progress) return;
+  startBGM();
+  playerName = document.getElementById('playerName').value.trim() || progress.name || "ผู้เล่นนิรนาม";
+  currentLevelIdx = progress.levelIdx;
+  totalScore = progress.totalScore;
+  showLevelInstruction(currentLevelIdx);
+}
+
+function showLevelInstruction(levelIdx) {
+  stopGuideCamera();
+  const lvl = LEVELS[levelIdx];
+  document.getElementById('instLevelTitle').innerText = `คำอธิบายด่านที่ ${lvl.level}/${LEVELS.length}`;
+  document.getElementById('instLevelDesc').innerText = lvl.desc;
+  document.getElementById('instTargetScore').innerText = lvl.targetScore;
+  document.getElementById('instTimeLimit').innerText = lvl.timeLimit;
+  document.getElementById('instEmojiLeft').innerHTML = lvl.emojiLeft;
+  document.getElementById('instLabelLeft').innerText = lvl.labelLeft;
+  document.getElementById('instEmojiRight').innerHTML = lvl.emojiRight;
+  document.getElementById('instLabelRight').innerText = lvl.labelRight;
+  showScreen(levelInstructionScreen);
+}
+
+async function startCurrentLevel() {
+  startBGM();
+  const lvl = LEVELS[currentLevelIdx];
+  levelScore = 0;
+  timeLeft = lvl.timeLimit;
+  tapSeqStep = 0;
+  toggleSubState = null;
+  holdStartTime = null;
+  lastPoseSeenTime = 0;
+  lastScoreTime = 0;
+
+  document.getElementById('levelBadge').innerText = `ด่านที่ ${lvl.level}/${LEVELS.length}`;
+  document.getElementById('gameEmojiLeft').innerHTML = lvl.emojiLeft;
+  document.getElementById('gameLabelLeft').innerText = lvl.labelLeft;
+  document.getElementById('gameEmojiRight').innerHTML = lvl.emojiRight;
+  document.getElementById('gameLabelRight').innerText = lvl.labelRight;
+  document.getElementById('scoreDisplay').innerText = levelScore;
+  document.getElementById('targetDisplay').innerText = lvl.targetScore;
+  document.getElementById('timeDisplay').innerText = timeLeft;
+  document.getElementById('feedbackText').innerText = "เตรียมพร้อม...";
+
+  showScreen(gameScreen);
+
+  if (!cameraInitialized) {
+    initCameraAndMediaPipe();
+  }
+
+  runCountdown(() => {
+    gameActive = true;
+    isPaused = false;
+    document.getElementById('feedbackText').innerText = "ลุยเลย! ชูมือให้กล้องเห็นนะคะ";
+    startTimer();
+  });
+}
+
+function runCountdown(onComplete) {
+  isCountingDown = true;
+  gameActive = false;
+  countdownOverlay.style.display = 'flex';
+  let count = 3;
+  countdownText.innerText = count;
+  playBeep(440, 0.15);
+
+  const countInterval = setInterval(() => {
+    count--;
+    if (count > 0) {
+      countdownText.innerText = count;
+      playBeep(440, 0.15);
+    } else if (count === 0) {
+      countdownText.innerText = "เริ่มเลย!";
+      playBeep(880, 0.3);
+    } else {
+      clearInterval(countInterval);
+      countdownOverlay.style.display = 'none';
+      isCountingDown = false;
+      if (onComplete) onComplete();
+    }
+  }, 1000);
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (!gameActive || isPaused || isCountingDown) return;
+    timeLeft--;
+    document.getElementById('timeDisplay').innerText = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      handleTimeOut();
+    }
+  }, 1000);
+}
+
+function togglePause() {
+  if (isCountingDown) return;
+  isPaused = !isPaused;
+  const btn = document.getElementById('pauseBtn');
+  if (isPaused) {
+    btn.innerText = "▶️ เล่นต่อ";
+    document.getElementById('feedbackText').innerText = "พักชั่วคราว...";
+  } else {
+    btn.innerText = "⏸️ พัก";
+    document.getElementById('feedbackText').innerText = "ลุยต่อเลยค่ะ!";
+  }
+}
+
+function initCameraAndMediaPipe() {
+  const hands = new Hands({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+  });
+  hands.setOptions({
+    maxNumHands: 2,
+    modelComplexity: 1,
+    minDetectionConfidence: 0.6,
+    minTrackingConfidence: 0.6
+  });
+  hands.onResults(onResults);
+
+  const camera = new Camera(videoElement, {
+    onFrame: async () => {
+      if ((gameActive || isCountingDown) && !isPaused) {
+        await hands.send({ image: videoElement });
+      }
+    },
+    width: 640,
+    height: 480
+  });
+  camera.start();
+  cameraInitialized = true;
+}
+
+function dist(p1, p2) {
+  return Math.hypot(p1.x - p2.x, p1.y - p2.y);
+}
+
+function isFingerTouching(thumbTip, fingerTip, threshold = 0.08) {
+  return dist(thumbTip, fingerTip) < threshold;
+}
+
+function isThumbUp(lm) {
+  return lm[4].y < lm[3].y && lm[3].y < lm[2].y &&
+         lm[8].y > lm[6].y && lm[12].y > lm[10].y && lm[16].y > lm[14].y && lm[20].y > lm[18].y;
+}
+
+function isPinkyUp(lm) {
+  return lm[20].y < lm[19].y && lm[19].y < lm[18].y &&
+         lm[8].y > lm[6].y && lm[12].y > lm[10].y && lm[16].y > lm[14].y;
+}
+
+function isJieb(lm) {
+  return dist(lm[4], lm[8]) < 0.08 && lm[12].y > lm[10].y && lm[16].y > lm[14].y && lm[20].y > lm[18].y;
+}
+
+function isLPose(lm) {
+  return lm[8].y < lm[6].y && dist(lm[4], lm[17]) > 0.15 && lm[12].y > lm[10].y && lm[16].y > lm[14].y && lm[20].y > lm[18].y;
+}
+
+function onResults(results) {
+  canvasCtx.save();
+  canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+  canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+  if (results.multiHandLandmarks) {
+    for (const landmarks of results.multiHandLandmarks) {
+      drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 4 });
+      drawLandmarks(canvasCtx, landmarks, { color: '#FF0000', lineWidth: 2 });
+    }
+  }
+  canvasCtx.restore();
+
+  if (gameActive && !isPaused && !isCountingDown) {
+    checkLevelGesture(results);
+  }
+}
+
+function checkLevelGesture(results) {
+  const lvl = LEVELS[currentLevelIdx];
+  const now = Date.now();
+  if (now - lastScoreTime < 600) return;
+
+  if (!results.multiHandLandmarks || results.multiHandLandmarks.length === 0) {
+    document.getElementById('feedbackText').innerText = "กรุณาชูมือให้เห็นในกล้องนะคะ";
+    return;
+  }
+
+  let handsDict = {};
+  for (let i = 0; i < results.multiHandLandmarks.length; i++) {
+    const rawLabel = results.multiHandedness[i].label;
+    const realHand = getRealHand(rawLabel);
+    handsDict[realHand] = results.multiHandLandmarks[i];
+  }
+
+  const rightHand = handsDict["Right"];
+  const leftHand = handsDict["Left"];
+
+  if (lvl.level === 1) {
+    if (!rightHand) { document.getElementById('feedbackText').innerText = "โปรดใช้มือขวาเล่นนะคะ"; return; }
+    const targetFingers = [8, 12, 16, 20];
+    const targetNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
+    const currentTargetIndex = targetFingers[tapSeqStep];
+    
+    if (isFingerTouching(rightHand[4], rightHand[currentTargetIndex])) {
+      if (now - lastStepTouchTime > 300) {
+        tapSeqStep++;
+        lastStepTouchTime = now;
+        if (tapSeqStep >= 4) {
+          tapSeqStep = 0;
+          triggerCorrectAnswer();
+        } else {
+          document.getElementById('feedbackText').innerText = `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]}`;
         }
-        document.body.addEventListener('click', startBGM);
+      }
+    } else {
+      document.getElementById('feedbackText').innerText = `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]}`;
+    }
+  } else if (lvl.level === 2) {
+    if (!leftHand) { document.getElementById('feedbackText').innerText = "โปรดใช้มือซ้ายเล่นนะคะ"; return; }
+    const targetFingers = [8, 12, 16, 20];
+    const targetNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
+    const currentTargetIndex = targetFingers[tapSeqStep];
 
-        function playBeep(freq = 440, duration = 0.15) {
-            try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch (e) { console.log("Audio play error", e); }
+    if (isFingerTouching(leftHand[4], leftHand[currentTargetIndex])) {
+      if (now - lastStepTouchTime > 300) {
+        tapSeqStep++;
+        lastStepTouchTime = now;
+        if (tapSeqStep >= 4) {
+          tapSeqStep = 0;
+          triggerCorrectAnswer();
+        } else {
+          document.getElementById('feedbackText').innerText = `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]}`;
         }
+      }
+    } else {
+      document.getElementById('feedbackText').innerText = `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]}`;
+    }
+  } else if (lvl.level === 3) {
+    if (!rightHand) { document.getElementById('feedbackText').innerText = "โปรดใช้มือขวาเล่นนะคะ"; return; }
+    if (toggleSubState === null || toggleSubState === 2) {
+      if (isThumbUp(rightHand)) {
+        toggleSubState = 1;
+        document.getElementById('feedbackText').innerText = "เก่งมาก! ต่อไปเปลี่ยนเป็นชูก้อย";
+      } else {
+        document.getElementById('feedbackText').innerText = "ชูนิ้วโป้งมือขวา";
+      }
+    } else if (toggleSubState === 1) {
+      if (isPinkyUp(rightHand)) {
+        toggleSubState = 2;
+        triggerCorrectAnswer();
+      } else {
+        document.getElementById('feedbackText').innerText = "สลับไปชูนิ้วก้อยมือขวา";
+      }
+    }
+  } else if (lvl.level === 4) {
+    if (!leftHand) { document.getElementById('feedbackText').innerText = "โปรดใช้มือซ้ายเล่นนะคะ"; return; }
+    if (toggleSubState === null || toggleSubState === 2) {
+      if (isThumbUp(leftHand)) {
+        toggleSubState = 1;
+        document.getElementById('feedbackText').innerText = "เก่งมาก! ต่อไปเปลี่ยนเป็นชูก้อย";
+      } else {
+        document.getElementById('feedbackText').innerText = "ชูนิ้วโป้งมือซ้าย";
+      }
+    } else if (toggleSubState === 1) {
+      if (isPinkyUp(leftHand)) {
+        toggleSubState = 2;
+        triggerCorrectAnswer();
+      } else {
+        document.getElementById('feedbackText').innerText = "สลับไปชูนิ้วก้อยมือซ้าย";
+      }
+    }
+  } else if (lvl.level === 5) {
+    if (!rightHand) { document.getElementById('feedbackText').innerText = "โปรดใช้มือขวาเล่นนะคะ"; return; }
+    if (toggleSubState === null || toggleSubState === 2) {
+      if (isJieb(rightHand)) {
+        toggleSubState = 1;
+        document.getElementById('feedbackText').innerText = "เก่งมาก! ต่อไปเปลี่ยนเป็นทำตัว L";
+      } else {
+        document.getElementById('feedbackText').innerText = "ทำท่าจีบมือขวา";
+      }
+    } else if (toggleSubState === 1) {
+      if (isLPose(rightHand)) {
+        toggleSubState = 2;
+        triggerCorrectAnswer();
+      } else {
+        document.getElementById('feedbackText').innerText = "สลับไปทำตัว L มือขวา";
+      }
+    }
+  } else if (lvl.level === 6) {
+    if (!leftHand) { document.getElementById('feedbackText').innerText = "โปรดใช้มือซ้ายเล่นนะคะ"; return; }
+    if (toggleSubState === null || toggleSubState === 2) {
+      if (isJieb(leftHand)) {
+        toggleSubState = 1;
+        document.getElementById('feedbackText').innerText = "เก่งมาก! ต่อไปเปลี่ยนเป็นทำตัว L";
+      } else {
+        document.getElementById('feedbackText').innerText = "ทำท่าจีบมือซ้าย";
+      }
+    } else if (toggleSubState === 1) {
+      if (isLPose(leftHand)) {
+        toggleSubState = 2;
+        triggerCorrectAnswer();
+      } else {
+        document.getElementById('feedbackText').innerText = "สลับไปทำตัว L มือซ้าย";
+      }
+    }
+  } else if (lvl.level === 7) {
+    if (!leftHand || !rightHand) { document.getElementById('feedbackText').innerText = "โปรดชูมือทั้งสองข้างขึ้นมานะคะ"; return; }
+    const targetFingers = [8, 12, 16, 20];
+    const targetNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
+    const currentTargetIndex = targetFingers[tapSeqStep];
 
-        function toggleHandSwap() {
-            invertHandDetection = !invertHandDetection;
-            const statusMsg = invertHandDetection ? "🔄 สลับโหมดมือเรียบร้อย!" : "🔄 กลับสู่โหมดมือปกติ (ค่าเริ่มต้น) เรียบร้อย!";
-            alert(statusMsg);
+    if (isFingerTouching(leftHand[4], leftHand[currentTargetIndex]) && isFingerTouching(rightHand[4], rightHand[currentTargetIndex])) {
+      if (now - lastStepTouchTime > 300) {
+        tapSeqStep++;
+        lastStepTouchTime = now;
+        if (tapSeqStep >= 4) {
+          tapSeqStep = 0;
+          triggerCorrectAnswer();
+        } else {
+          document.getElementById('feedbackText').innerText = `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]} พร้อมกันทั้ง 2 ข้าง`;
         }
-
-        function getRealHand(rawLabel) {
-            const baseHand = (rawLabel === "Left") ? "Right" : "Left";
-            if (!invertHandDetection) return baseHand;
-            return (baseHand === "Left") ? "Right" : "Left";
-        }
-
-        function showScreen(targetScreen) {
-            startScreen.classList.remove('active-screen');
-            cameraGuideScreen.classList.remove('active-screen');
-            levelSelectScreen.classList.remove('active-screen');
-            levelInstructionScreen.classList.remove('active-screen');
-            gameScreen.classList.remove('active-screen');
-            levelClearScreen.classList.remove('active-screen');
-            resultScreen.classList.remove('active-screen');
-
-            targetScreen.classList.add('active-screen');
-        }
-
-        async function startGuideCamera() {
-            try {
-                const guideVideo = document.getElementById('guideVideo');
-                if (guideStream) {
-                    guideStream.getTracks().forEach(track => track.stop());
-                }
-                guideStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } } });
-                guideVideo.srcObject = guideStream;
-            } catch (err) {
-                console.log("Guide camera error:", err);
-            }
-        }
-
-        function stopGuideCamera() {
-            if (guideStream) {
-                guideStream.getTracks().forEach(track => track.stop());
-                guideStream = null;
-            }
-            const guideVideo = document.getElementById('guideVideo');
-            if (guideVideo) guideVideo.srcObject = null;
-        }
-
-        function goToCameraGuide() {
-            startBGM();
-            playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
-            showScreen(cameraGuideScreen);
-            startGuideCamera();
-        }
-
-        function goToLevelSelectFromGuide() {
-            stopGuideCamera();
-            renderLevelGrid();
-            showScreen(levelSelectScreen);
-        }
-
-        function goToStartScreen() {
-            stopGuideCamera();
-            if (gameActive) {
-                saveProgress();
-                if (totalScore > 0) saveScore(playerName, totalScore);
-            }
-
-            gameActive = false;
-            isCountingDown = false;
-            isPaused = false;
-            clearInterval(timerInterval);
-            bgm.pause();
-            isBGMPlaying = false;
-            bgm.currentTime = 0;
-            correctOverlay.classList.remove('show');
-            countdownOverlay.style.display = 'none';
-            
-            showScreen(startScreen);
-            displayLeaderboard();
-            checkResumeAvailable();
-        }
-
-        function goToLevelSelect() {
-            stopGuideCamera();
-            startBGM();
-            playerName = document.getElementById('playerName').value.trim() || "ผู้เล่นนิรนาม";
-            renderLevelGrid();
-            showScreen(levelSelectScreen);
-        }
-
-        function renderLevelGrid() {
-            const grid = document.getElementById('levelGrid');
-            grid.innerHTML = '';
-
-            LEVELS.forEach((lvl, idx) => {
-                const card = document.createElement('div');
-                const isUnlocked = idx <= maxUnlockedLevel;
-
-                card.className = `level-card ${isUnlocked ? 'unlocked' : 'locked'}`;
-                card.innerHTML = `
-                    <div class="level-card-num">${isUnlocked ? '⭐ ด่านที่ ' + (idx + 1) : '🔒 ด่านที่ ' + (idx + 1)}</div>
-                    <div class="level-card-title">${lvl.title.split(':')[1] || lvl.title}</div>
-                `;
-
-                if (isUnlocked) {
-                    card.onclick = () => {
-                        currentLevelIdx = idx;
-                        showLevelInstruction(currentLevelIdx);
-                    };
-                }
-                grid.appendChild(card);
-            });
-        }
-
-        function resumeGameSession() {
-            const progress = loadProgress();
-            if (!progress) return;
-            startBGM();
-            playerName = document.getElementById('playerName').value.trim() || progress.name || "ผู้เล่นนิรนาม";
-            currentLevelIdx = progress.levelIdx;
-            totalScore = progress.totalScore;
-
-            showLevelInstruction(currentLevelIdx);
-        }
-
-        function showLevelInstruction(levelIdx) {
-            stopGuideCamera();
-            const lvl = LEVELS[levelIdx];
-
-            document.getElementById('instLevelTitle').innerText = `คำอธิบายด่านที่ ${lvl.level}/${LEVELS.length}`;
-            document.getElementById('instLevelDesc').innerText = lvl.desc;
-            document.getElementById('instTargetScore').innerText = lvl.targetScore;
-            document.getElementById('instTimeLimit').innerText = lvl.timeLimit;
-            
-            document.getElementById('instEmojiLeft').innerHTML = lvl.emojiLeft;
-            document.getElementById('instLabelLeft').innerText = lvl.labelLeft;
-            document.getElementById('instEmojiRight').innerHTML = lvl.emojiRight;
-            document.getElementById('instLabelRight').innerText = lvl.labelRight;
-
-            showScreen(levelInstructionScreen);
-        }
-
-        async function startCurrentLevel() {
-            startBGM(); 
-            const lvl = LEVELS[currentLevelIdx];
-
-            levelScore = 0;
-            timeLeft = lvl.timeLimit;
-            tapSeqStep = 0;
-            toggleSubState = null;
-            holdStartTime = null;
-            lastPoseSeenTime = 0;
-            lastScoreTime = 0;
-
-            document.getElementById('levelBadge').innerText = `ด่านที่ ${lvl.level}/${LEVELS.length}`;
-            document.getElementById('gameEmojiLeft').innerHTML = lvl.emojiLeft;
-            document.getElementById('gameLabelLeft').innerText = lvl.labelLeft;
-            document.getElementById('gameEmojiRight').innerHTML = lvl.emojiRight;
-            document.getElementById('gameLabelRight').innerText = lvl.labelRight;
-
-            document.getElementById('scoreDisplay').innerText = levelScore;
-            document.getElementById('targetDisplay').innerText = lvl.targetScore;
-            document.getElementById('timeDisplay').innerText = timeLeft;
-            document.getElementById('feedbackText').innerText = "เตรียมตัว...";
-
-            showScreen(gameScreen);
-
-            if (!cameraInitialized) {
-                initCameraAndMediaPipe();
-            }
-
-            runCountdown(() => {
-                gameActive = true;
-                isPaused = false;
-                document.getElementById('feedbackText').innerText = "ลุยเลย! ชูมือให้กล้องเห็นนะคะ";
-                startTimer();
-            });
-        }
-
-        function runCountdown(onComplete) {
-            isCountingDown = true;
-            gameActive = false;
-            countdownOverlay.style.display = 'flex';
-            let count = 3;
-
-            countdownText.innerText = count;
-            playBeep(440, 0.15); 
-
-            const countInterval = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    countdownText.innerText = count;
-                    playBeep(440, 0.15); 
-                } else if (count === 0) {
-                    countdownText.innerText = "เริ่มเลย!";
-                    playBeep(880, 0.3); 
-                } else {
-                    clearInterval(countInterval);
-                    countdownOverlay.style.display = 'none';
-                    isCountingDown = false;
-                    if (onComplete) onComplete();
-                }
-            }, 1000);
-        }
-
-        function startTimer() {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                if (!gameActive || isPaused || isCountingDown) return;
-                timeLeft--;
-                document.getElementById('timeDisplay').innerText = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    handleTimeOut();
-                }
-            }, 1000);
-        }
-
-        function togglePause() {
-            if (isCountingDown) return;
-            isPaused = !isPaused;
-            const btn = document.getElementById('pauseBtn');
-            if (isPaused) {
-                btn.innerText = "▶️ เล่นต่อ";
-                document.getElementById('feedbackText').innerText = "พักชั่วคราว...";
-            } else {
-                btn.innerText = "⏸️ พัก";
-                document.getElementById('feedbackText').innerText = "ลุยต่อเลยค่ะ!";
-            }
-        }
-
-        function initCameraAndMediaPipe() {
-            const hands = new Hands({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-            });
-
-            hands.setOptions({
-                maxNumHands: 2,
-                modelComplexity: 1,
-                minDetectionConfidence: 0.6,
-                minTrackingConfidence: 0.6
-            });
-
-            hands.onResults(onResults);
-
-            const camera = new Camera(videoElement, {
-                onFrame: async () => {
-                    if ((gameActive || isCountingDown) && !isPaused) {
-                        await hands.send({ image: videoElement });
-                    }
-                },
-                width: 640,
-                height: 480
-            });
-
-            camera.start();
-            cameraInitialized = true;
-        }
-
-        function onResults(results) {
-            canvasCtx.save();
-            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-
-            let detectedHands = [];
-
-            if (results.multiHandLandmarks && results.multiHandedness) {
-                for (let i = 0; i < results.multiHandLandmarks.length; i++) {
-                    const landmarks = results.multiHandLandmarks[i];
-                    const rawHand = results.multiHandedness[i].label;
-                    const realHand = getRealHand(rawHand);
-
-                    drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#00FF00', lineWidth: 3 });
-                    drawLandmarks(canvasCtx, landmarks, { color: '#FF0000', lineWidth: 1, radius: 3 });
-
-                    detectedHands.push({
-                        hand: realHand,
-                        landmarks: landmarks
-                    });
-                }
-            }
-            canvasCtx.restore();
-
-            if (gameActive && !isPaused && !isCountingDown) {
-                processLevelLogic(detectedHands);
-            }
-        }
-
-        // ================= GESTURE DETECTION UTILS =================
-
-        function getDist(p1, p2) {
-            return Math.hypot(p1.x - p2.x, p1.y - p2.y);
-        }
-
-        function getHandScale(lm) {
-            return getDist(lm[0], lm[9]) || 0.2;
-        }
-
-        function isThumbTouching(lm, tipIdx, threshold = 0.28) {
-            const scale = getHandScale(lm);
-            return (getDist(lm[4], lm[tipIdx]) / scale) < threshold;
-        }
-
-        function isFingerExtended(lm, tipIdx, pipIdx) {
-            return getDist(lm[tipIdx], lm[0]) > getDist(lm[pipIdx], lm[0]);
-        }
-
-        function isThumbUp(lm) {
-            const scale = getHandScale(lm);
-            const thumbExt = getDist(lm[4], lm[17]) / scale > 0.55;
-            const indexFold = !isFingerExtended(lm, 8, 6);
-            const middleFold = !isFingerExtended(lm, 12, 10);
-            const ringFold = !isFingerExtended(lm, 16, 14);
-            const pinkyFold = !isFingerExtended(lm, 20, 18);
-            return thumbExt && indexFold && middleFold && ringFold && pinkyFold;
-        }
-
-        function isPinkyUp(lm) {
-            const scale = getHandScale(lm);
-            const pinkyExt = isFingerExtended(lm, 20, 18);
-            const thumbFold = getDist(lm[4], lm[9]) / scale < 0.45;
-            const indexFold = !isFingerExtended(lm, 8, 6);
-            const middleFold = !isFingerExtended(lm, 12, 10);
-            const ringFold = !isFingerExtended(lm, 16, 14);
-            return pinkyExt && thumbFold && indexFold && middleFold && ringFold;
-        }
-
-        function isJeeb(lm) {
-            return isThumbTouching(lm, 8, 0.32);
-        }
-
-        function isLShape(lm) {
-            const scale = getHandScale(lm);
-            const thumbIndexDist = getDist(lm[4], lm[8]) / scale;
-            const thumbExt = getDist(lm[4], lm[0]) / scale > 0.45;
-            const indexExt = isFingerExtended(lm, 8, 6);
-            const middleFold = !isFingerExtended(lm, 12, 10);
-            const ringFold = !isFingerExtended(lm, 16, 14);
-            const pinkyFold = !isFingerExtended(lm, 20, 18);
-            return thumbIndexDist > 0.5 && thumbExt && indexExt && middleFold && ringFold && pinkyFold;
-        }
-
-        // ================= LEVEL LOGIC =================
-
-        function processLevelLogic(detectedHands) {
-            const now = Date.now();
-            const fingerTips = [8, 12, 16, 20];
-            const fingerNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
-
-            switch (currentLevelIdx) {
-                case 0: {
-                    const rHand = detectedHands.find(h => h.hand === 'Right');
-                    if (!rHand) {
-                        document.getElementById('feedbackText').innerText = "กรุณาชู 'มือขวา' ให้กล้องเห็นนะคะ";
-                        return;
-                    }
-                    const lm = rHand.landmarks;
-                    if (isThumbTouching(lm, fingerTips[tapSeqStep])) {
-                        if (now - lastStepTouchTime > 250) {
-                            lastStepTouchTime = now;
-                            tapSeqStep++;
-                            if (tapSeqStep >= 4) {
-                                addPoint();
-                                tapSeqStep = 0;
-                            } else {
-                                document.getElementById('feedbackText').innerText = `แตะ ${fingerNames[tapSeqStep - 1]} แล้ว! ต่อไปแตะ ${fingerNames[tapSeqStep]}`;
-                            }
-                        }
-                    } else {
-                        document.getElementById('feedbackText').innerText = `มือขวา: กำลังรอแตะ ${fingerNames[tapSeqStep]}`;
-                    }
-                    break;
-                }
-
-                case 1: {
-                    const lHand = detectedHands.find(h => h.hand === 'Left');
-                    if (!lHand) {
-                        document.getElementById('feedbackText').innerText = "กรุณาชู 'มือซ้าย' ให้กล้องเห็นนะคะ";
-                        return;
-                    }
-                    const lm = lHand.landmarks;
-                    if (isThumbTouching(lm, fingerTips[tapSeqStep])) {
-                        if (now - lastStepTouchTime > 250) {
-                            lastStepTouchTime = now;
-                            tapSeqStep++;
-                            if (tapSeqStep >= 4) {
-                                addPoint();
-                                tapSeqStep = 0;
-                            } else {
-                                document.getElementById('feedbackText').innerText = `แตะ ${fingerNames[tapSeqStep - 1]} แล้ว! ต่อไปแตะ ${fingerNames[tapSeqStep]}`;
-                            }
-                        }
-                    } else {
-                        document.getElementById('feedbackText').innerText = `มือซ้าย: กำลังรอแตะ ${fingerNames[tapSeqStep]}`;
-                    }
-                    break;
-                }
-
-                case 2: {
-                    const rHand = detectedHands.find(h => h.hand === 'Right');
-                    if (!rHand) {
-                        document.getElementById('feedbackText').innerText = "กรุณาชู 'มือขวา' ค่ะ";
-                        return;
-                    }
-                    const isT = isThumbUp(rHand.landmarks);
-                    const isP = isPinkyUp(rHand.landmarks);
-
-                    if (toggleSubState !== 'READY_FOR_PINKY') {
-                        if (isT) {
-                            toggleSubState = 'READY_FOR_PINKY';
-                            document.getElementById('feedbackText').innerText = "ชูโป้งแล้ว! ต่อไปสลับไป 'ชูก้อย' ค่ะ";
-                        } else {
-                            document.getElementById('feedbackText').innerText = "เริ่มต้นด้วยการ 'ชูนิ้วโป้ง' มือขวาค่ะ";
-                        }
-                    } else {
-                        if (isP) {
-                            addPoint();
-                            toggleSubState = null; 
-                            document.getElementById('feedbackText').innerText = "เก่งมาก! ชูนิ้วโป้งเพื่อเริ่มรอบถัดไปค่ะ";
-                        } else {
-                            document.getElementById('feedbackText').innerText = "ชูโป้งแล้ว! ต่อไปสลับไป 'ชูก้อย' ค่ะ";
-                        }
-                    }
-                    break;
-                }
-
-                case 3: {
-                    const lHand = detectedHands.find(h => h.hand === 'Left');
-                    if (!lHand) {
-                        document.getElementById('feedbackText').innerText = "กรุณาชู 'มือซ้าย' ค่ะ";
-                        return;
-                    }
-                    const isT = isThumbUp(lHand.landmarks);
-                    const isP = isPinkyUp(lHand.landmarks);
-
-                    if (toggleSubState !== 'READY_FOR_PINKY') {
-                        if (isT) {
-                            toggleSubState = 'READY_FOR_PINKY';
-                            document.getElementById('feedbackText').innerText = "ชูโป้งแล้ว! ต่อไปสลับไป 'ชูก้อย' ค่ะ";
-                        } else {
-                            document.getElementById('feedbackText').innerText = "เริ่มต้นด้วยการ 'ชูนิ้วโป้ง' มือซ้ายค่ะ";
-                        }
-                    } else {
-                        if (isP) {
-                            addPoint();
-                            toggleSubState = null; 
-                            document.getElementById('feedbackText').innerText = "เก่งมาก! ชูนิ้วโป้งเพื่อเริ่มรอบถัดไปค่ะ";
-                        } else {
-                            document.getElementById('feedbackText').innerText = "ชูโป้งแล้ว! ต่อไปสลับไป 'ชูก้อย' ค่ะ";
-                        }
-                    }
-                    break;
-                }
-
-                case 4: {
-                    const rHand = detectedHands.find(h => h.hand === 'Right');
-                    if (!rHand) {
-                        document.getElementById('feedbackText').innerText = "กรุณาชู 'มือขวา' ค่ะ";
-                        return;
-                    }
-                    const isJ = isJeeb(rHand.landmarks);
-                    const isL = isLShape(rHand.landmarks);
-
-                    if (toggleSubState !== 'READY_FOR_L') {
-                        if (isJ) {
-                            toggleSubState = 'READY_FOR_L';
-                            document.getElementById('feedbackText').innerText = "ทำท่าจีบแล้ว! ต่อไปสลับไปทำ 'ตัว L' ค่ะ";
-                        } else {
-                            document.getElementById('feedbackText').innerText = "เริ่มต้นด้วยการทำ 'ท่าจีบ' มือขวาค่ะ";
-                        }
-                    } else {
-                        if (isL) {
-                            addPoint();
-                            toggleSubState = null; 
-                            document.getElementById('feedbackText').innerText = "เก่งมาก! ทำท่าจีบเพื่อเริ่มรอบถัดไปค่ะ";
-                        } else {
-                            document.getElementById('feedbackText').innerText = "ทำท่าจีบแล้ว! ต่อไปสลับไปทำ 'ตัว L' ค่ะ";
-                        }
-                    }
-                    break;
-                }
-
-                case 5: {
-                    const lHand = detectedHands.find(h => h.hand === 'Left');
-                    if (!lHand) {
-                        document.getElementById('feedbackText').innerText = "กรุณาชู 'มือซ้าย' ค่ะ";
-                        return;
-                    }
-                    const isJ = isJeeb(lHand.landmarks);
-                    const isL = isLShape(lHand.landmarks);
-
-                    if (toggleSubState !== 'READY_FOR_L') {
-                        if (isJ) {
-                            toggleSubState = 'READY_FOR_L';
-                            document.getElementById('feedbackText').innerText = "ทำท่าจีบแล้ว! ต่อไปสลับไปทำ 'ตัว L' ค่ะ";
-                        } else {
-                            document.getElementById('feedbackText').innerText = "เริ่มต้นด้วยการทำ 'ท่าจีบ' มือซ้ายค่ะ";
-                        }
-                    } else {
-                        if (isL) {
-                            addPoint();
-                            toggleSubState = null; 
-                            document.getElementById('feedbackText').innerText = "เก่งมาก! ทำท่าจีบเพื่อเริ่มรอบถัดไปค่ะ";
-                        } else {
-                            document.getElementById('feedbackText').innerText = "ทำท่าจีบแล้ว! ต่อไปสลับไปทำ 'ตัว L' ค่ะ";
-                        }
-                    }
-                    break;
-                }
-
-                case 6: {
-                    const lHand = detectedHands.find(h => h.hand === 'Left');
-                    const rHand = detectedHands.find(h => h.hand === 'Right');
-                    if (!lHand || !rHand) {
-                        document.getElementById('feedbackText').innerText = "ชูมือทั้ง 2 ข้างให้กล้องเห็นนะคะ";
-                        return;
-                    }
-                    const lTouch = isThumbTouching(lHand.landmarks, fingerTips[tapSeqStep]);
-                    const rTouch = isThumbTouching(rHand.landmarks, fingerTips[tapSeqStep]);
-
-                    if (lTouch && rTouch) {
-                        if (now - lastStepTouchTime > 250) {
-                            lastStepTouchTime = now;
-                            tapSeqStep++;
-                            if (tapSeqStep >= 4) {
-                                addPoint();
-                                tapSeqStep = 0;
-                            } else {
-                                document.getElementById('feedbackText').innerText = `เก่งมาก! ต่อไปแตะ ${fingerNames[tapSeqStep]} พร้อมกันค่ะ`;
-                            }
-                        }
-                    } else {
-                        document.getElementById('feedbackText').innerText = `สองมือ: แตะ ${fingerNames[tapSeqStep]} พร้อมกันทั้งซ้าย-ขวา`;
-                    }
-                    break;
-                }
-
-                case 7: {
-                    const lHand = detectedHands.find(h => h.hand === 'Left');
-                    const rHand = detectedHands.find(h => h.hand === 'Right');
-                    if (!lHand || !rHand) {
-                        document.getElementById('feedbackText').innerText = "ชูมือทั้ง 2 ข้างให้กล้องเห็นนะคะ";
-                        if (now - lastPoseSeenTime > 200) holdStartTime = null;
-                        return;
-                    }
-                    const isPoseA = isPinkyUp(lHand.landmarks) && isThumbUp(rHand.landmarks);
-                    const isPoseB = isThumbUp(lHand.landmarks) && isPinkyUp(rHand.landmarks);
-
-                    let currentPose = null;
-                    if (isPoseA) currentPose = 'A';
-                    else if (isPoseB) currentPose = 'B';
-
-                    if (currentPose && currentPose !== toggleSubState) {
-                        lastPoseSeenTime = now;
-                        if (!holdStartTime) {
-                            holdStartTime = now;
-                        } else if (now - holdStartTime >= 500) {
-                            addPoint();
-                            toggleSubState = currentPose;
-                            holdStartTime = null;
-                            document.getElementById('feedbackText').innerText = "สลับฝั่งต่อไปได้เลยค่ะ!";
-                        } else {
-                            const remaining = ((500 - (now - holdStartTime)) / 1000).toFixed(1);
-                            document.getElementById('feedbackText').innerText = `ค้างไว้แป๊บนึง... (${remaining}s)`;
-                        }
-                    } else {
-                        if (now - lastPoseSeenTime > 200) {
-                            holdStartTime = null;
-                            if (toggleSubState) {
-                                document.getElementById('feedbackText').innerText = "สลับฝั่งแล้วค้างไว้ 0.5 วินาทีค่ะ";
-                            } else {
-                                document.getElementById('feedbackText').innerText = "ทำท่า ซ้ายก้อย-ขวาโป้ง (หรือตรงข้าม) ค้างไว้ 0.5 วินาทีค่ะ";
-                            }
-                        }
-                    }
-                    break;
-                }
-
-                case 8:
-                case 9: {
-                    const lHand = detectedHands.find(h => h.hand === 'Left');
-                    const rHand = detectedHands.find(h => h.hand === 'Right');
-                    if (!lHand || !rHand) {
-                        document.getElementById('feedbackText').innerText = "ชูมือทั้ง 2 ข้างให้กล้องเห็นนะคะ";
-                        if (now - lastPoseSeenTime > 200) holdStartTime = null;
-                        return;
-                    }
-
-                    const isPoseA = isJeeb(lHand.landmarks) && isLShape(rHand.landmarks);
-                    const isPoseB = isLShape(lHand.landmarks) && isJeeb(rHand.landmarks);
-
-                    let currentPose = null;
-                    if (isPoseA) currentPose = 'A';
-                    else if (isPoseB) currentPose = 'B';
-
-                    if (currentPose && currentPose !== toggleSubState) {
-                        lastPoseSeenTime = now;
-                        if (!holdStartTime) {
-                            holdStartTime = now;
-                        } else if (now - holdStartTime >= 500) {
-                            addPoint();
-                            toggleSubState = currentPose;
-                            holdStartTime = null;
-                            document.getElementById('feedbackText').innerText = "สลับฝั่งต่อไปได้เลยค่ะ!";
-                        } else {
-                            const remaining = ((500 - (now - holdStartTime)) / 1000).toFixed(1);
-                            document.getElementById('feedbackText').innerText = `ค้างไว้แป๊บนึง... (${remaining}s)`;
-                        }
-                    } else {
-                        if (now - lastPoseSeenTime > 200) {
-                            holdStartTime = null;
-                            if (toggleSubState) {
-                                document.getElementById('feedbackText').innerText = "สลับท่า (ซ้ายจีบ/ขวาL หรือ ซ้ายL/ขวาจีบ) ค้างไว้ 0.5 วินาทีค่ะ";
-                            } else {
-                                document.getElementById('feedbackText').innerText = "ทำท่า ซ้ายจีบ - ขวาตัว L (หรือตรงข้าม) ค้างไว้ 0.5 วินาทีค่ะ";
-                            }
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-
-        function addPoint() {
-            const now = Date.now();
-            if (now - lastScoreTime < 300) return;
-            lastScoreTime = now;
-
-            levelScore++;
-            totalScore++;
-            document.getElementById('scoreDisplay').innerText = levelScore;
-
-            sndCorrect.currentTime = 0;
-            sndCorrect.play().catch(() => {});
-
-            triggerCorrectOverlay();
-
-            const lvl = LEVELS[currentLevelIdx];
-            if (levelScore >= lvl.targetScore) {
-                setTimeout(handleLevelClear, 400);
-            }
-        }
-
-        function triggerCorrectOverlay() {
-            correctOverlay.classList.add('show');
-            setTimeout(() => {
-                correctOverlay.classList.remove('show');
-            }, 600);
-        }
-
-        function handleLevelClear() {
-            gameActive = false;
-            clearInterval(timerInterval);
-
-            if (currentLevelIdx + 1 > maxUnlockedLevel) {
-                maxUnlockedLevel = Math.min(currentLevelIdx + 1, LEVELS.length - 1);
-                saveUnlockedLevels();
-            }
-
-            saveProgress();
-            saveScore(playerName, totalScore);
-
-            const lvl = LEVELS[currentLevelIdx];
-            document.getElementById('clearLevelName').innerText = `คุณผ่าน ${lvl.title} แล้ว!`;
-            
-            document.getElementById('clearLevelScore').innerText = levelScore;
-            document.getElementById('clearTargetScore').innerText = lvl.targetScore;
-            document.getElementById('clearTotalScore').innerText = totalScore;
-
-            if (currentLevelIdx >= LEVELS.length - 1) {
-                document.getElementById('resTitle').innerText = "🎉 ยินดีด้วย! คุณผ่านครบ 10 ด่านแล้ว";
-                document.getElementById('resName').innerText = playerName;
-                document.getElementById('resScore').innerText = totalScore;
-                document.getElementById('resFeedback').innerText = "คุณตา/คุณยาย สุดยอดมากๆ เลยค่ะ สมองสดใส แข็งแรงสุดๆ!";
-                showScreen(resultScreen);
-            } else {
-                showScreen(levelClearScreen);
-            }
-        }
-
-        function handleTimeOut() {
-            gameActive = false;
-            sndWrong.currentTime = 0;
-            sndWrong.play().catch(() => {});
-
-            saveScore(playerName, totalScore);
-
-            document.getElementById('resTitle').innerText = "หมดเวลา! ⏰";
-            document.getElementById('resName').innerText = playerName;
-            document.getElementById('resScore').innerText = levelScore;
-            document.getElementById('resFeedback').innerText = `ทำได้ดีมากค่ะ! ทำได้ ${levelScore} คะแนนในด่านนี้ ลองใหม่อีกครั้งนะคะ`;
-            showScreen(resultScreen);
-        }
-
-        function proceedToNextLevelInstruction() {
-            currentLevelIdx++;
-            if (currentLevelIdx < LEVELS.length) {
-                showLevelInstruction(currentLevelIdx);
-            } else {
-                goToLevelSelect();
-            }
-        }
-
-        function retryCurrentLevel() {
-            showLevelInstruction(currentLevelIdx);
-        }
-
-        // ================= LOCAL STORAGE & LEADERBOARD =================
-
-        function saveUnlockedLevels() {
-            localStorage.setItem('muanMue_maxUnlocked', maxUnlockedLevel);
-        }
-
-        function loadUnlockedLevels() {
-            const val = localStorage.getItem('muanMue_maxUnlocked');
-            maxUnlockedLevel = val !== null ? parseInt(val, 10) : 0;
-        }
-
-        function saveProgress() {
-            const data = {
-                name: playerName,
-                levelIdx: currentLevelIdx,
-                totalScore: totalScore
-            };
-            localStorage.setItem('muanMue_progress', JSON.stringify(data));
-        }
-
-        function loadProgress() {
-            const data = localStorage.getItem('muanMue_progress');
-            return data ? JSON.parse(data) : null;
-        }
-
-        function clearProgress() {
-            localStorage.removeItem('muanMue_progress');
-        }
-
-        function checkResumeAvailable() {
-            const prog = loadProgress();
-            const resumeBox = document.getElementById('resumeInfo');
-            const resumeBtn = document.getElementById('resumeBtn');
-
-            if (prog && prog.levelIdx > 0) {
-                resumeBox.style.display = 'block';
-                resumeBox.innerHTML = `📌 <b>พบประวัติเดิม:</b> คุณ ${prog.name} (ด่านที่ ${prog.levelIdx + 1}, คะแนนสะสม ${prog.totalScore} ⭐)`;
-                resumeBtn.style.display = 'inline-flex';
-            } else {
-                resumeBox.style.display = 'none';
-                resumeBtn.style.display = 'none';
-            }
-        }
-
-        function saveScore(name, score) {
-            let scores = JSON.parse(localStorage.getItem('muanMue_leaderboard') || '[]');
-            scores.push({ name: name, score: score, date: new Date().toLocaleDateString('th-TH') });
-            scores.sort((a, b) => b.score - a.score);
-            scores = scores.slice(0, 5);
-            localStorage.setItem('muanMue_leaderboard', JSON.stringify(scores));
-        }
-
-        function displayLeaderboard() {
-            const listEl = document.getElementById('leaderboard-list');
-            const scores = JSON.parse(localStorage.getItem('muanMue_leaderboard') || '[]');
-            if (scores.length === 0) {
-                listEl.innerHTML = '<p style="color:#aaa; text-align:center;">ยังไม่มีประวัติการเล่น</p>';
-                return;
-            }
-            let html = '';
-            scores.forEach((item, index) => {
-                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
-                html += `<div class="score-item">
-                    <span>${medal} ${item.name}</span>
-                    <b>${item.score} ⭐</b>
-                </div>`;
-            });
-            listEl.innerHTML = html;
-        }
-
-        function resetLeaderboard() {
-            if (confirm("คุณต้องการล้างประวัติคะแนนและปลดล็อคด่านทั้งหมดใช่หรือไม่?")) {
-                localStorage.removeItem('muanMue_leaderboard');
-                localStorage.removeItem('muanMue_maxUnlocked');
-                maxUnlockedLevel = 0;
-                clearProgress();
-                displayLeaderboard();
-                checkResumeAvailable();
-            }
-        }
-    </script>
+      }
+    } else {
+      document.getElementById('feedbackText').innerText = `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]} ทั้งสองข้างพร้อมกัน`;
+    }
+  } else if (lvl.level === 8) {
+    if (!leftHand || !rightHand) { document.getElementById('feedbackText').innerText = "โปรดชูมือทั้งสองข้างขึ้นมานะคะ"; return; }
+    let matched = false;
+    if (toggleSubState === null || toggleSubState === 2) {
+      if (isPinkyUp(leftHand) && isThumbUp(rightHand)) matched = true;
+    } else if (toggleSubState === 1) {
+      if (isThumbUp(leftHand) && isPinkyUp(rightHand)) matched = true;
+    }
+
+    if (matched) {
+      if (!holdStartTime) holdStartTime = now;
+      if (now - holdStartTime >= 500) {
+        holdStartTime = null;
+        toggleSubState = (toggleSubState === 1) ? 2 : 1;
+        triggerCorrectAnswer();
+      } else {
+        document.getElementById('feedbackText').innerText = "ค้างท่าไว้สักครู่...";
+      }
+    } else {
+      holdStartTime = null;
+      document.getElementById('feedbackText').innerText = (toggleSubState === 1) ? "สลับฝั่ง: ซ้ายโป้ง - ขวาก้อย" : "ทำท่า: ซ้ายก้อย - ขวาโป้ง";
+    }
+  } else if (lvl.level === 9 || lvl.level === 10) {
+    if (!leftHand || !rightHand) { document.getElementById('feedbackText').innerText = "โปรดชูมือทั้งสองข้างขึ้นมานะคะ"; return; }
+    let matched = false;
+    if (toggleSubState === null || toggleSubState === 2) {
+      if (isJieb(leftHand) && isLPose(rightHand)) matched = true;
+    } else if (toggleSubState === 1) {
+      if (isLPose(leftHand) && isJieb(rightHand)) matched = true;
+    }
+
+    if (matched) {
+      if (!holdStartTime) holdStartTime = now;
+      if (now - holdStartTime >= 500) {
+        holdStartTime = null;
+        toggleSubState = (toggleSubState === 1) ? 2 : 1;
+        triggerCorrectAnswer();
+      } else {
+        document.getElementById('feedbackText').innerText = "ค้างท่าไว้สักครู่...";
+      }
+    } else {
+      holdStartTime = null;
+      document.getElementById('feedbackText').innerText = (toggleSubState === 1) ? "สลับฝั่ง: ซ้าย L - ขวาจีบ" : "ทำท่า: ซ้ายจีบ - ขวา L";
+    }
+  }
+}
+
+function triggerCorrectAnswer() {
+  lastScoreTime = Date.now();
+  levelScore++;
+  totalScore++;
+  document.getElementById('scoreDisplay').innerText = levelScore;
+  
+  try {
+    sndCorrect.currentTime = 0;
+    sndCorrect.play().catch(e => playBeep(880, 0.2));
+  } catch(e) { playBeep(880, 0.2); }
+
+  correctOverlay.classList.add('show');
+  setTimeout(() => {
+    correctOverlay.classList.remove('show');
+  }, 500);
+
+  const lvl = LEVELS[currentLevelIdx];
+  if (levelScore >= lvl.targetScore) {
+    handleLevelClear();
+  } else {
+    document.getElementById('feedbackText').innerText = "ถูกต้อง! 🎉 สู้ๆ ทำต่อเลย!";
+  }
+}
+
+function handleLevelClear() {
+  gameActive = false;
+  clearInterval(timerInterval);
+  
+  if (currentLevelIdx + 1 > maxUnlockedLevel) {
+    maxUnlockedLevel = currentLevelIdx + 1;
+    saveUnlockedLevels();
+  }
+
+  saveProgress();
+  saveScore(playerName, totalScore);
+
+  const lvl = LEVELS[currentLevelIdx];
+  document.getElementById('clearLevelName').innerText = `คุณผ่าน ${lvl.title} เรียบร้อย!`;
+  document.getElementById('clearLevelScore').innerText = levelScore;
+  document.getElementById('clearTargetScore').innerText = lvl.targetScore;
+  document.getElementById('clearTotalScore').innerText = totalScore;
+
+  const nextBtn = document.getElementById('nextLevelBtn');
+  if (currentLevelIdx + 1 >= LEVELS.length) {
+    nextBtn.innerText = "🏆 คุณผ่านครบทุกด่านแล้ว!";
+  } else {
+    nextBtn.innerText = "ไปด่านถัดไป ➔";
+  }
+
+  showScreen(levelClearScreen);
+}
+
+function handleTimeOut() {
+  gameActive = false;
+  try {
+    sndWrong.currentTime = 0;
+    sndWrong.play().catch(e => playBeep(220, 0.3));
+  } catch(e) { playBeep(220, 0.3); }
+
+  saveScore(playerName, totalScore);
+
+  const lvl = LEVELS[currentLevelIdx];
+  document.getElementById('resName').innerText = playerName;
+  document.getElementById('resScore').innerText = levelScore;
+  document.getElementById('resFeedback').innerText = `เป้าหมายด่านนี้คือ ${lvl.targetScore} คะแนน ลองใหม่อีกครั้งนะคะ!`;
+
+  showScreen(resultScreen);
+}
+
+function proceedToNextLevelInstruction() {
+  if (currentLevelIdx + 1 < LEVELS.length) {
+    currentLevelIdx++;
+    showLevelInstruction(currentLevelIdx);
+  } else {
+    goToLevelSelect();
+  }
+}
+
+function retryCurrentLevel() {
+  showLevelInstruction(currentLevelIdx);
+}
+
+function saveUnlockedLevels() {
+  localStorage.setItem('muanhand_maxUnlocked', maxUnlockedLevel);
+}
+
+function loadUnlockedLevels() {
+  const saved = localStorage.getItem('muanhand_maxUnlocked');
+  if (saved !== null) {
+    maxUnlockedLevel = parseInt(saved, 10);
+  } else {
+    maxUnlockedLevel = 0;
+  }
+}
+
+function saveProgress() {
+  const progress = {
+    name: playerName,
+    levelIdx: currentLevelIdx,
+    totalScore: totalScore,
+    time: new Date().toLocaleString('th-TH')
+  };
+  localStorage.setItem('muanhand_progress', JSON.stringify(progress));
+}
+
+function loadProgress() {
+  const saved = localStorage.getItem('muanhand_progress');
+  if (saved) return JSON.parse(saved);
+  return null;
+}
+
+function checkResumeAvailable() {
+  const progress = loadProgress();
+  const resumeBox = document.getElementById('resumeInfo');
+  const resumeBtn = document.getElementById('resumeBtn');
+  if (progress && progress.levelIdx < LEVELS.length) {
+    resumeBox.style.display = 'block';
+    resumeBox.innerHTML = `📌 <b>พบประวัติการเล่นเดิม:</b> คุณ ${progress.name}<br>ค้างไว้ที่ ด่านที่ ${progress.levelIdx + 1} (คะแนนรวม: ${progress.totalScore} ⭐)`;
+    resumeBtn.style.display = 'inline-block';
+  } else {
+    resumeBox.style.display = 'none';
+    resumeBtn.style.display = 'none';
+  }
+}
+
+function saveScore(name, score) {
+  if (!name || score <= 0) return;
+  let scores = JSON.parse(localStorage.getItem('muanhand_scores') || '[]');
+  scores.push({ name: name, score: score, date: new Date().toLocaleDateString('th-TH') });
+  scores.sort((a, b) => b.score - a.score);
+  scores = scores.slice(0, 5);
+  localStorage.setItem('muanhand_scores', JSON.stringify(scores));
+}
+
+function displayLeaderboard() {
+  const list = document.getElementById('leaderboard-list');
+  const scores = JSON.parse(localStorage.getItem('muanhand_scores') || '[]');
+  if (scores.length === 0) {
+    list.innerHTML = '<p style="color:#aaa; text-align:center;">ยังไม่มีประวัติการเล่น</p>';
+    return;
+  }
+  let html = '';
+  scores.forEach((s, idx) => {
+    const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
+    html += `<div class="score-item"><span>${medal} ${s.name}</span><b>${s.score} ⭐</b></div>`;
+  });
+  list.innerHTML = html;
+}
+
+function resetLeaderboard() {
+  if (confirm("คุณต้องการล้างคะแนนทั้งหมดใช่หรือไม่?")) {
+    localStorage.removeItem('muanhand_scores');
+    localStorage.removeItem('muanhand_progress');
+    displayLeaderboard();
+    checkResumeAvailable();
+  }
+}
+</script>
 </body>
 </html>
