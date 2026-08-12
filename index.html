@@ -1269,47 +1269,56 @@
       }
 
       function toggleInstructionAudio() {
-        const sndInst = document.getElementById("snd-instruction");
-        const playBtn = document.getElementById("playAudioBtn");
-
-        if (!sndInst.src) return; // ถ้าไม่มีไฟล์เสียง ให้ข้ามไป
-
+        const sndInst = document.getElementById('snd-instruction');
+        const playBtn = document.getElementById('playAudioBtn');
+        const bgm = document.getElementById('bgm'); // ดึงตัวควบคุมเสียงเพลงพื้นหลัง
+        
+        if (!sndInst.src) return; 
+        
         if (sndInst.paused) {
-          sndInst.play();
-          playBtn.innerHTML = "⏸️ หยุดฟัง";
-          playBtn.classList.replace("btn-blue", "btn-yellow");
+            sndInst.play();
+            bgm.volume = 0.05; // 📉 ลดเสียงเพลงพื้นหลังลงให้เบามากๆ
+            playBtn.innerHTML = "⏸️ หยุดฟัง";
+            playBtn.classList.replace('btn-blue', 'btn-yellow');
         } else {
-          sndInst.pause();
-          playBtn.innerHTML = "🔊 ฟังคำอธิบาย";
-          playBtn.classList.replace("btn-yellow", "btn-blue");
+            sndInst.pause();
+            bgm.volume = 0.2; // 📈 คืนระดับเสียงเพลงพื้นหลังกลับมาปกติ
+            playBtn.innerHTML = "🔊 ฟังคำอธิบาย";
+            playBtn.classList.replace('btn-yellow', 'btn-blue');
         }
 
-        // เมื่อเสียงเล่นจบ ให้ปุ่มกลับเป็นสถานะเดิม
-        sndInst.onended = function () {
-          playBtn.innerHTML = "🔊 ฟังคำอธิบาย";
-          playBtn.classList.replace("btn-yellow", "btn-blue");
+        // เมื่อเสียงเล่นจบ ให้ปุ่มกลับเป็นสถานะเดิม และคืนเสียงเพลง
+        sndInst.onended = function() {
+            bgm.volume = 0.2; // 📈 คืนระดับเสียงเพลงพื้นหลังกลับมาปกติ
+            playBtn.innerHTML = "🔊 ฟังคำอธิบาย";
+            playBtn.classList.replace('btn-yellow', 'btn-blue');
         };
       }
 
       function toggleGuideAudio() {
-        const sndInst = document.getElementById("snd-instruction");
-        const playBtn = document.getElementById("playGuideAudioBtn");
-
+        const sndInst = document.getElementById('snd-instruction');
+        const playBtn = document.getElementById('playGuideAudioBtn');
+        const bgm = document.getElementById('bgm'); // ดึงตัวควบคุมเสียงเพลงพื้นหลัง
+        
         if (!sndInst.src) return;
-
+        
         if (sndInst.paused) {
-          sndInst.play();
-          playBtn.innerHTML = "⏸️ หยุดฟัง";
-          playBtn.classList.replace("btn-blue", "btn-yellow");
+            sndInst.play();
+            bgm.volume = 0.05; // 📉 ลดเสียงเพลงพื้นหลังลงให้เบามากๆ
+            playBtn.innerHTML = "⏸️ หยุดฟัง";
+            playBtn.classList.replace('btn-blue', 'btn-yellow');
         } else {
-          sndInst.pause();
-          playBtn.innerHTML = "🔊 ฟังคำแนะนำ";
-          playBtn.classList.replace("btn-yellow", "btn-blue");
+            sndInst.pause();
+            bgm.volume = 0.2; // 📈 คืนระดับเสียงเพลงพื้นหลังกลับมาปกติ
+            playBtn.innerHTML = "🔊 ฟังคำแนะนำ";
+            playBtn.classList.replace('btn-yellow', 'btn-blue');
         }
 
-        sndInst.onended = function () {
-          playBtn.innerHTML = "🔊 ฟังคำแนะนำ";
-          playBtn.classList.replace("btn-yellow", "btn-blue");
+        // เมื่อเสียงเล่นจบ ให้ปุ่มกลับเป็นสถานะเดิม และคืนเสียงเพลง
+        sndInst.onended = function() {
+            bgm.volume = 0.2; // 📈 คืนระดับเสียงเพลงพื้นหลังกลับมาปกติ
+            playBtn.innerHTML = "🔊 ฟังคำแนะนำ";
+            playBtn.classList.replace('btn-yellow', 'btn-blue');
         };
       }
 
