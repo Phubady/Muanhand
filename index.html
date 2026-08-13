@@ -567,8 +567,8 @@
           width: 100%;
           max-width: 1100px;
           grid-template-columns: 1fr 1.5fr;
-          grid-template-rows: auto auto 1fr;
-          gap: 25px;
+          grid-template-rows: auto auto 1fr auto;
+          gap: 20px;
           align-items: center;
           margin: 0 auto;
         }
@@ -581,13 +581,17 @@
           grid-column: 1;
           grid-row: 2;
         }
-        #game-screen .feedback {
+        #game-screen #gameGifContainer {
           grid-column: 1;
           grid-row: 3;
         }
+        #game-screen .feedback {
+          grid-column: 1;
+          grid-row: 4;
+        }
         #game-screen .game-container {
           grid-column: 2;
-          grid-row: 1 / span 3;
+          grid-row: 1 / span 4;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -599,23 +603,6 @@
           max-height: 75vh;
           border-radius: 15px;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        /* ควบคุมตำแหน่ง GIF ให้อยู่แถวที่ 3 (ฝั่งซ้าย) */
-        #game-screen #gameGifContainer {
-          grid-column: 1;
-          grid-row: 3;
-        }
-
-        /* ขยับกล่องคำแนะนำ (เตรียมพร้อม/ลุยเลย) ลงไปอยู่แถวที่ 4 */
-        #game-screen .feedback {
-          grid-column: 1;
-          grid-row: 4;
-        }
-
-        /* ขยายให้กล้อง (ฝั่งขวา) ครอบคลุมความสูงตั้งแต่แถว 1 ถึง 4 */
-        #game-screen .game-container {
-          grid-column: 2;
-          grid-row: 1 / span 4;
         }
       }
       @media (min-width: 1024px) {
@@ -716,7 +703,6 @@
 
     <!-- หน้าคำแนะนำและลองตั้งกล้อง (อยู่ก่อนหน้าเลือกด่าน) -->
     <div id="camera-guide-screen" class="screen">
-      <!-- กล้องสำหรับให้ผู้เล่นดูตัวเอง (ขยายขนาดทดแทนส่วนหัวข้อที่ตัดออก) -->
       <div style="position: relative; width: 100%; margin: 0 auto 15px auto">
         <video
           id="guideVideo"
@@ -757,8 +743,7 @@
         </p>
         <ul style="list-style: none; padding-left: 0; margin: 0">
           <li style="margin-bottom: 8px">
-            💡 <b>1. นั่งในที่สว่าง :</b> ให้แสงส่องเข้าด้านหน้า
-            (หลีกเลี่ยงการนั่งย้อนแสง)
+            💡 <b>1. นั่งในที่สว่าง :</b> ให้แสงส่องเข้าด้านหน้า (หลีกเลี่ยงการนั่งย้อนแสง)
           </li>
           <li style="margin-bottom: 8px">
             📏 <b>2. นั่งห่างกล้อง :</b> ให้เห็นมือชัดเจนทั้งสองข้าง
@@ -769,8 +754,7 @@
           <li style="margin-bottom: 8px">
             📷
             <b
-              >4. ตั้งกล้องให้นิ่งที่ระดับอก หรือสายตา
-              และเช็ดหรือทำความสะอาดกล้องให้สะอาด</b
+              >4. ตั้งกล้องให้นิ่งที่ระดับอก หรือสายตา และเช็ดทำความสะอาดเลนส์กล้องให้สะอาด</b
             >
           </li>
         </ul>
@@ -1196,14 +1180,13 @@
       let tapSeqStep = 0;
       let toggleSubState = null;
       let holdStartTime = null;
-      let lastPoseSeenTime = 0;
       let audioCtx = null;
 
       const startScreen = document.getElementById("start-screen");
       const cameraGuideScreen = document.getElementById("camera-guide-screen");
       const levelSelectScreen = document.getElementById("level-select-screen");
       const levelInstructionScreen = document.getElementById(
-        "level-instruction-screen",
+        "level-instruction-screen"
       );
       const gameScreen = document.getElementById("game-screen");
       const levelClearScreen = document.getElementById("level-clear-screen");
@@ -1232,7 +1215,7 @@
             .then(() => {
               isBGMPlaying = true;
             })
-            .catch((e) => console.log(e));
+            .catch((e) => console.log("BGM play auto-blocked:", e));
         }
       }
       document.body.addEventListener("click", startBGM);
@@ -1249,7 +1232,7 @@
           gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
           gain.gain.exponentialRampToValueAtTime(
             0.01,
-            audioCtx.currentTime + duration,
+            audioCtx.currentTime + duration
           );
           osc.connect(gain);
           gain.connect(audioCtx.destination);
@@ -1275,56 +1258,52 @@
       }
 
       function toggleInstructionAudio() {
-        const sndInst = document.getElementById('snd-instruction');
-        const playBtn = document.getElementById('playAudioBtn');
-        const bgm = document.getElementById('bgm'); // ดึงตัวควบคุมเสียงเพลงพื้นหลัง
-        
-        if (!sndInst.src) return; 
-        
+        const sndInst = document.getElementById("snd-instruction");
+        const playBtn = document.getElementById("playAudioBtn");
+
+        if (!sndInst.src) return;
+
         if (sndInst.paused) {
-            sndInst.play();
-            bgm.volume = 0.05; // 📉 ลดเสียงเพลงพื้นหลังลงให้เบามากๆ
-            playBtn.innerHTML = "⏸️ หยุดฟัง";
-            playBtn.classList.replace('btn-blue', 'btn-yellow');
+          sndInst.play().catch((e) => console.log("Audio play error:", e));
+          bgm.volume = 0.05;
+          playBtn.innerHTML = "⏸️ หยุดฟัง";
+          playBtn.classList.replace("btn-blue", "btn-yellow");
         } else {
-            sndInst.pause();
-            bgm.volume = 0.2; // 📈 คืนระดับเสียงเพลงพื้นหลังกลับมาปกติ
-            playBtn.innerHTML = "🔊 ฟังคำอธิบาย";
-            playBtn.classList.replace('btn-yellow', 'btn-blue');
+          sndInst.pause();
+          bgm.volume = 0.2;
+          playBtn.innerHTML = "🔊 ฟังคำอธิบาย";
+          playBtn.classList.replace("btn-yellow", "btn-blue");
         }
 
-        // เมื่อเสียงเล่นจบ ให้ปุ่มกลับเป็นสถานะเดิม และคืนเสียงเพลง
-        sndInst.onended = function() {
-            bgm.volume = 0.2; // 📈 คืนระดับเสียงเพลงพื้นหลังกลับมาปกติ
-            playBtn.innerHTML = "🔊 ฟังคำอธิบาย";
-            playBtn.classList.replace('btn-yellow', 'btn-blue');
+        sndInst.onended = function () {
+          bgm.volume = 0.2;
+          playBtn.innerHTML = "🔊 ฟังคำอธิบาย";
+          playBtn.classList.replace("btn-yellow", "btn-blue");
         };
       }
 
       function toggleGuideAudio() {
-        const sndInst = document.getElementById('snd-instruction');
-        const playBtn = document.getElementById('playGuideAudioBtn');
-        const bgm = document.getElementById('bgm'); // ดึงตัวควบคุมเสียงเพลงพื้นหลัง
-        
+        const sndInst = document.getElementById("snd-instruction");
+        const playBtn = document.getElementById("playGuideAudioBtn");
+
         if (!sndInst.src) return;
-        
+
         if (sndInst.paused) {
-            sndInst.play();
-            bgm.volume = 0.05; // 📉 ลดเสียงเพลงพื้นหลังลงให้เบามากๆ
-            playBtn.innerHTML = "⏸️ หยุดฟัง";
-            playBtn.classList.replace('btn-blue', 'btn-yellow');
+          sndInst.play().catch((e) => console.log("Audio play error:", e));
+          bgm.volume = 0.05;
+          playBtn.innerHTML = "⏸️ หยุดฟัง";
+          playBtn.classList.replace("btn-blue", "btn-yellow");
         } else {
-            sndInst.pause();
-            bgm.volume = 0.2; // 📈 คืนระดับเสียงเพลงพื้นหลังกลับมาปกติ
-            playBtn.innerHTML = "🔊 ฟังคำแนะนำ";
-            playBtn.classList.replace('btn-yellow', 'btn-blue');
+          sndInst.pause();
+          bgm.volume = 0.2;
+          playBtn.innerHTML = "🔊 ฟังคำแนะนำ";
+          playBtn.classList.replace("btn-yellow", "btn-blue");
         }
 
-        // เมื่อเสียงเล่นจบ ให้ปุ่มกลับเป็นสถานะเดิม และคืนเสียงเพลง
-        sndInst.onended = function() {
-            bgm.volume = 0.2; // 📈 คืนระดับเสียงเพลงพื้นหลังกลับมาปกติ
-            playBtn.innerHTML = "🔊 ฟังคำแนะนำ";
-            playBtn.classList.replace('btn-yellow', 'btn-blue');
+        sndInst.onended = function () {
+          bgm.volume = 0.2;
+          playBtn.innerHTML = "🔊 ฟังคำแนะนำ";
+          playBtn.classList.replace("btn-yellow", "btn-blue");
         };
       }
 
@@ -1371,11 +1350,11 @@
         const playBtn = document.getElementById("playGuideAudioBtn");
         sndInst.pause();
         sndInst.currentTime = 0;
-        sndInst.src = "guide_audio.mp3"; // <-- เปลี่ยนเป็นชื่อไฟล์เสียงคำแนะนำของคุณ
+        sndInst.src = "guide_audio.mp3";
         playBtn.innerHTML = "🔊 ฟังคำแนะนำ";
         if (playBtn.classList.contains("btn-yellow"))
           playBtn.classList.replace("btn-yellow", "btn-blue");
-        //
+
         showScreen(cameraGuideScreen);
         startGuideCamera();
       }
@@ -1425,9 +1404,13 @@
           const isUnlocked = idx <= maxUnlockedLevel;
           card.className = `level-card ${isUnlocked ? "unlocked" : "locked"}`;
           card.innerHTML = `
-      <div class="level-card-num">${isUnlocked ? "⭐ ด่านที่ " + (idx + 1) : "🔒 ด่านที่ " + (idx + 1)}</div>
-      <div class="level-card-title">${lvl.title.split(":")[1] || lvl.title}</div>
-    `;
+            <div class="level-card-num">${
+              isUnlocked ? "⭐ ด่านที่ " + (idx + 1) : "🔒 ด่านที่ " + (idx + 1)
+            }</div>
+            <div class="level-card-title">${
+              lvl.title.split(":")[1] || lvl.title
+            }</div>
+          `;
           if (isUnlocked) {
             card.onclick = () => {
               currentLevelIdx = idx;
@@ -1454,8 +1437,9 @@
       function showLevelInstruction(levelIdx) {
         stopGuideCamera();
         const lvl = LEVELS[levelIdx];
-        document.getElementById("instLevelTitle").innerText =
-          `คำอธิบายด่านที่ ${lvl.level}/${LEVELS.length}`;
+        document.getElementById(
+          "instLevelTitle"
+        ).innerText = `คำอธิบายด่านที่ ${lvl.level}/${LEVELS.length}`;
         document.getElementById("instLevelDesc").innerText = lvl.desc;
         document.getElementById("instTargetScore").innerText = lvl.targetScore;
         document.getElementById("instTimeLimit").innerText = lvl.timeLimit;
@@ -1463,31 +1447,29 @@
         document.getElementById("instLabelLeft").innerText = lvl.labelLeft;
         document.getElementById("instEmojiRight").innerHTML = lvl.emojiRight;
         document.getElementById("instLabelRight").innerText = lvl.labelRight;
-        // --- จัดการ GIF หน้าคำอธิบาย ---
+
         const gifContainer = document.getElementById("instGifContainer");
         const gifLeft = document.getElementById("instGifLeft");
         const gifRight = document.getElementById("instGifRight");
 
         if (lvl.gifSrcLeft && lvl.gifSrcRight) {
-          // กรณีมี 2 รูป (ด่าน 7-10)
           gifLeft.src = lvl.gifSrcLeft;
           gifRight.src = lvl.gifSrcRight;
           gifLeft.style.display = "block";
           gifRight.style.display = "block";
           gifContainer.style.display = "flex";
         } else if (lvl.gifSrc) {
-          // กรณีมี 1 รูป (ด่าน 1-6)
           gifLeft.src = lvl.gifSrc;
           gifLeft.style.display = "block";
           gifRight.style.display = "none";
           gifContainer.style.display = "flex";
         } else {
-          // กรณีไม่มีรูป
           gifContainer.style.display = "none";
         }
+
         const sndInst = document.getElementById("snd-instruction");
         const playBtn = document.getElementById("playAudioBtn");
-        sndInst.pause(); // หยุดเสียงเก่าเสมอเมื่อเปิดหน้าใหม่
+        sndInst.pause();
         sndInst.currentTime = 0;
 
         if (lvl.audioSrc) {
@@ -1496,7 +1478,7 @@
           playBtn.innerHTML = "🔊 ฟังคำอธิบาย";
           playBtn.classList.replace("btn-yellow", "btn-blue");
         } else {
-          playBtn.style.display = "none"; // ซ่อนปุ่มถ้าด่านนั้นไม่มีไฟล์เสียง
+          playBtn.style.display = "none";
         }
         showScreen(levelInstructionScreen);
       }
@@ -1510,11 +1492,11 @@
         tapSeqStep = 0;
         toggleSubState = null;
         holdStartTime = null;
-        lastPoseSeenTime = 0;
         lastScoreTime = 0;
 
-        document.getElementById("levelBadge").innerText =
-          `ด่านที่ ${lvl.level}/${LEVELS.length}`;
+        document.getElementById(
+          "levelBadge"
+        ).innerText = `ด่านที่ ${lvl.level}/${LEVELS.length}`;
         document.getElementById("gameEmojiLeft").innerHTML = lvl.emojiLeft;
         document.getElementById("gameLabelLeft").innerText = lvl.labelLeft;
         document.getElementById("gameEmojiRight").innerHTML = lvl.emojiRight;
@@ -1524,7 +1506,6 @@
         document.getElementById("timeDisplay").innerText = timeLeft;
         document.getElementById("feedbackText").innerText = "เตรียมพร้อม...";
 
-        // --- จัดการ GIF หน้าเล่นเกม ---
         const gameGifContainer = document.getElementById("gameGifContainer");
         const gameGifLeft = document.getElementById("gameGifLeft");
         const gameGifRight = document.getElementById("gameGifRight");
@@ -1532,20 +1513,14 @@
         if (lvl.gifSrcLeft && lvl.gifSrcRight) {
           gameGifLeft.src = lvl.gifSrcLeft;
           gameGifRight.src = lvl.gifSrcRight;
-
-          // ปรับขนาดให้แสดง 2 รูปคู่กันได้พอดี
           gameGifLeft.style.width = "48%";
           gameGifRight.style.width = "48%";
-
           gameGifLeft.style.display = "block";
           gameGifRight.style.display = "block";
           gameGifContainer.style.display = "flex";
         } else if (lvl.gifSrc) {
           gameGifLeft.src = lvl.gifSrc;
-
-          // คืนค่าขนาดให้รูปเดียวขยายเต็ม
           gameGifLeft.style.width = "100%";
-
           gameGifLeft.style.display = "block";
           gameGifRight.style.display = "none";
           gameGifContainer.style.display = "flex";
@@ -1650,13 +1625,13 @@
       }
 
       function handScale(lm) {
-        // ระยะจากข้อมือถึงโคนนิ้วกลาง ใช้เป็นมาตรวัดขนาดมือ
-        // เพื่อให้เกณฑ์ระยะห่างปรับตามระยะห่างของมือจากกล้องได้ (ใกล้/ไกลกล้องก็ยังตรวจจับได้แม่นยำ)
+        // ระยะจากข้อมือ (0) ถึงโคนนิ้วกลาง (9) ช่วยปรับเกณฑ์ตามระยะใกล้/ไกลของมือผู้เล่น
         return dist(lm[0], lm[9]);
       }
 
-      function isFingerTouching(thumbTip, fingerTip, threshold = 0.08) {
-        return dist(thumbTip, fingerTip) < threshold;
+      function isFingerTouching(lm, fingerIdx, thresholdFactor = 0.45) {
+        const scale = handScale(lm);
+        return dist(lm[4], lm[fingerIdx]) < scale * thresholdFactor;
       }
 
       function isThumbUp(lm) {
@@ -1709,7 +1684,7 @@
           0,
           0,
           canvasElement.width,
-          canvasElement.height,
+          canvasElement.height
         );
 
         if (results.multiHandLandmarks) {
@@ -1765,7 +1740,7 @@
           const targetNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
           const currentTargetIndex = targetFingers[tapSeqStep];
 
-          if (isFingerTouching(rightHand[4], rightHand[currentTargetIndex])) {
+          if (isFingerTouching(rightHand, currentTargetIndex)) {
             if (now - lastStepTouchTime > 300) {
               tapSeqStep++;
               lastStepTouchTime = now;
@@ -1773,13 +1748,15 @@
                 tapSeqStep = 0;
                 triggerCorrectAnswer();
               } else {
-                document.getElementById("feedbackText").innerText =
-                  `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]}`;
+                document.getElementById(
+                  "feedbackText"
+                ).innerText = `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]}`;
               }
             }
           } else {
-            document.getElementById("feedbackText").innerText =
-              `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]}`;
+            document.getElementById(
+              "feedbackText"
+            ).innerText = `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]}`;
           }
         } else if (lvl.level === 2) {
           if (!leftHand) {
@@ -1791,7 +1768,7 @@
           const targetNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
           const currentTargetIndex = targetFingers[tapSeqStep];
 
-          if (isFingerTouching(leftHand[4], leftHand[currentTargetIndex])) {
+          if (isFingerTouching(leftHand, currentTargetIndex)) {
             if (now - lastStepTouchTime > 300) {
               tapSeqStep++;
               lastStepTouchTime = now;
@@ -1799,13 +1776,15 @@
                 tapSeqStep = 0;
                 triggerCorrectAnswer();
               } else {
-                document.getElementById("feedbackText").innerText =
-                  `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]}`;
+                document.getElementById(
+                  "feedbackText"
+                ).innerText = `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]}`;
               }
             }
           } else {
-            document.getElementById("feedbackText").innerText =
-              `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]}`;
+            document.getElementById(
+              "feedbackText"
+            ).innerText = `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]}`;
           }
         } else if (lvl.level === 3) {
           if (!rightHand) {
@@ -1914,8 +1893,8 @@
           const currentTargetIndex = targetFingers[tapSeqStep];
 
           if (
-            isFingerTouching(leftHand[4], leftHand[currentTargetIndex]) &&
-            isFingerTouching(rightHand[4], rightHand[currentTargetIndex])
+            isFingerTouching(leftHand, currentTargetIndex) &&
+            isFingerTouching(rightHand, currentTargetIndex)
           ) {
             if (now - lastStepTouchTime > 300) {
               tapSeqStep++;
@@ -1924,13 +1903,15 @@
                 tapSeqStep = 0;
                 triggerCorrectAnswer();
               } else {
-                document.getElementById("feedbackText").innerText =
-                  `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]} พร้อมกันทั้ง 2 ข้าง`;
+                document.getElementById(
+                  "feedbackText"
+                ).innerText = `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]} พร้อมกันทั้ง 2 ข้าง`;
               }
             }
           } else {
-            document.getElementById("feedbackText").innerText =
-              `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]} ทั้งสองข้างพร้อมกัน`;
+            document.getElementById(
+              "feedbackText"
+            ).innerText = `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]} ทั้งสองข้างพร้อมกัน`;
           }
         } else if (lvl.level === 8) {
           if (!leftHand || !rightHand) {
@@ -2035,8 +2016,9 @@
         saveScore(playerName, totalScore);
 
         const lvl = LEVELS[currentLevelIdx];
-        document.getElementById("clearLevelName").innerText =
-          `คุณผ่าน ${lvl.title} เรียบร้อย!`;
+        document.getElementById(
+          "clearLevelName"
+        ).innerText = `คุณผ่าน ${lvl.title} เรียบร้อย!`;
         document.getElementById("clearLevelScore").innerText = levelScore;
         document.getElementById("clearTargetScore").innerText = lvl.targetScore;
         document.getElementById("clearTotalScore").innerText = totalScore;
@@ -2065,8 +2047,9 @@
         const lvl = LEVELS[currentLevelIdx];
         document.getElementById("resName").innerText = playerName;
         document.getElementById("resScore").innerText = levelScore;
-        document.getElementById("resFeedback").innerText =
-          `เป้าหมายด่านนี้คือ ${lvl.targetScore} คะแนน ลองใหม่อีกครั้งนะคะ!`;
+        document.getElementById(
+          "resFeedback"
+        ).innerText = `เป้าหมายด่านนี้คือ ${lvl.targetScore} คะแนน ลองใหม่อีกครั้งนะคะ!`;
 
         showScreen(resultScreen);
       }
@@ -2130,7 +2113,7 @@
       function saveScore(name, score) {
         if (!name || score <= 0) return;
         let scores = JSON.parse(
-          localStorage.getItem("muanhand_scores") || "[]",
+          localStorage.getItem("muanhand_scores") || "[]"
         );
         scores.push({
           name: name,
@@ -2145,7 +2128,7 @@
       function displayLeaderboard() {
         const list = document.getElementById("leaderboard-list");
         const scores = JSON.parse(
-          localStorage.getItem("muanhand_scores") || "[]",
+          localStorage.getItem("muanhand_scores") || "[]"
         );
         if (scores.length === 0) {
           list.innerHTML =
@@ -2158,10 +2141,10 @@
             idx === 0
               ? "🥇"
               : idx === 1
-                ? "🥈"
-                : idx === 2
-                  ? "🥉"
-                  : `${idx + 1}.`;
+              ? "🥈"
+              : idx === 2
+              ? "🥉"
+              : `${idx + 1}.`;
           html += `<div class="score-item"><span>${medal} ${s.name}</span><b>${s.score} ⭐</b></div>`;
         });
         list.innerHTML = html;
