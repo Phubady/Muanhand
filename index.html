@@ -565,69 +565,215 @@
           height: 30px;
         }
       }
-      @media (min-width: 768px) and (orientation: landscape) {
+      /* --- โค้ดสำหรับแสดงผลแนวนอน (ล็อคให้อยู่หน้าเดียว ไม่มีการเลื่อน 100%) --- */
+      @media (orientation: landscape) {
         body {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 15px;
+          padding: 5px;
+          height: 100dvh;
+          overflow: hidden; /* บังคับบอดี้ห้ามเลื่อน */
         }
-        #game-screen.active-screen {
-          display: grid;
-          width: 100%;
-          height: 100%; /* ล็อคความสูงหน้าเกมให้พอดีจอ */
+        
+        /* บังคับขอบเขตของหน้าจอทุกหน้าให้อยู่ในจอพอดี */
+        .screen.active-screen {
+          height: 95dvh;
+          max-height: 95dvh;
+          width: 95vw;
           max-width: 1100px;
-          grid-template-columns: 1fr 1.5fr;
-          /* บังคับความสูงแต่ละบรรทัด: แถวที่ 4 ล็อคไว้ 80px เสมอ */
-          grid-template-rows: auto auto minmax(0, 1fr) 80px;
-          gap: 15px;
-          align-items: center;
-          margin: 0 auto;
+          padding: 10px 20px;
+          overflow: hidden; /* ห้ามให้เนื้อหาในกรอบล้นออกไป */
+          box-sizing: border-box;
+          display: grid; /* ใช้ Grid เป็นหลักในการจัดสัดส่วน */
         }
-        #game-screen .info-bar {
-          grid-column: 1;
-          grid-row: 1;
-          margin-bottom: 0;
-        }
-        #game-screen .example-box {
-          grid-column: 1;
-          grid-row: 2;
-        }
-        #game-screen #gameGifContainer {
-          grid-column: 1;
-          grid-row: 3;
-          height: 100%;
-          min-height: 0; /* ยอมให้กล่องรูปหดตัวตามพื้นที่จอที่เหลือของ iPhone */
-          display: flex;
+        
+        /* ซ่อนการเว้นบรรทัด <br> เดิม เพื่อประหยัดพื้นที่แนวตั้ง */
+        .screen > br { display: none; }
+
+        /* 1. หน้าแรก (ซ้าย: ข้อมูลผู้เล่น, ขวา: ตารางคะแนน) */
+        #start-screen.active-screen {
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: auto auto auto auto 1fr;
+          gap: 10px;
           align-items: center;
         }
-        #game-screen #gameGifContainer img {
-          max-height: 100% !important; /* ให้รูปหดตัวไม่เกินความสูงที่เหลือ */
-          object-fit: contain;
-        }
-        #game-screen .feedback {
-          grid-column: 1;
-          grid-row: 4;
+        #start-screen > * { grid-column: 1; margin: 2px auto; }
+        #start-screen > .leaderboard {
+          grid-column: 2;
+          grid-row: 1 / span 5;
           height: 100%;
           margin: 0;
-        }
-        #game-screen .game-container {
-          grid-column: 2;
-          grid-row: 1 / span 4;
           display: flex;
-          align-items: center;
-          justify-content: center;
-          height: 100%;
-          width: 100%;
+          flex-direction: column;
           overflow: hidden;
         }
-        #game-screen canvas {
-          width: 100%;
-          height: 100%; /* ดึงความสูงตามพื้นที่ฝั่งขวา */
-          max-height: none; /* ยกเลิกค่าเดิมที่ใช้ vh */
-          object-fit: contain; /* บังคับให้กล้องพอดีขอบเขตโดยไม่ดันโครงสร้างหน้าจอให้แตก */
-          border-radius: 15px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        #start-screen #leaderboard-list {
+          flex: 1;
+          overflow-y: auto; /* ยอมให้เลื่อนได้เฉพาะรายชื่อคะแนนถ้ามีคนเล่นเยอะมาก */
+          min-height: 0;
+        }
+        #start-screen > div[style*="text-align: right"] {
+          grid-column: 2;
+          grid-row: 6;
+          margin-top: 5px;
+        }
+
+        /* 2. หน้าคำแนะนำกล้อง (ซ้าย: ข้อความ, ขวา: กล้อง) */
+        #camera-guide-screen.active-screen {
+          grid-template-columns: 1.2fr 1fr;
+          grid-template-rows: auto auto auto auto;
+          gap: 10px;
+          align-content: center;
+        }
+        #camera-guide-screen > div:first-child {
+          grid-column: 2;
+          grid-row: 1 / span 4;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          margin: 0;
+          min-height: 0; /* สำคัญมาก ป้องกันกล้องดันกรอบล้น */
+        }
+        #camera-guide-screen video {
+          max-height: 100%;
+          object-fit: contain;
+        }
+        #camera-guide-screen > .instruction-box { grid-column: 1; margin: 0; }
+
+        /* 3. หน้าเลือกด่าน (จัดใหม่เป็น 2 แถว 5 คอลัมน์ จะได้ไม่ล้นจอแนวนอน) */
+        #level-select-screen.active-screen {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+        #level-select-screen > .level-grid {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr); /* บังคับ 5 คอลัมน์ */
+          grid-template-rows: repeat(2, 1fr);    /* บังคับ 2 แถว */
+          gap: 8px;
+          height: 100%;
+          min-height: 0; /* ป้องกันการล้น */
+          margin: 10px 0;
+        }
+        .level-card {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 5px;
+        }
+
+        /* 4. หน้าอธิบายด่าน (จัด Layout ให้สมดุล: ซ้าย=ข้อความ/ปุ่ม, ขวา=รูปภาพ) */
+        #level-instruction-screen.active-screen {
+          display: grid !important;
+          grid-template-columns: 1.1fr 0.9fr !important; /* แบ่งจอ ซ้าย(กว้างกว่านิดนึง) : ขวา */
+          grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+          gap: 10px 20px;
+          align-items: stretch; 
+        }
+        
+        /* 4.1 หัวข้อ (พาดเต็ม 2 ฝั่งด้านบนสุด) */
+        #level-instruction-screen > h1 {
+          grid-column: 1 / span 2;
+          grid-row: 1;
+          margin: 0 0 5px 0;
+          text-align: center;
+        }
+
+        /* 4.2 ฝั่งซ้าย: กล่องคำอธิบาย */
+        #level-instruction-screen > .instruction-box {
+          grid-column: 1;
+          grid-row: 2;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        /* 4.3 ฝั่งซ้าย: ปุ่มฟังเสียง, เริ่มด่าน, ย้อนกลับ เรียงต่อกันลงมา */
+        #level-instruction-screen > #playAudioBtn {
+          grid-column: 1;
+          grid-row: 3;
+          margin: 0;
+        }
+        #level-instruction-screen > .btn-green {
+          grid-column: 1;
+          grid-row: 4;
+          margin: 0;
+        }
+        #level-instruction-screen > .btn-gray {
+          grid-column: 1;
+          grid-row: 5;
+          margin: 0;
+          width: 60%;
+          justify-self: center; /* จัดปุ่มกลับให้อยู่กึ่งกลางของฝั่งซ้าย */
+        }
+
+        /* 4.4 ฝั่งขวา: ภาพ GIF เคลื่อนไหว */
+        #level-instruction-screen > #instGifContainer {
+          grid-column: 2;
+          grid-row: 2; /* ให้อยู่ระดับเดียวกับกล่องคำอธิบาย */
+          height: 100%;
+          min-height: 120px;
+          margin: 0;
+        }
+        #level-instruction-screen > #instGifContainer img {
+          max-height: 100% !important;
+          object-fit: contain;
+        }
+
+        /* 4.5 ฝั่งขวา: กล่องรูปมือตัวอย่าง (Example Box) */
+        #level-instruction-screen > .example-box {
+          grid-column: 2;
+          grid-row: 3 / span 3; /* คลุมความสูงแถว 3-5 ให้พอดีกับระดับของปุ่มฝั่งซ้าย */
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        /* 5. หน้าเกมเพลย์ (กลับมาแบ่งซ้าย-ขวาเหมือนเดิม) */
+        #game-screen.active-screen {
+          display: grid !important; /* บังคับใช้โครงสร้างแยกซ้าย-ขวา */
+          grid-template-columns: 1fr 1.5fr !important; /* แบ่งสัดส่วน ซ้าย 1 : ขวา 1.5 */
+          grid-template-rows: auto auto minmax(0, 1fr) min-content;
+          gap: 15px;
+        }
+        #game-screen .info-bar { grid-column: 1; grid-row: 1; margin-bottom: 0; }
+        #game-screen .example-box { grid-column: 1; grid-row: 2; margin: 0; }
+        #game-screen #gameGifContainer { 
+          grid-column: 1; grid-row: 3; height: 100%; min-height: 0; display: flex; align-items: center; justify-content: center; margin: 0;
+        }
+        #game-screen #gameGifContainer img { max-height: 100% !important; object-fit: contain; }
+        #game-screen .feedback { grid-column: 1; grid-row: 4; margin: 0; min-height: 60px; }
+        #game-screen .game-container { 
+          grid-column: 2; grid-row: 1 / span 4; display: flex; align-items: center; justify-content: center; 
+          height: 100%; width: 100%; overflow: hidden; 
+        }
+        #game-screen canvas { 
+          width: 100%; height: 100%; object-fit: contain; border-radius: 15px; 
+        }
+
+        /* 6. หน้าผ่านด่านและผลลัพธ์ */
+        #level-clear-screen.active-screen,
+        #result-screen.active-screen {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+
+        /* ปรับขนาดฟอนต์ให้เล็กลงเมื่อเล่นแนวนอนบนจอมือถือเล็กๆ (เช่น iPhone) */
+        @media (max-height: 480px) {
+          h1 { font-size: 20px; margin: 2px; }
+          h2 { font-size: 16px; margin: 2px; }
+          p, .instruction-box { font-size: 14px; margin: 2px 0; padding: 6px; }
+          button { font-size: 14px; padding: 4px 10px; margin: 2px; }
+          .level-card-num { font-size: 14px; }
+          .level-card-title { font-size: 11px; }
+          .emoji-card .emoji { font-size: 28px; min-height: 30px; padding: 2px; }
+          .feedback { font-size: 16px; min-height: 40px; padding: 4px; }
+          #game-screen.active-screen { gap: 6px; }
         }
       }
 
@@ -662,7 +808,532 @@
         }
       }
       
-      
+      /* --- แก้ปัญหาหน้าคำอธิบายด่าน เฉพาะบน "มือถือแนวนอน" (ไม่กระทบ iPad) --- */
+      @media (orientation: landscape) and (max-height: 480px) {
+        #level-instruction-screen.active-screen {
+          gap: 6px 15px !important;
+          /* ล้างความสูงตายตัวทิ้ง แล้วใช้สัดส่วน (fr) แบ่งพื้นที่บน-ล่างให้สมดุล */
+          /* แถว 1: หัวข้อ (24px) */
+          /* แถว 2: GIF และ คำอธิบาย (กินพื้นที่ 1.1 ส่วน) */
+          /* แถว 3-5: กล่องตัวอย่าง และ ปุ่ม (กินพื้นที่รวมกัน 0.25 + 0.4 + 0.25 = 0.9 ส่วน) */
+          grid-template-rows: 24px minmax(0, 1.1fr) minmax(0, 0.25fr) minmax(0, 0.4fr) minmax(0, 0.25fr) !important;
+        }
+        
+        #level-instruction-screen > h1 {
+          font-size: 18px !important;
+          margin: 0 0 2px 0 !important;
+        }
+
+        /* --- ฝั่งซ้าย --- */
+        #level-instruction-screen > .instruction-box {
+          padding: 8px 12px !important;
+          justify-content: center !important; 
+          overflow-y: auto !important; 
+        }
+        #level-instruction-screen > .instruction-box p { font-size: 14px !important; margin: 2px 0 !important; }
+        #level-instruction-screen > .instruction-box ul { font-size: 13px !important; margin: 2px 0 0 0 !important; }
+        #level-instruction-screen > .instruction-box li { margin-bottom: 2px !important; }
+
+        #level-instruction-screen > #playAudioBtn,
+        #level-instruction-screen > .btn-green,
+        #level-instruction-screen > .btn-gray {
+          font-size: 14px !important;
+          padding: 0 10px !important;
+          height: 100% !important; 
+          border-radius: 8px !important;
+          margin: 0 !important;
+        }
+        #level-instruction-screen > .btn-gray { font-size: 12px !important; width: 70% !important; }
+
+        /* --- ฝั่งขวา (ปลดล็อคให้ภาพนิ่งระเบิดขนาดเต็มพื้นที่ 100%) --- */
+        
+        #level-instruction-screen > #instGifContainer {
+          grid-column: 2 !important;
+          grid-row: 2 !important; 
+          height: 100% !important;
+          min-height: 0 !important; 
+          margin: 0 !important;
+        }
+        #level-instruction-screen > #instGifContainer img {
+          max-height: 100% !important; 
+          width: auto !important;
+          object-fit: contain !important;
+        }
+
+        #level-instruction-screen > .example-box {
+          grid-column: 2 !important;
+          grid-row: 3 / span 3 !important; 
+          padding: 4px 6px !important; /* ลดช่องว่างขอบกล่องลงให้เหลือน้อยที่สุด */
+          margin: 0 !important;
+          min-height: 0 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: space-between !important;
+        }
+        
+        #level-instruction-screen > .example-box .example-title {
+          font-size: 13px !important;
+          margin: 0 0 2px 0 !important;
+          flex-shrink: 0 !important; 
+          text-align: center !important;
+        }
+
+        #level-instruction-screen > .example-box .emoji-container {
+          flex: 1 !important; 
+          min-height: 0 !important;
+          padding: 0 !important; /* ล้างช่องว่างล่องหนทิ้งทั้งหมด */
+          margin: 0 !important;
+          display: flex !important;
+          align-items: stretch !important; /* สำคัญ: บังคับให้การ์ดยืดเต็มแนวตั้ง */
+        }
+
+        #level-instruction-screen > .example-box .emoji-card {
+          flex: 1 !important;
+          align-items: stretch !important; /* สำคัญ: บังคับให้ยืดเต็มแนวนอน (แก้ปัญหารูปหด) */
+          justify-content: flex-end !important;
+          padding: 0 2px !important;
+        }
+
+        #level-instruction-screen > .example-box .emoji-card .emoji {
+          flex: 1 !important;
+          min-height: 0 !important;
+          padding: 0 !important; 
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+        
+        #level-instruction-screen > .example-box .emoji-card img {
+          width: 100% !important; /* บังคับให้รูปกว้าง 100% ตามกรอบที่ยืดแล้ว */
+          height: 100% !important; /* บังคับให้รูปสูง 100% */
+          max-height: none !important; /* ปลดล็อคข้อจำกัดความสูงทุกชนิด */
+          object-fit: contain !important;
+        }
+        
+        #level-instruction-screen > .example-box .emoji-card .label {
+          font-size: 11px !important;
+          margin-top: 2px !important;
+          flex-shrink: 0 !important;
+          text-align: center !important;
+        }
+
+        #level-instruction-screen > .example-box .emoji-divider {
+          height: auto !important; 
+          align-self: stretch !important; /* ให้เส้นแบ่งยืดขึ้นลงอัตโนมัติตามรูป */
+          margin: 6px 0 !important;
+        }
+
+        /* ================================================== */
+        /* --- แก้ไขหน้าเล่นเกม (มือถือแนวนอน) --- */
+        
+        /* 1. บังคับให้ปุ่มและป้ายด่านอยู่แถวเดียวกัน (ห้ามปัดบรรทัด) */
+        #game-screen .info-bar {
+          flex-wrap: nowrap !important; 
+          justify-content: space-between !important;
+          gap: 4px !important;
+          margin-bottom: 4px !important;
+        }
+        #game-screen .action-btns-group {
+          width: auto !important;
+          flex-wrap: nowrap !important;
+          justify-content: flex-end !important;
+        }
+        #game-screen .level-badge {
+          font-size: 12px !important;
+          padding: 4px 8px !important;
+          white-space: nowrap !important;
+        }
+        #game-screen .action-btns-group button {
+          font-size: 11px !important;
+          padding: 4px 6px !important;
+          height: 28px !important;
+          margin: 0 !important;
+        }
+
+        /* 2. จัดการสัดส่วนหน้าจอ: ลดซ้าย ขยายขวา และแก้ปัญหากรอบทับกัน */
+        #game-screen.active-screen {
+          /* ปรับสัดส่วนเป็น ซ้าย 1 ส่วน : ขวา 2 ส่วน  */
+          grid-template-columns: 1fr 2fr !important; 
+          grid-template-rows: 28px minmax(0, 1fr) minmax(0, 1fr) 35px !important;
+          gap: 8px 15px !important; /* เพิ่มระยะห่างแนวตั้งเป็น 8px เพื่อแยกกล่องออกจากกัน */
+        }
+
+        /* 3. ปรับขนาดกล่องภาพนิ่ง (Example Box) */
+        #game-screen .example-box {
+          margin: 0 !important;
+          padding: 4px 6px !important;
+          height: 100% !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+          min-height: 0 !important;
+          box-sizing: border-box !important; /* สำคัญ: บังคับให้อยู่ในกรอบ ไม่ล้น */
+        }
+        #game-screen .example-box .emoji-container {
+          padding: 4px !important;
+          margin: 0 !important;
+          height: 100% !important; 
+          align-items: center !important;
+          min-height: 0 !important;
+          box-sizing: border-box !important;
+        }
+        #game-screen .example-box .emoji-card {
+          height: 100% !important;
+          justify-content: center !important;
+          min-height: 0 !important;
+        }
+        #game-screen .example-box .emoji-card .emoji {
+          flex: 1 !important; 
+          min-height: 0 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          padding: 0 !important;
+        }
+        #game-screen .example-box .emoji-card img {
+          max-height: 100% !important; 
+          height: 100% !important; 
+          width: auto !important;
+          object-fit: contain !important;
+        }
+        #game-screen .example-box .emoji-card .label {
+          font-size: 11px !important; 
+          margin-top: 2px !important;
+          flex-shrink: 0 !important; 
+        }
+        #game-screen .example-box .emoji-divider {
+          height: 80% !important;
+          max-height: none !important; 
+        }
+
+        /* 4. ปรับกล่องภาพเคลื่อนไหว (GIF) ให้พอดี ไม่ทะลักไปทับกล่องอื่น */
+        #game-screen #gameGifContainer {
+          height: 100% !important;
+          min-height: 0 !important;
+          margin: 0 !important;
+          box-sizing: border-box !important; /* สำคัญ: บังคับให้อยู่ในกรอบ ไม่ล้น */
+          padding: 2px !important; 
+        }
+        #game-screen #gameGifContainer img {
+          max-height: 100% !important; 
+          height: 100% !important; /* บังคับไม่ให้รูปสูงทะลุกล่อง */
+          object-fit: contain !important;
+          box-sizing: border-box !important;
+        }
+
+        /* 5. ปรับกล่องข้อความเตือนด้านล่างให้พอดี */
+        #game-screen .feedback {
+          margin: 0 !important;
+          min-height: 35px !important;
+          font-size: 13px !important;
+          padding: 4px !important;
+          box-sizing: border-box !important;
+        }
+      }
+      /* ========================================================= */
+      /* --- ปรับขยายภาพนิ่งฝั่งขวา สำหรับ iPad (จอที่สูงกว่า 480px) --- */
+      @media (orientation: landscape) and (min-height: 481px) {
+        #level-instruction-screen > .example-box {
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+        }
+        
+        #level-instruction-screen > .example-box .emoji-container {
+          flex: 1 !important;
+          display: flex !important;
+          align-items: stretch !important; /* บังคับให้การ์ดยืดเต็มแนวตั้ง */
+          padding: 10px !important;
+        }
+        
+        #level-instruction-screen > .example-box .emoji-card {
+          flex: 1 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: flex-end !important;
+        }
+        
+        #level-instruction-screen > .example-box .emoji-card .emoji {
+          flex: 1 !important; /* ดันให้พื้นที่รูปขยายรับพื้นที่ที่เหลือทั้งหมด */
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          min-height: 120px !important; 
+          padding: 0 !important;
+        }
+        
+        /* ปลดล็อคขนาดรูปมือ ให้ใหญ่เต็มพื้นที่กล่องบนไอแพด */
+        #level-instruction-screen > .example-box .emoji-card img {
+          max-height: 200px !important; /* ปลดล็อคจากของเดิม 100px ให้ขยายได้ถึง 200px */
+          max-width: 100% !important;
+          height: 100% !important; 
+          width: auto !important;
+          object-fit: contain !important;
+        }
+        
+        #level-instruction-screen > .example-box .emoji-card .label {
+          font-size: 16px !important; /* ปรับข้อความให้ใหญ่ขึ้นรับกับรูปบนไอแพด */
+          margin-top: 8px !important;
+        }
+        
+        #level-instruction-screen > .example-box .emoji-divider {
+          height: auto !important;
+          align-self: stretch !important; /* ให้เส้นแบ่งยืดขึ้นลงอัตโนมัติตามรูป */
+          margin: 15px 0 !important;
+        }
+        /* ========================================================= */
+        /* --- ปรับขยายหน้าเลือกด่าน สำหรับ iPad (จอที่สูงกว่า 480px) --- */
+        
+        #level-select-screen.active-screen h1 {
+          font-size: 38px !important;
+          margin-bottom: 10px !important;
+        }
+        #level-select-screen.active-screen p {
+          font-size: 22px !important;
+          margin-bottom: 15px !important;
+        }
+        #level-select-screen .level-grid {
+          gap: 15px !important; /* เพิ่มระยะห่างระหว่างการ์ดให้ดูไม่อึดอัด */
+          margin: 15px 0 20px 0 !important;
+        }
+        #level-select-screen .level-card {
+          padding: 15px 10px !important;
+        }
+        
+        /* ขยายตัวหนังสือ "ด่านที่ 1" */
+        #level-select-screen .level-card-num {
+          font-size: 26px !important; 
+          margin-bottom: 8px !important;
+        }
+        
+        /* ขยายคำอธิบายด่าน และยอมให้ตัดขึ้นบรรทัดใหม่เพื่อเติมเต็มพื้นที่แนวตั้ง */
+        #level-select-screen .level-card-title {
+          font-size: 17px !important; 
+          white-space: normal !important; 
+          line-height: 1.4 !important;
+        }
+        
+        /* ขยายปุ่มย้อนกลับให้สมส่วนกับหน้าจอ */
+        #level-select-screen .btn-gray {
+          font-size: 22px !important;
+          padding: 12px 24px !important;
+          border-radius: 15px !important;
+        }
+
+        /* ========================================================= */
+        /* --- ปรับขยายหน้าแรก (Start Screen) สำหรับ iPad --- */
+        
+        #start-screen.active-screen {
+          gap: 20px !important; /* เพิ่มระยะห่างระหว่างฝั่งซ้ายและขวา */
+        }
+        
+        /* ขยายชื่อเกมและคำอธิบาย */
+        #start-screen h1 {
+          font-size: 60px !important;
+          margin-bottom: 15px !important;
+        }
+        #start-screen p {
+          font-size: 24px !important;
+          margin-bottom: 20px !important;
+        }
+        
+        /* ขยายช่องพิมพ์ชื่อ */
+        #start-screen input[type="text"] {
+          font-size: 26px !important;
+          padding: 15px !important;
+          width: 90% !important;
+          border-width: 3px !important;
+          border-radius: 15px !important;
+        }
+        
+        /* ขยายกล่องประวัติการเล่นเดิม (ถ้ามี) */
+        #start-screen .resume-box {
+          font-size: 20px !important;
+          padding: 15px 20px !important;
+          line-height: 1.5 !important;
+          margin-bottom: 20px !important;
+        }
+        
+        /* ขยายปุ่มเล่นเกมให้ใหญ่ขึ้น */
+        #start-screen button.btn-green, 
+        #start-screen button#resumeBtn {
+          font-size: 26px !important;
+          padding: 15px 30px !important;
+          border-radius: 20px !important;
+          margin-top: 15px !important;
+        }
+
+        /* --- ปรับขยายตารางคะแนนฝั่งขวา --- */
+        #start-screen .leaderboard {
+          padding: 30px !important;
+          border-radius: 20px !important;
+        }
+        #start-screen .leaderboard h3 {
+          font-size: 26px !important; /* ขยายหัวข้อตาราง */
+        }
+        #start-screen .leaderboard .btn-red {
+          font-size: 16px !important;
+          padding: 8px 15px !important;
+        }
+        #start-screen .score-item {
+          font-size: 24px !important; /* ขยายรายชื่อและคะแนน */
+          padding: 15px 0 !important;
+          margin-bottom: 10px !important;
+        }
+        #start-screen #leaderboard-list p {
+          font-size: 22px !important; /* ขยายข้อความ "ยังไม่มีประวัติการเล่น" */
+          margin-top: 20px !important;
+        }
+        /* ========================================================= */
+        /* --- ปรับขยายหน้าคำแนะนำกล้อง (Camera Guide) สำหรับ iPad --- */
+        
+        #camera-guide-screen.active-screen {
+          /* ปรับให้ฝั่งกล้อง (1.2fr) กว้างกว่าฝั่งซ้าย (1fr) */
+          grid-template-columns: 1fr 1.2fr !important; 
+          /* แบ่งสัดส่วนแนวตั้ง: แถว 2 (กล่องข้อความ) ให้ยืดหยุ่นที่สุด (1fr) */
+          grid-template-rows: auto 1fr auto auto !important; 
+          align-items: stretch !important; /* บังคับให้เนื้อหายืดเต็มแนวตั้ง */
+          gap: 20px !important;
+        }
+        
+        /* จัดตำแหน่งปุ่มและกล่องข้อความฝั่งซ้ายให้ชิดขอบและเต็มพื้นที่ */
+        #camera-guide-screen > #playGuideAudioBtn { 
+          grid-row: 1 !important; 
+          margin: 0 !important; 
+        }
+        #camera-guide-screen > .instruction-box { 
+          grid-row: 2 !important; 
+          margin: 0 !important; 
+          display: flex !important; 
+          flex-direction: column !important; 
+          justify-content: center !important; /* ให้ตัวหนังสืออยู่กึ่งกลางกล่อง */
+        }
+        #camera-guide-screen > .btn-green { 
+          grid-row: 3 !important; 
+          margin: 0 !important; 
+        }
+        #camera-guide-screen > .btn-gray { 
+          grid-row: 4 !important; 
+          margin: 0 !important; 
+        }
+
+        /* --- ขยายพื้นที่กล้องฝั่งขวาให้เต็ม 100% --- */
+        #camera-guide-screen > div:first-child {
+          grid-row: 1 / span 4 !important; /* ให้กล้องกินพื้นที่ตั้งแต่แถว 1-4 */
+          height: 100% !important;
+          margin: 0 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+        
+       #camera-guide-screen > div:first-child video {
+          width: 100% !important; 
+          height: 100% !important; 
+          max-height: none !important; 
+          object-fit: contain !important; /* เปลี่ยนเป็น contain เพื่อไม่ให้ภาพโดนซูมตัดขอบ */
+          background-color: #000 !important; /* บังคับพื้นหลังสีดำให้เหมือนหน้าเกม */
+          border: none !important; /* เอากรอบสีชมพูออก */
+          border-radius: 15px !important; /* โค้งมนเท่ากับหน้าเกม */
+        }
+
+        /* ========================================================= */
+      /* --- เลย์เอาต์เฉพาะ จอคอมพิวเตอร์ / โน้ตบุ๊ก (PC & Mac) --- */
+      /* ใช้ (hover: hover) เพื่อเช็คว่าเป็นอุปกรณ์ที่มีเมาส์ (แยกออกจาก iPad ชัดเจน) */
+      @media (min-width: 1024px) and (hover: hover) {
+        
+        /* 1. ขยายกรอบหน้าจอให้กว้างขึ้นเต็มตาบนจอคอม (ปลดล็อคพื้นที่ด้านข้างทุกหน้า) */
+        .screen.active-screen {
+          width: 96vw !important; /* บังคับให้ขยายกว้าง 96% ของหน้าจอเสมอ */
+          max-width: none !important; /* ปลดล็อคข้อจำกัด 1200px ทิ้งไป */
+          height: 94vh !important; /* ยืดความสูงให้เกือบเต็มขอบจอ */
+          max-height: none !important;
+          padding: 40px 50px !important; /* เพิ่มพื้นที่ขอบด้านในให้ดูไม่อึดอัด */
+          border-width: 8px !important;
+        }
+
+        /* 2. ลูกเล่นเฉพาะจอคอม: เมื่อเอาเมาส์ไปชี้ที่ปุ่ม (Hover) ให้ปุ่มสว่างและเด้งขึ้น */
+        button:hover {
+          filter: brightness(1.15);
+          transform: translateY(-3px);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        /* 3. ปรับขนาดฟอนต์หัวข้อให้ใหญ่สะใจสำหรับจอคอม */
+        h1 {
+          font-size: 50px !important;
+        }
+
+        /* 4. ปรับขนาดหน้าเกมเพลย์บนคอมพิวเตอร์ */
+        #game-screen.active-screen {
+          grid-template-columns: 1fr 2fr !important; /* ให้พื้นที่กล้อง (ฝั่งขวา) กว้างกว่าฝั่งซ้าย 2 เท่า */
+          gap: 30px !important;
+        }
+
+        /* 5. ปรับตารางเลือกด่านให้ใหญ่และมีลูกเล่นตอนเมาส์ชี้ */
+        #level-select-screen .level-grid {
+          gap: 20px !important;
+        }
+        .level-card.unlocked:hover {
+          transform: scale(1.05) !important;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+          border-color: #27ae60 !important;
+        }
+/* --- 6. ปรับขยายหน้าคำแนะนำกล้อง (Camera Guide) ให้เต็มตาบนจอคอม --- */
+        
+        #camera-guide-screen.active-screen {
+          gap: 40px !important;
+          /* ปรับสัดส่วนให้ฝั่งกล้อง (ขวา) กว้างกว่าฝั่งข้อความ (ซ้าย) */
+          grid-template-columns: 1fr 1.5fr !important; 
+          align-items: stretch !important; /* บังคับให้พื้นที่ซ้าย-ขวาสูงเท่ากัน */
+        }
+        
+        /* ขยายกล่องคำแนะนำและตัวหนังสือด้านใน */
+        #camera-guide-screen > .instruction-box {
+          padding: 30px 40px !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
+        }
+        #camera-guide-screen > .instruction-box p {
+          font-size: 28px !important;
+          margin-bottom: 20px !important;
+        }
+        #camera-guide-screen > .instruction-box ul {
+          font-size: 22px !important;
+          line-height: 1.6 !important;
+        }
+        #camera-guide-screen > .instruction-box li {
+          margin-bottom: 15px !important;
+        }
+
+        /* ขยายปุ่มทั้ง 3 ปุ่มฝั่งซ้าย */
+        #camera-guide-screen > button {
+          font-size: 22px !important;
+          padding: 16px 20px !important;
+          border-radius: 15px !important;
+          margin-top: 15px !important;
+        }
+        
+        /* --- ขยายพื้นที่กล้องฝั่งขวาให้เต็ม 100% --- */
+        #camera-guide-screen > div:first-child {
+          height: 100% !important;
+          margin: 0 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+        
+        #camera-guide-screen > div:first-child video {
+          width: 100% !important; /* บังคับกว้าง 100% */
+          height: 100% !important; /* บังคับสูง 100% */
+          max-height: none !important; /* ปลดล็อคข้อจำกัดความสูงเดิมทิ้ง */
+          object-fit: cover !important; /* ให้ภาพเต็มกรอบพอดี (ตัดขอบส่วนเกินออกนิดหน่อย) */
+          border-width: 6px !important;
+          border-radius: 20px !important;
+        }
+      }
+      }
     </style>
   </head>
   <body>
