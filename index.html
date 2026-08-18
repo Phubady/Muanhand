@@ -35,6 +35,9 @@
         padding: 10px;
         text-align: center;
         color: #5a3d31;
+        height: 100dvh;
+        overflow: hidden;
+        box-sizing: border-box;
       }
       .screen {
         display: none;
@@ -47,8 +50,14 @@
         padding: 20px;
         box-sizing: border-box;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        max-height: calc(100dvh - 20px);
+        overflow-y: auto;
       }
       .active-screen {
+        display: block;
+      }
+      #game-screen.active-screen {
+        overflow: hidden; 
         display: block;
       }
       h1 {
@@ -147,7 +156,11 @@
       .feedback {
         font-size: 19px;
         color: #d35400;
-        min-height: 32px;
+        min-height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
         margin-bottom: 10px;
         font-weight: bold;
         background: #ffffff;
@@ -557,18 +570,17 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          min-height: 100vh;
-          margin: 0;
-          padding: 20px;
-          box-sizing: border-box;
+          padding: 15px;
         }
         #game-screen.active-screen {
           display: grid;
           width: 100%;
+          height: 100%; /* ล็อคความสูงหน้าเกมให้พอดีจอ */
           max-width: 1100px;
           grid-template-columns: 1fr 1.5fr;
-          grid-template-rows: auto auto 1fr auto;
-          gap: 20px;
+          /* บังคับความสูงแต่ละบรรทัด: แถวที่ 4 ล็อคไว้ 80px เสมอ */
+          grid-template-rows: auto auto minmax(0, 1fr) 80px;
+          gap: 15px;
           align-items: center;
           margin: 0 auto;
         }
@@ -584,10 +596,20 @@
         #game-screen #gameGifContainer {
           grid-column: 1;
           grid-row: 3;
+          height: 100%;
+          min-height: 0; /* ยอมให้กล่องรูปหดตัวตามพื้นที่จอที่เหลือของ iPhone */
+          display: flex;
+          align-items: center;
+        }
+        #game-screen #gameGifContainer img {
+          max-height: 100% !important; /* ให้รูปหดตัวไม่เกินความสูงที่เหลือ */
+          object-fit: contain;
         }
         #game-screen .feedback {
           grid-column: 1;
           grid-row: 4;
+          height: 100%;
+          margin: 0;
         }
         #game-screen .game-container {
           grid-column: 2;
@@ -596,25 +618,25 @@
           align-items: center;
           justify-content: center;
           height: 100%;
+          width: 100%;
+          overflow: hidden;
         }
         #game-screen canvas {
           width: 100%;
-          height: auto;
-          max-height: 75vh;
+          height: 100%; /* ดึงความสูงตามพื้นที่ฝั่งขวา */
+          max-height: none; /* ยกเลิกค่าเดิมที่ใช้ vh */
+          object-fit: contain; /* บังคับให้กล้องพอดีขอบเขตโดยไม่ดันโครงสร้างหน้าจอให้แตก */
           border-radius: 15px;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
       }
+
       @media (min-width: 1024px) {
         #game-screen.active-screen {
           max-width: 95vw;
           grid-template-columns: 1fr 2.5fr;
-          gap: 30px;
-          padding: 30px;
-        }
-        #game-screen canvas {
-          max-height: 85vh;
-          object-fit: contain;
+          gap: 20px;
+          padding: 20px;
         }
         .emoji-card .emoji {
           font-size: 70px;
@@ -625,8 +647,7 @@
         }
         .feedback {
           font-size: 26px;
-          padding: 15px;
-          min-height: 40px;
+          padding: 10px;
         }
         .action-btns-group button {
           font-size: 18px;
@@ -640,6 +661,8 @@
           top: 20px;
         }
       }
+      
+      
     </style>
   </head>
   <body>
@@ -698,6 +721,12 @@
         <div id="leaderboard-list">
           <p style="color: #aaa; text-align: center">ยังไม่มีประวัติการเล่น</p>
         </div>
+      </div>
+      <!-- ปุ่มสำหรับแอดมิน -->
+      <div style="margin-top: 15px; text-align: right;">
+        <button onclick="unlockAdmin()" style="background: none; border: none; color: #aaa; font-size: 14px; text-decoration: underline; cursor: pointer; padding: 0; box-shadow: none;">
+          🔒 สำหรับแอดมิน
+        </button>
       </div>
     </div>
 
@@ -1036,7 +1065,7 @@
           gifSrc: "rt_opposition.GIF",
           emojiLeft: "<img src='Rt-hand.png' alt='มือขวา'>",
           labelLeft: "มือขวา",
-          emojiRight: "<img src='lt-hand-4touch.png' alt='แตะนิ้ว'>",
+          emojiRight: "<img src='rt-hand-4touch.png' alt='แตะนิ้ว'>",
           labelRight: "ชี้➜กลาง➜นาง➜ก้อย",
         },
         {
@@ -1047,10 +1076,10 @@
           timeLimit: 20,
           audioSrc: "lv2.mp3",
           gifSrc: "lt_opposition.GIF",
-          emojiLeft: "<img src='rt-hand-4touch.png' alt='แตะนิ้ว'>",
-          labelLeft: "ชี้➜กลาง➜นาง➜ก้อย",
-          emojiRight: "<img src='Lt-hand.png' alt='มือซ้าย'>",
-          labelRight: "มือซ้าย",
+          emojiRight: "<img src='lt-hand-4touch.png' alt='แตะนิ้ว'>",
+          labelRight: "ชี้➜กลาง➜นาง➜ก้อย",
+          emojiLeft: "<img src='Lt-hand.png' alt='มือซ้าย'>",
+          labelLeft: "มือซ้าย",
         },
         {
           level: 3,
@@ -1452,14 +1481,39 @@
         const gifLeft = document.getElementById("instGifLeft");
         const gifRight = document.getElementById("instGifRight");
 
+        const syncTime = new Date().getTime();
+
         if (lvl.gifSrcLeft && lvl.gifSrcRight) {
-          gifLeft.src = lvl.gifSrcLeft;
-          gifRight.src = lvl.gifSrcRight;
+          // เปิดกล่อง Container ไว้ก่อน
           gifLeft.style.display = "block";
           gifRight.style.display = "block";
           gifContainer.style.display = "flex";
+          
+          // เคลียร์ภาพเก่าออกเพื่อรีเซ็ตเฟรม
+          gifLeft.src = ""; 
+          gifRight.src = "";
+          
+          // โหลดภาพทั้งสองไว้เบื้องหลัง (Preload)
+          let loadedCount = 0;
+          const tempImgL = new Image();
+          const tempImgR = new Image();
+          
+          const onBothLoaded = () => {
+            loadedCount++;
+            if (loadedCount === 2) {
+              // เมื่อโหลดเสร็จครบ 2 ภาพ ค่อยใส่ src ให้หน้าจอพร้อมกันเป๊ะๆ
+              gifLeft.src = tempImgL.src;
+              gifRight.src = tempImgR.src;
+            }
+          };
+          
+          tempImgL.onload = onBothLoaded;
+          tempImgR.onload = onBothLoaded;
+          tempImgL.src = lvl.gifSrcLeft + "?t=" + syncTime;
+          tempImgR.src = lvl.gifSrcRight + "?t=" + syncTime;
+          
         } else if (lvl.gifSrc) {
-          gifLeft.src = lvl.gifSrc;
+          gifLeft.src = lvl.gifSrc + "?t=" + syncTime;
           gifLeft.style.display = "block";
           gifRight.style.display = "none";
           gifContainer.style.display = "flex";
@@ -1510,16 +1564,40 @@
         const gameGifLeft = document.getElementById("gameGifLeft");
         const gameGifRight = document.getElementById("gameGifRight");
 
+       const syncTime = new Date().getTime();
+
         if (lvl.gifSrcLeft && lvl.gifSrcRight) {
-          gameGifLeft.src = lvl.gifSrcLeft;
-          gameGifRight.src = lvl.gifSrcRight;
           gameGifLeft.style.width = "48%";
           gameGifRight.style.width = "48%";
           gameGifLeft.style.display = "block";
           gameGifRight.style.display = "block";
           gameGifContainer.style.display = "flex";
+          
+          // เคลียร์ภาพเก่าออกเพื่อรีเซ็ตเฟรม
+          gameGifLeft.src = ""; 
+          gameGifRight.src = "";
+          
+          // โหลดภาพทั้งสองไว้เบื้องหลัง (Preload)
+          let loadedCount = 0;
+          const tempImgL = new Image();
+          const tempImgR = new Image();
+          
+          const onBothLoaded = () => {
+            loadedCount++;
+            if (loadedCount === 2) {
+              // เมื่อโหลดเสร็จครบ 2 ภาพ ค่อยใส่ src ให้หน้าจอพร้อมกัน
+              gameGifLeft.src = tempImgL.src;
+              gameGifRight.src = tempImgR.src;
+            }
+          };
+          
+          tempImgL.onload = onBothLoaded;
+          tempImgR.onload = onBothLoaded;
+          tempImgL.src = lvl.gifSrcLeft + "?t=" + syncTime;
+          tempImgR.src = lvl.gifSrcRight + "?t=" + syncTime;
+
         } else if (lvl.gifSrc) {
-          gameGifLeft.src = lvl.gifSrc;
+          gameGifLeft.src = lvl.gifSrc + "?t=" + syncTime;
           gameGifLeft.style.width = "100%";
           gameGifLeft.style.display = "block";
           gameGifRight.style.display = "none";
@@ -2158,6 +2236,23 @@
           checkResumeAvailable();
         }
       }
+      // --- ระบบ Admin ---
+      function unlockAdmin() {
+        const password = prompt("กรุณาใส่รหัสผ่านสำหรับ Admin:");
+        
+        // ตั้งรหัสผ่านที่ต้องการ
+        if (password === "9999") { 
+          maxUnlockedLevel = LEVELS.length - 1; // ปลดล็อคถึงด่านสุดท้าย
+          saveUnlockedLevels();
+          alert("✅ เข้าสู่โหมด Admin: ปลดล็อคทุกด่านเรียบร้อยแล้ว!");
+          
+          // ทำการรีเฟรชหน้าเลือกด่านให้เป็นสีเขียวทั้งหมดทันที
+          renderLevelGrid(); 
+        } else if (password !== null && password !== "") {
+          alert("❌ รหัสผ่านไม่ถูกต้อง");
+        }
+      }
+      // -----------------
     </script>
   </body>
 </html>
