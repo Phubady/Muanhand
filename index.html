@@ -2259,17 +2259,16 @@
 			}
 
 			function isThumbUp(lm) {
-				const scale = handScale(lm); // คำนวณครั้งเดียวแล้วส่งต่อ
+				const scale = handScale(lm);
 				return (
-					lm[4].y < lm[3].y &&
-					lm[3].y < lm[2].y &&
-					isFingerClosed(lm, 8, 5, scale, 0.45) &&
-					isFingerClosed(lm, 12, 9, scale, 0.45) &&
-					isFingerClosed(lm, 16, 13, scale, 0.45) &&
-					isFingerClosed(lm, 20, 17, scale, 0.45)
+					(lm[2].y - lm[4].y) > scale * 0.355 &&
+					lm[4].y < lm[5].y &&
+					isFingerClosed(lm, 8, 5, scale, 0.40) &&
+					isFingerClosed(lm, 12, 9, scale, 0.40) &&
+					isFingerClosed(lm, 16, 13, scale, 0.40) &&
+					isFingerClosed(lm, 20, 17, scale, 0.40)
 				);
 			}
-
 			function isPinkyUp(lm) {
 				const scale = handScale(lm);
 				return (
