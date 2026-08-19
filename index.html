@@ -2380,14 +2380,28 @@
         return dist(lm[4], lm[fingerIdx]) < scale * thresholdFactor;
       }
 
+      // ฟังก์ชันคำนวณระยะห่างระหว่างจุด 2 จุด (Euclidean Distance)
+      function getDistance(p1, p2) {
+        const dx = p1.x - p2.x;
+        const dy = p1.y - p2.y;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+
+      function isFingerClosed(lm, tipIndex, baseIndex) {
+        const distance = getDistance(lm[tipIndex], lm[baseIndex]);
+        const threshold = 0.1; // ปรับค่านี้ได้ตามความเหมาะสมของขนาดมือ/กล้อง
+        return distance < threshold;
+      }
+
       function isThumbUp(lm) {
         return (
           lm[4].y < lm[3].y &&
           lm[3].y < lm[2].y &&
-          lm[8].x < lm[5].x &&
-          lm[12].x < lm[9].x &&
-          lm[16].x < lm[13].x &&
-          lm[20].x < lm[17].x
+    
+          isFingerClosed(lm, 8, 5) &&   // นิ้วชี้ (ปลายนิ้ว 8, โคนนิ้ว 5)
+          isFingerClosed(lm, 12, 9) &&  // นิ้วกลาง (ปลายนิ้ว 12, โคนนิ้ว 9)
+          isFingerClosed(lm, 16, 13) && // นิ้วนาง (ปลายนิ้ว 16, โคนนิ้ว 13)
+          isFingerClosed(lm, 20, 17)    // นิ้วก้อย (ปลายนิ้ว 20, โคนนิ้ว 17)
         );
       }
 
