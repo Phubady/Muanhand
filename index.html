@@ -2273,11 +2273,14 @@
 			function isPinkyUp(lm) {
 				const scale = handScale(lm);
 				return (
-					dist(lm[20], lm[17]) > scale * 0.45 &&
-					isFingerClosed(lm, 4, 2, scale) &&
+					// 1. นิ้วก้อยไม่อยู่ในสภาพพับกำ (!isFingerClosed)
+					!isFingerClosed(lm, 20, 17, scale) &&
+					// 2. นิ้วชี้, นิ้วกลาง, นิ้วนาง ต้องพับกำอยู่
 					isFingerClosed(lm, 8, 5, scale) &&
 					isFingerClosed(lm, 12, 9, scale) &&
-					isFingerClosed(lm, 16, 13, scale)
+					isFingerClosed(lm, 16, 13, scale) &&
+					// 3. นิ้วโป้งพับเก็บอยู่
+					dist(lm[4], lm[9]) < scale * 0.65
 				);
 			}
 
