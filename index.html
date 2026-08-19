@@ -2260,7 +2260,7 @@
       }
 
       function isFingerClosed(lm, tipIndex, baseIndex) {
-        return getDistance(lm[tipIndex], lm[baseIndex]) < 0.1;
+        return getDistance(lm[tipIndex], lm[baseIndex]) < 0.11;
       }
 
       function isThumbUp(lm) {
@@ -2276,7 +2276,7 @@
 
       function isPinkyUp(lm) {
          return (
-           getDistance(lm[20], lm[17]) > 0.12 &&
+           getDistance(lm[20], lm[17]) > 0.11 &&
            isFingerClosed(lm, 4, 2) &&
            isFingerClosed(lm, 8, 5) &&
            isFingerClosed(lm, 12, 9) &&
