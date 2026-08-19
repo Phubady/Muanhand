@@ -1801,7 +1801,6 @@
 
       /* --- 4. INITIALIZATION & STORAGE --- */
       window.onload = function () {
-        loadUnlockedLevels();
         displayLeaderboard();
         checkResumeAvailable();
       };
@@ -1936,6 +1935,7 @@
       function goToCameraGuide() {
         startBGM();
         state.playerName = DOM.playerName.value.trim() || "ผู้เล่นนิรนาม";
+        loadUnlockedLevels();
         const sndInst = DOM.audio.sndInstruction;
         const playBtn = document.getElementById("playGuideAudioBtn");
         sndInst.pause();
@@ -1981,6 +1981,7 @@
         stopGuideCamera();
         startBGM();
         state.playerName = DOM.playerName.value.trim() || "ผู้เล่นนิรนาม";
+        loadUnlockedLevels();
         renderLevelGrid();
         showScreen(DOM.screens.levelSelect);
       }
@@ -2014,6 +2015,7 @@
         if (!progress) return;
         startBGM();
         state.playerName = DOM.playerName.value.trim() || progress.name || "ผู้เล่นนิรนาม";
+        loadUnlockedLevels();
         state.currentLevelIdx = progress.levelIdx;
         state.totalScore = progress.totalScore;
         showLevelInstruction(state.currentLevelIdx);
@@ -2585,12 +2587,35 @@
 
       /* --- 8. LOCAL STORAGE HELPERS --- */
       function saveUnlockedLevels() {
-        localStorage.setItem("muanhand_maxUnlocked", state.maxUnlockedLevel);
+        // ถ้าอยู่ในโหมดแอดมิน ไม่ต้องเซฟทับประวัติผู้เล่น
+        if (sessionStorage.getItem("muanhand_isAdmin") === "true") return;
+
+        let playerLevels = JSON.parse(localStorage.getItem("muanhand_player_levels") || "{}");
+        let pName = playerName || "ผู้เล่นนิรนาม";
+        
+        // เซฟอัปเดตเฉพาะกรณีที่เล่นได้ด่านสูงกว่าเดิมเท่านั้น
+        if (playerLevels[pName] === undefined || maxUnlockedLevel > playerLevels[pName]) {
+          playerLevels[pName] = maxUnlockedLevel;
+        }
+        localStorage.setItem("muanhand_player_levels", JSON.stringify(playerLevels));
       }
 
       function loadUnlockedLevels() {
-        const saved = localStorage.getItem("muanhand_maxUnlocked");
-        state.maxUnlockedLevel = saved !== null ? parseInt(saved, 10) : 0;
+        // ถ้าเปิดโหมดแอดมินไว้ ให้ปลดล็อคด่านทั้งหมดทันที
+        if (sessionStorage.getItem("muanhand_isAdmin") === "true") {
+          maxUnlockedLevel = LEVELS.length - 1;
+          return;
+        }
+        
+        let playerLevels = JSON.parse(localStorage.getItem("muanhand_player_levels") || "{}");
+        let pName = playerName || "ผู้เล่นนิรนาม";
+        
+        // เช็คว่าชื่อนี้เคยเล่นไหม ถ้าเคยให้โหลดด่านเดิม ถ้าไม่เคยให้เริ่มที่ 0 (ด่าน 1)
+        if (playerLevels[pName] !== undefined) {
+          maxUnlockedLevel = playerLevels[pName];
+        } else {
+          maxUnlockedLevel = 0; 
+        }
       }
 
       function saveProgress() {
@@ -2650,18 +2675,21 @@
       function resetLeaderboard() {
         if (confirm("คุณต้องการล้างคะแนนทั้งหมดใช่หรือไม่?")) {
           localStorage.removeItem("muanhand_scores");
+          localStorage.removeItem("muanhand_progress");
+          localStorage.removeItem("muanhand_player_levels"); // <--- เพิ่มบรรทัดนี้
           displayLeaderboard();
+          checkResumeAvailable();
         }
       }
 
       function unlockAdmin() {
         const pass = prompt("กรุณากรอกรหัสผ่านแอดมิน:");
         if (pass === "1234") {
+          sessionStorage.setItem("muanhand_isAdmin", "true");
           state.maxUnlockedLevel = LEVELS.length - 1;
-          saveUnlockedLevels();
-          alert("🔓 ปลดล็อคทุกด่านเรียบร้อยแล้ว!");
+          alert("🔓 ปลดล็อคทุกด่านเรียบร้อยแล้ว!\n(สิทธิ์นี้จะถูกยกเลิกเมื่อปิดหน้าเว็บ)");
           renderLevelGrid();
-        } else if (pass !== null) {
+        } else if (pass !== null && pass !== "") {
           alert("❌ รหัสผ่านไม่ถูกต้อง");
         }
       }
