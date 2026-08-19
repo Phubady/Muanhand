@@ -2380,7 +2380,7 @@
         return dist(lm[4], lm[fingerIdx]) < scale * thresholdFactor;
       }
 
-      // ฟังก์ชันคำนวณระยะห่างระหว่างจุด 2 จุด (Euclidean Distance)
+// ฟังก์ชันคำนวณระยะห่างระหว่างจุด 2 จุด (Euclidean Distance)
       function getDistance(p1, p2) {
         const dx = p1.x - p2.x;
         const dy = p1.y - p2.y;
@@ -2397,7 +2397,7 @@
         return (
           lm[4].y < lm[3].y &&
           lm[3].y < lm[2].y &&
-    
+      
           isFingerClosed(lm, 8, 5) &&   // นิ้วชี้ (ปลายนิ้ว 8, โคนนิ้ว 5)
           isFingerClosed(lm, 12, 9) &&  // นิ้วกลาง (ปลายนิ้ว 12, โคนนิ้ว 9)
           isFingerClosed(lm, 16, 13) && // นิ้วนาง (ปลายนิ้ว 16, โคนนิ้ว 13)
@@ -2406,13 +2406,16 @@
       }
 
       function isPinkyUp(lm) {
-        return (
-          lm[20].y < lm[19].y &&
-          lm[19].y < lm[18].y &&
-          lm[8].y > lm[6].y &&
-          lm[12].y > lm[10].y &&
-          lm[16].y > lm[14].y
-        );
+         // เช็คว่านิ้วก้อยตั้งตรง (รองรับทิศทางตั้งขึ้นหรือกลับหัวด้วยเวกเตอร์ระยะห่างระหว่างปลายนิ้ว 20 กับโคนนิ้ว 17)
+         const isPinkyExtended = getDistance(lm[20], lm[17]) > 0.15;
+
+         return (
+           isPinkyExtended &&
+           isFingerClosed(lm, 4, 2) &&   // นิ้วโป้งพับ
+           isFingerClosed(lm, 8, 5) &&   // นิ้วชี้พับ
+           isFingerClosed(lm, 12, 9) &&  // นิ้วกลางพับ
+           isFingerClosed(lm, 16, 13)    // นิ้วนางพับ
+         );
       }
 
       function isJieb(lm) {
