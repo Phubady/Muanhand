@@ -1352,9 +1352,16 @@
         ด่านที่ผ่านแล้วหรือกำลังเล่นจะสามารถกดเข้าเล่นได้ค่ะ
       </p>
       <div class="level-grid" id="levelGrid"></div>
-      <button class="btn-gray" onclick="goToStartScreen()">
-        ◀ ย้อนกลับหน้าแรก
-      </button>
+      
+      <!-- จัดกลุ่มปุ่มให้อยู่ตรงกลางและเว้นระยะห่าง -->
+      <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+        <button class="btn-gray" onclick="goToStartScreen()">
+          ◀ ย้อนกลับหน้าแรก
+        </button>
+        <button class="btn-red" style="font-size: 18px;" onclick="resetPlayerProgress()">
+          🔄 เริ่มเล่นใหม่ตั้งแต่ด่าน 1
+        </button>
+      </div>
     </div>
 
     <!-- หน้าคำอธิบายด่าน -->
@@ -2587,34 +2594,33 @@
 
       /* --- 8. LOCAL STORAGE HELPERS --- */
       function saveUnlockedLevels() {
-        // ถ้าอยู่ในโหมดแอดมิน ไม่ต้องเซฟทับประวัติผู้เล่น
         if (sessionStorage.getItem("muanhand_isAdmin") === "true") return;
 
         let playerLevels = JSON.parse(localStorage.getItem("muanhand_player_levels") || "{}");
-        let pName = playerName || "ผู้เล่นนิรนาม";
+        let pName = document.getElementById("playerName").value.trim() || "ผู้เล่นนิรนาม";
         
-        // เซฟอัปเดตเฉพาะกรณีที่เล่นได้ด่านสูงกว่าเดิมเท่านั้น
-        if (playerLevels[pName] === undefined || maxUnlockedLevel > playerLevels[pName]) {
-          playerLevels[pName] = maxUnlockedLevel;
+        // อัปเดตข้อมูลโดยอ้างอิงจาก state.maxUnlockedLevel
+        if (playerLevels[pName] === undefined || state.maxUnlockedLevel > playerLevels[pName]) {
+          playerLevels[pName] = state.maxUnlockedLevel;
         }
         localStorage.setItem("muanhand_player_levels", JSON.stringify(playerLevels));
+        localStorage.setItem("muanhand_maxUnlocked", "0"); 
       }
 
       function loadUnlockedLevels() {
-        // ถ้าเปิดโหมดแอดมินไว้ ให้ปลดล็อคด่านทั้งหมดทันที
         if (sessionStorage.getItem("muanhand_isAdmin") === "true") {
-          maxUnlockedLevel = LEVELS.length - 1;
+          state.maxUnlockedLevel = LEVELS.length - 1;
           return;
         }
         
         let playerLevels = JSON.parse(localStorage.getItem("muanhand_player_levels") || "{}");
-        let pName = playerName || "ผู้เล่นนิรนาม";
+        let pName = document.getElementById("playerName").value.trim() || "ผู้เล่นนิรนาม";
         
-        // เช็คว่าชื่อนี้เคยเล่นไหม ถ้าเคยให้โหลดด่านเดิม ถ้าไม่เคยให้เริ่มที่ 0 (ด่าน 1)
+        // โหลดข้อมูลไปเก็บใน state.maxUnlockedLevel
         if (playerLevels[pName] !== undefined) {
-          maxUnlockedLevel = playerLevels[pName];
+          state.maxUnlockedLevel = playerLevels[pName];
         } else {
-          maxUnlockedLevel = 0; 
+          state.maxUnlockedLevel = 0; 
         }
       }
 
@@ -2676,12 +2682,45 @@
         if (confirm("คุณต้องการล้างคะแนนทั้งหมดใช่หรือไม่?")) {
           localStorage.removeItem("muanhand_scores");
           localStorage.removeItem("muanhand_progress");
-          localStorage.removeItem("muanhand_player_levels"); // <--- เพิ่มบรรทัดนี้
           displayLeaderboard();
           checkResumeAvailable();
         }
       }
 
+      function resetPlayerProgress() {
+        let inputName = document.getElementById("playerName").value.trim();
+        let pName = inputName || "ผู้เล่นนิรนาม";
+        
+        if (confirm(`คุณแน่ใจหรือไม่ที่จะล้างประวัติการเล่นของ "${pName}" และเริ่มใหม่ตั้งแต่ด่าน 1?`)) {
+          
+          let playerLevels = JSON.parse(localStorage.getItem("muanhand_player_levels") || "{}");
+          if (playerLevels[pName] !== undefined) {
+            delete playerLevels[pName];
+            localStorage.setItem("muanhand_player_levels", JSON.stringify(playerLevels));
+          }
+          
+          localStorage.removeItem("muanhand_maxUnlocked");
+          localStorage.setItem("muanhand_maxUnlocked", "0"); 
+          
+          const progress = loadProgress();
+          if (progress && progress.name === pName) {
+            localStorage.removeItem("muanhand_progress");
+          }
+
+          // จุดสำคัญ: ต้องสั่งเคลียร์ค่าที่ 'state' เพื่อให้ UI รับรู้
+          state.maxUnlockedLevel = 0;
+          state.currentLevelIdx = 0;
+          
+          // สั่งให้หน้าจอวาดแม่กุญแจใหม่ทันที (โดยไม่ต้องรีเฟรชหน้าเว็บ)
+          renderLevelGrid(); 
+          
+          setTimeout(() => {
+            alert(`รีเซ็ตประวัติของ "${pName}" เรียบร้อยแล้วค่ะ!`);
+            goToStartScreen(); 
+          }, 100);
+        }
+      }
+      
       function unlockAdmin() {
         const pass = prompt("กรุณากรอกรหัสผ่านแอดมิน:");
         if (pass === "1234") {
