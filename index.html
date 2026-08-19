@@ -2259,8 +2259,9 @@
         return Math.sqrt(dx * dx + dy * dy);
       }
 
-      function isFingerClosed(lm, tipIndex, baseIndex) {
-        return getDistance(lm[tipIndex], lm[baseIndex]) < 0.11;
+      function isFingerClosed(lm, tipIndex, baseIndex, thresholdFactor = 0.35) {
+        const scale = handScale(lm);
+        return getDistance(lm[tipIndex], lm[baseIndex]) < scale * thresholdFactor;
       }
 
       function isThumbUp(lm) {
@@ -2275,13 +2276,14 @@
       }
 
       function isPinkyUp(lm) {
-         return (
-           getDistance(lm[20], lm[17]) > 0.11 &&
-           isFingerClosed(lm, 4, 2) &&
-           isFingerClosed(lm, 8, 5) &&
-           isFingerClosed(lm, 12, 9) &&
-           isFingerClosed(lm, 16, 13)
-         );
+        const scale = handScale(lm);
+        return (
+          getDistance(lm[20], lm[17]) > scale * 0.45 && // ปรับนิ้วก้อยกางให้ยืดหยุ่นตาม scale ด้วย
+          isFingerClosed(lm, 4, 2) &&
+          isFingerClosed(lm, 8, 5) &&
+          isFingerClosed(lm, 12, 9) &&
+          isFingerClosed(lm, 16, 13)
+        );
       }
 
       function isJieb(lm) {
