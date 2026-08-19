@@ -7,6 +7,12 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>ม่วนมือ - ตะลุย 10 ด่าน</title>
+
+    <!-- Optimization: Preconnect & DNS-Prefetch ช่วยเพิ่มความเร็วการโหลดไฟล์ CDN External -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap"
       rel="stylesheet"
@@ -565,7 +571,6 @@
           height: 30px;
         }
       }
-      /* --- โค้ดสำหรับแสดงผลแนวนอน (ล็อคให้อยู่หน้าเดียว ไม่มีการเลื่อน 100%) --- */
       @media (orientation: landscape) {
         body {
           display: flex;
@@ -573,25 +578,19 @@
           justify-content: center;
           padding: 5px;
           height: 100dvh;
-          overflow: hidden; /* บังคับบอดี้ห้ามเลื่อน */
+          overflow: hidden;
         }
-        
-        /* บังคับขอบเขตของหน้าจอทุกหน้าให้อยู่ในจอพอดี */
         .screen.active-screen {
           height: 95dvh;
           max-height: 95dvh;
           width: 95vw;
           max-width: 1100px;
           padding: 10px 20px;
-          overflow: hidden; /* ห้ามให้เนื้อหาในกรอบล้นออกไป */
+          overflow: hidden;
           box-sizing: border-box;
-          display: grid; /* ใช้ Grid เป็นหลักในการจัดสัดส่วน */
+          display: grid;
         }
-        
-        /* ซ่อนการเว้นบรรทัด <br> เดิม เพื่อประหยัดพื้นที่แนวตั้ง */
         .screen > br { display: none; }
-
-        /* 1. หน้าแรก (ซ้าย: ข้อมูลผู้เล่น, ขวา: ตารางคะแนน) */
         #start-screen.active-screen {
           grid-template-columns: 1fr 1fr;
           grid-template-rows: auto auto auto auto 1fr;
@@ -610,7 +609,7 @@
         }
         #start-screen #leaderboard-list {
           flex: 1;
-          overflow-y: auto; /* ยอมให้เลื่อนได้เฉพาะรายชื่อคะแนนถ้ามีคนเล่นเยอะมาก */
+          overflow-y: auto;
           min-height: 0;
         }
         #start-screen > div[style*="text-align: right"] {
@@ -618,8 +617,6 @@
           grid-row: 6;
           margin-top: 5px;
         }
-
-        /* 2. หน้าคำแนะนำกล้อง (ซ้าย: ข้อความ, ขวา: กล้อง) */
         #camera-guide-screen.active-screen {
           grid-template-columns: 1.2fr 1fr;
           grid-template-rows: auto auto auto auto;
@@ -633,15 +630,13 @@
           display: flex;
           align-items: center;
           margin: 0;
-          min-height: 0; /* สำคัญมาก ป้องกันกล้องดันกรอบล้น */
+          min-height: 0;
         }
         #camera-guide-screen video {
           max-height: 100%;
           object-fit: contain;
         }
         #camera-guide-screen > .instruction-box { grid-column: 1; margin: 0; }
-
-        /* 3. หน้าเลือกด่าน (จัดใหม่เป็น 2 แถว 5 คอลัมน์ จะได้ไม่ล้นจอแนวนอน) */
         #level-select-screen.active-screen {
           display: flex;
           flex-direction: column;
@@ -649,11 +644,11 @@
         }
         #level-select-screen > .level-grid {
           display: grid;
-          grid-template-columns: repeat(5, 1fr); /* บังคับ 5 คอลัมน์ */
-          grid-template-rows: repeat(2, 1fr);    /* บังคับ 2 แถว */
+          grid-template-columns: repeat(5, 1fr);
+          grid-template-rows: repeat(2, 1fr);
           gap: 8px;
           height: 100%;
-          min-height: 0; /* ป้องกันการล้น */
+          min-height: 0;
           margin: 10px 0;
         }
         .level-card {
@@ -662,25 +657,19 @@
           justify-content: center;
           padding: 5px;
         }
-
-        /* 4. หน้าอธิบายด่าน (จัด Layout ให้สมดุล: ซ้าย=ข้อความ/ปุ่ม, ขวา=รูปภาพ) */
         #level-instruction-screen.active-screen {
           display: grid !important;
-          grid-template-columns: 1.1fr 0.9fr !important; /* แบ่งจอ ซ้าย(กว้างกว่านิดนึง) : ขวา */
+          grid-template-columns: 1.1fr 0.9fr !important;
           grid-template-rows: auto minmax(0, 1fr) auto auto auto;
           gap: 10px 20px;
           align-items: stretch; 
         }
-        
-        /* 4.1 หัวข้อ (พาดเต็ม 2 ฝั่งด้านบนสุด) */
         #level-instruction-screen > h1 {
           grid-column: 1 / span 2;
           grid-row: 1;
           margin: 0 0 5px 0;
           text-align: center;
         }
-
-        /* 4.2 ฝั่งซ้าย: กล่องคำอธิบาย */
         #level-instruction-screen > .instruction-box {
           grid-column: 1;
           grid-row: 2;
@@ -689,8 +678,6 @@
           flex-direction: column;
           justify-content: center;
         }
-
-        /* 4.3 ฝั่งซ้าย: ปุ่มฟังเสียง, เริ่มด่าน, ย้อนกลับ เรียงต่อกันลงมา */
         #level-instruction-screen > #playAudioBtn {
           grid-column: 1;
           grid-row: 3;
@@ -706,13 +693,11 @@
           grid-row: 5;
           margin: 0;
           width: 60%;
-          justify-self: center; /* จัดปุ่มกลับให้อยู่กึ่งกลางของฝั่งซ้าย */
+          justify-self: center;
         }
-
-        /* 4.4 ฝั่งขวา: ภาพ GIF เคลื่อนไหว */
         #level-instruction-screen > #instGifContainer {
           grid-column: 2;
-          grid-row: 2; /* ให้อยู่ระดับเดียวกับกล่องคำอธิบาย */
+          grid-row: 2;
           height: 100%;
           min-height: 120px;
           margin: 0;
@@ -721,21 +706,17 @@
           max-height: 100% !important;
           object-fit: contain;
         }
-
-        /* 4.5 ฝั่งขวา: กล่องรูปมือตัวอย่าง (Example Box) */
         #level-instruction-screen > .example-box {
           grid-column: 2;
-          grid-row: 3 / span 3; /* คลุมความสูงแถว 3-5 ให้พอดีกับระดับของปุ่มฝั่งซ้าย */
+          grid-row: 3 / span 3;
           margin: 0;
           display: flex;
           flex-direction: column;
           justify-content: center;
         }
-
-        /* 5. หน้าเกมเพลย์ (กลับมาแบ่งซ้าย-ขวาเหมือนเดิม) */
         #game-screen.active-screen {
-          display: grid !important; /* บังคับใช้โครงสร้างแยกซ้าย-ขวา */
-          grid-template-columns: 1fr 1.5fr !important; /* แบ่งสัดส่วน ซ้าย 1 : ขวา 1.5 */
+          display: grid !important;
+          grid-template-columns: 1fr 1.5fr !important;
           grid-template-rows: auto auto minmax(0, 1fr) min-content;
           gap: 15px;
         }
@@ -753,8 +734,6 @@
         #game-screen canvas { 
           width: 100%; height: 100%; object-fit: contain; border-radius: 15px; 
         }
-
-        /* 6. หน้าผ่านด่านและผลลัพธ์ */
         #level-clear-screen.active-screen,
         #result-screen.active-screen {
           display: flex;
@@ -762,8 +741,6 @@
           justify-content: center;
           align-items: center;
         }
-
-        /* ปรับขนาดฟอนต์ให้เล็กลงเมื่อเล่นแนวนอนบนจอมือถือเล็กๆ (เช่น iPhone) */
         @media (max-height: 480px) {
           h1 { font-size: 20px; margin: 2px; }
           h2 { font-size: 16px; margin: 2px; }
@@ -776,7 +753,6 @@
           #game-screen.active-screen { gap: 6px; }
         }
       }
-
       @media (min-width: 1024px) {
         #game-screen.active-screen {
           max-width: 95vw;
@@ -807,24 +783,15 @@
           top: 20px;
         }
       }
-      
-      /* --- แก้ปัญหาหน้าคำอธิบายด่าน เฉพาะบน "มือถือแนวนอน" (ไม่กระทบ iPad) --- */
       @media (orientation: landscape) and (max-height: 480px) {
         #level-instruction-screen.active-screen {
           gap: 6px 15px !important;
-          /* ล้างความสูงตายตัวทิ้ง แล้วใช้สัดส่วน (fr) แบ่งพื้นที่บน-ล่างให้สมดุล */
-          /* แถว 1: หัวข้อ (24px) */
-          /* แถว 2: GIF และ คำอธิบาย (กินพื้นที่ 1.1 ส่วน) */
-          /* แถว 3-5: กล่องตัวอย่าง และ ปุ่ม (กินพื้นที่รวมกัน 0.25 + 0.4 + 0.25 = 0.9 ส่วน) */
           grid-template-rows: 24px minmax(0, 1.1fr) minmax(0, 0.25fr) minmax(0, 0.4fr) minmax(0, 0.25fr) !important;
         }
-        
         #level-instruction-screen > h1 {
           font-size: 18px !important;
           margin: 0 0 2px 0 !important;
         }
-
-        /* --- ฝั่งซ้าย --- */
         #level-instruction-screen > .instruction-box {
           padding: 8px 12px !important;
           justify-content: center !important; 
@@ -844,9 +811,6 @@
           margin: 0 !important;
         }
         #level-instruction-screen > .btn-gray { font-size: 12px !important; width: 70% !important; }
-
-        /* --- ฝั่งขวา (ปลดล็อคให้ภาพนิ่งระเบิดขนาดเต็มพื้นที่ 100%) --- */
-        
         #level-instruction-screen > #instGifContainer {
           grid-column: 2 !important;
           grid-row: 2 !important; 
@@ -859,41 +823,36 @@
           width: auto !important;
           object-fit: contain !important;
         }
-
         #level-instruction-screen > .example-box {
           grid-column: 2 !important;
           grid-row: 3 / span 3 !important; 
-          padding: 4px 6px !important; /* ลดช่องว่างขอบกล่องลงให้เหลือน้อยที่สุด */
+          padding: 4px 6px !important;
           margin: 0 !important;
           min-height: 0 !important;
           display: flex !important;
           flex-direction: column !important;
           justify-content: space-between !important;
         }
-        
         #level-instruction-screen > .example-box .example-title {
           font-size: 13px !important;
           margin: 0 0 2px 0 !important;
           flex-shrink: 0 !important; 
           text-align: center !important;
         }
-
         #level-instruction-screen > .example-box .emoji-container {
           flex: 1 !important; 
           min-height: 0 !important;
-          padding: 0 !important; /* ล้างช่องว่างล่องหนทิ้งทั้งหมด */
+          padding: 0 !important;
           margin: 0 !important;
           display: flex !important;
-          align-items: stretch !important; /* สำคัญ: บังคับให้การ์ดยืดเต็มแนวตั้ง */
+          align-items: stretch !important;
         }
-
         #level-instruction-screen > .example-box .emoji-card {
           flex: 1 !important;
-          align-items: stretch !important; /* สำคัญ: บังคับให้ยืดเต็มแนวนอน (แก้ปัญหารูปหด) */
+          align-items: stretch !important;
           justify-content: flex-end !important;
           padding: 0 2px !important;
         }
-
         #level-instruction-screen > .example-box .emoji-card .emoji {
           flex: 1 !important;
           min-height: 0 !important;
@@ -902,31 +861,23 @@
           align-items: center !important;
           justify-content: center !important;
         }
-        
         #level-instruction-screen > .example-box .emoji-card img {
-          width: 100% !important; /* บังคับให้รูปกว้าง 100% ตามกรอบที่ยืดแล้ว */
-          height: 100% !important; /* บังคับให้รูปสูง 100% */
-          max-height: none !important; /* ปลดล็อคข้อจำกัดความสูงทุกชนิด */
+          width: 100% !important;
+          height: 100% !important; 
+          max-height: none !important;
           object-fit: contain !important;
         }
-        
         #level-instruction-screen > .example-box .emoji-card .label {
           font-size: 11px !important;
           margin-top: 2px !important;
           flex-shrink: 0 !important;
           text-align: center !important;
         }
-
         #level-instruction-screen > .example-box .emoji-divider {
           height: auto !important; 
-          align-self: stretch !important; /* ให้เส้นแบ่งยืดขึ้นลงอัตโนมัติตามรูป */
+          align-self: stretch !important;
           margin: 6px 0 !important;
         }
-
-        /* ================================================== */
-        /* --- แก้ไขหน้าเล่นเกม (มือถือแนวนอน) --- */
-        
-        /* 1. บังคับให้ปุ่มและป้ายด่านอยู่แถวเดียวกัน (ห้ามปัดบรรทัด) */
         #game-screen .info-bar {
           flex-wrap: nowrap !important; 
           justify-content: space-between !important;
@@ -949,16 +900,11 @@
           height: 28px !important;
           margin: 0 !important;
         }
-
-        /* 2. จัดการสัดส่วนหน้าจอ: ลดซ้าย ขยายขวา และแก้ปัญหากรอบทับกัน */
         #game-screen.active-screen {
-          /* ปรับสัดส่วนเป็น ซ้าย 1 ส่วน : ขวา 2 ส่วน  */
           grid-template-columns: 1fr 2fr !important; 
           grid-template-rows: 28px minmax(0, 1fr) minmax(0, 1fr) 35px !important;
-          gap: 8px 15px !important; /* เพิ่มระยะห่างแนวตั้งเป็น 8px เพื่อแยกกล่องออกจากกัน */
+          gap: 8px 15px !important;
         }
-
-        /* 3. ปรับขนาดกล่องภาพนิ่ง (Example Box) */
         #game-screen .example-box {
           margin: 0 !important;
           padding: 4px 6px !important;
@@ -967,7 +913,7 @@
           flex-direction: column !important;
           justify-content: center !important;
           min-height: 0 !important;
-          box-sizing: border-box !important; /* สำคัญ: บังคับให้อยู่ในกรอบ ไม่ล้น */
+          box-sizing: border-box !important;
         }
         #game-screen .example-box .emoji-container {
           padding: 4px !important;
@@ -1005,23 +951,19 @@
           height: 80% !important;
           max-height: none !important; 
         }
-
-        /* 4. ปรับกล่องภาพเคลื่อนไหว (GIF) ให้พอดี ไม่ทะลักไปทับกล่องอื่น */
         #game-screen #gameGifContainer {
           height: 100% !important;
           min-height: 0 !important;
           margin: 0 !important;
-          box-sizing: border-box !important; /* สำคัญ: บังคับให้อยู่ในกรอบ ไม่ล้น */
+          box-sizing: border-box !important;
           padding: 2px !important; 
         }
         #game-screen #gameGifContainer img {
           max-height: 100% !important; 
-          height: 100% !important; /* บังคับไม่ให้รูปสูงทะลุกล่อง */
+          height: 100% !important;
           object-fit: contain !important;
           box-sizing: border-box !important;
         }
-
-        /* 5. ปรับกล่องข้อความเตือนด้านล่างให้พอดี */
         #game-screen .feedback {
           margin: 0 !important;
           min-height: 35px !important;
@@ -1030,60 +972,48 @@
           box-sizing: border-box !important;
         }
       }
-      /* ========================================================= */
-      /* --- ปรับขยายภาพนิ่งฝั่งขวา สำหรับ iPad (จอที่สูงกว่า 480px) --- */
       @media (orientation: landscape) and (min-height: 481px) {
         #level-instruction-screen > .example-box {
           display: flex !important;
           flex-direction: column !important;
           justify-content: center !important;
         }
-        
         #level-instruction-screen > .example-box .emoji-container {
           flex: 1 !important;
           display: flex !important;
-          align-items: stretch !important; /* บังคับให้การ์ดยืดเต็มแนวตั้ง */
+          align-items: stretch !important;
           padding: 10px !important;
         }
-        
         #level-instruction-screen > .example-box .emoji-card {
           flex: 1 !important;
           display: flex !important;
           flex-direction: column !important;
           justify-content: flex-end !important;
         }
-        
         #level-instruction-screen > .example-box .emoji-card .emoji {
-          flex: 1 !important; /* ดันให้พื้นที่รูปขยายรับพื้นที่ที่เหลือทั้งหมด */
+          flex: 1 !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
           min-height: 120px !important; 
           padding: 0 !important;
         }
-        
-        /* ปลดล็อคขนาดรูปมือ ให้ใหญ่เต็มพื้นที่กล่องบนไอแพด */
         #level-instruction-screen > .example-box .emoji-card img {
-          max-height: 200px !important; /* ปลดล็อคจากของเดิม 100px ให้ขยายได้ถึง 200px */
+          max-height: 200px !important;
           max-width: 100% !important;
           height: 100% !important; 
           width: auto !important;
           object-fit: contain !important;
         }
-        
         #level-instruction-screen > .example-box .emoji-card .label {
-          font-size: 16px !important; /* ปรับข้อความให้ใหญ่ขึ้นรับกับรูปบนไอแพด */
+          font-size: 16px !important;
           margin-top: 8px !important;
         }
-        
         #level-instruction-screen > .example-box .emoji-divider {
           height: auto !important;
-          align-self: stretch !important; /* ให้เส้นแบ่งยืดขึ้นลงอัตโนมัติตามรูป */
+          align-self: stretch !important;
           margin: 15px 0 !important;
         }
-        /* ========================================================= */
-        /* --- ปรับขยายหน้าเลือกด่าน สำหรับ iPad (จอที่สูงกว่า 480px) --- */
-        
         #level-select-screen.active-screen h1 {
           font-size: 38px !important;
           margin-bottom: 10px !important;
@@ -1093,41 +1023,29 @@
           margin-bottom: 15px !important;
         }
         #level-select-screen .level-grid {
-          gap: 15px !important; /* เพิ่มระยะห่างระหว่างการ์ดให้ดูไม่อึดอัด */
+          gap: 15px !important;
           margin: 15px 0 20px 0 !important;
         }
         #level-select-screen .level-card {
           padding: 15px 10px !important;
         }
-        
-        /* ขยายตัวหนังสือ "ด่านที่ 1" */
         #level-select-screen .level-card-num {
           font-size: 26px !important; 
           margin-bottom: 8px !important;
         }
-        
-        /* ขยายคำอธิบายด่าน และยอมให้ตัดขึ้นบรรทัดใหม่เพื่อเติมเต็มพื้นที่แนวตั้ง */
         #level-select-screen .level-card-title {
           font-size: 17px !important; 
           white-space: normal !important; 
           line-height: 1.4 !important;
         }
-        
-        /* ขยายปุ่มย้อนกลับให้สมส่วนกับหน้าจอ */
         #level-select-screen .btn-gray {
           font-size: 22px !important;
           padding: 12px 24px !important;
           border-radius: 15px !important;
         }
-
-        /* ========================================================= */
-        /* --- ปรับขยายหน้าแรก (Start Screen) สำหรับ iPad --- */
-        
         #start-screen.active-screen {
-          gap: 20px !important; /* เพิ่มระยะห่างระหว่างฝั่งซ้ายและขวา */
+          gap: 20px !important;
         }
-        
-        /* ขยายชื่อเกมและคำอธิบาย */
         #start-screen h1 {
           font-size: 60px !important;
           margin-bottom: 15px !important;
@@ -1136,8 +1054,6 @@
           font-size: 24px !important;
           margin-bottom: 20px !important;
         }
-        
-        /* ขยายช่องพิมพ์ชื่อ */
         #start-screen input[type="text"] {
           font-size: 26px !important;
           padding: 15px !important;
@@ -1145,16 +1061,12 @@
           border-width: 3px !important;
           border-radius: 15px !important;
         }
-        
-        /* ขยายกล่องประวัติการเล่นเดิม (ถ้ามี) */
         #start-screen .resume-box {
           font-size: 20px !important;
           padding: 15px 20px !important;
           line-height: 1.5 !important;
           margin-bottom: 20px !important;
         }
-        
-        /* ขยายปุ่มเล่นเกมให้ใหญ่ขึ้น */
         #start-screen button.btn-green, 
         #start-screen button#resumeBtn {
           font-size: 26px !important;
@@ -1162,41 +1074,32 @@
           border-radius: 20px !important;
           margin-top: 15px !important;
         }
-
-        /* --- ปรับขยายตารางคะแนนฝั่งขวา --- */
         #start-screen .leaderboard {
           padding: 30px !important;
           border-radius: 20px !important;
         }
         #start-screen .leaderboard h3 {
-          font-size: 26px !important; /* ขยายหัวข้อตาราง */
+          font-size: 26px !important;
         }
         #start-screen .leaderboard .btn-red {
           font-size: 16px !important;
           padding: 8px 15px !important;
         }
         #start-screen .score-item {
-          font-size: 24px !important; /* ขยายรายชื่อและคะแนน */
+          font-size: 24px !important;
           padding: 15px 0 !important;
           margin-bottom: 10px !important;
         }
         #start-screen #leaderboard-list p {
-          font-size: 22px !important; /* ขยายข้อความ "ยังไม่มีประวัติการเล่น" */
+          font-size: 22px !important;
           margin-top: 20px !important;
         }
-        /* ========================================================= */
-        /* --- ปรับขยายหน้าคำแนะนำกล้อง (Camera Guide) สำหรับ iPad --- */
-        
         #camera-guide-screen.active-screen {
-          /* ปรับให้ฝั่งกล้อง (1.2fr) กว้างกว่าฝั่งซ้าย (1fr) */
           grid-template-columns: 1fr 1.2fr !important; 
-          /* แบ่งสัดส่วนแนวตั้ง: แถว 2 (กล่องข้อความ) ให้ยืดหยุ่นที่สุด (1fr) */
           grid-template-rows: auto 1fr auto auto !important; 
-          align-items: stretch !important; /* บังคับให้เนื้อหายืดเต็มแนวตั้ง */
+          align-items: stretch !important;
           gap: 20px !important;
         }
-        
-        /* จัดตำแหน่งปุ่มและกล่องข้อความฝั่งซ้ายให้ชิดขอบและเต็มพื้นที่ */
         #camera-guide-screen > #playGuideAudioBtn { 
           grid-row: 1 !important; 
           margin: 0 !important; 
@@ -1206,7 +1109,7 @@
           margin: 0 !important; 
           display: flex !important; 
           flex-direction: column !important; 
-          justify-content: center !important; /* ให้ตัวหนังสืออยู่กึ่งกลางกล่อง */
+          justify-content: center !important;
         }
         #camera-guide-screen > .btn-green { 
           grid-row: 3 !important; 
@@ -1216,61 +1119,44 @@
           grid-row: 4 !important; 
           margin: 0 !important; 
         }
-
-        /* --- ขยายพื้นที่กล้องฝั่งขวาให้เต็ม 100% --- */
         #camera-guide-screen > div:first-child {
-          grid-row: 1 / span 4 !important; /* ให้กล้องกินพื้นที่ตั้งแต่แถว 1-4 */
+          grid-row: 1 / span 4 !important;
           height: 100% !important;
           margin: 0 !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
         }
-        
        #camera-guide-screen > div:first-child video {
           width: 100% !important; 
           height: 100% !important; 
           max-height: none !important; 
-          object-fit: contain !important; /* เปลี่ยนเป็น contain เพื่อไม่ให้ภาพโดนซูมตัดขอบ */
-          background-color: #000 !important; /* บังคับพื้นหลังสีดำให้เหมือนหน้าเกม */
-          border: none !important; /* เอากรอบสีชมพูออก */
-          border-radius: 15px !important; /* โค้งมนเท่ากับหน้าเกม */
+          object-fit: contain !important;
+          background-color: #000 !important;
+          border: none !important;
+          border-radius: 15px !important;
         }
-
-        /* ========================================================= */
-      /* --- เลย์เอาต์เฉพาะ จอคอมพิวเตอร์ / โน้ตบุ๊ก (PC & Mac) --- */
-      /* ใช้ (hover: hover) เพื่อเช็คว่าเป็นอุปกรณ์ที่มีเมาส์ (แยกออกจาก iPad ชัดเจน) */
       @media (min-width: 1024px) and (hover: hover) {
-        
-        /* 1. ขยายกรอบหน้าจอให้กว้างขึ้นเต็มตาบนจอคอม (ปลดล็อคพื้นที่ด้านข้างทุกหน้า) */
         .screen.active-screen {
-          width: 96vw !important; /* บังคับให้ขยายกว้าง 96% ของหน้าจอเสมอ */
-          max-width: none !important; /* ปลดล็อคข้อจำกัด 1200px ทิ้งไป */
-          height: 94vh !important; /* ยืดความสูงให้เกือบเต็มขอบจอ */
+          width: 96vw !important;
+          max-width: none !important;
+          height: 94vh !important;
           max-height: none !important;
-          padding: 40px 50px !important; /* เพิ่มพื้นที่ขอบด้านในให้ดูไม่อึดอัด */
+          padding: 40px 50px !important;
           border-width: 8px !important;
         }
-
-        /* 2. ลูกเล่นเฉพาะจอคอม: เมื่อเอาเมาส์ไปชี้ที่ปุ่ม (Hover) ให้ปุ่มสว่างและเด้งขึ้น */
         button:hover {
           filter: brightness(1.15);
           transform: translateY(-3px);
           box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2) !important;
         }
-
-        /* 3. ปรับขนาดฟอนต์หัวข้อให้ใหญ่สะใจสำหรับจอคอม */
         h1 {
           font-size: 50px !important;
         }
-
-        /* 4. ปรับขนาดหน้าเกมเพลย์บนคอมพิวเตอร์ */
         #game-screen.active-screen {
-          grid-template-columns: 1fr 2fr !important; /* ให้พื้นที่กล้อง (ฝั่งขวา) กว้างกว่าฝั่งซ้าย 2 เท่า */
+          grid-template-columns: 1fr 2fr !important;
           gap: 30px !important;
         }
-
-        /* 5. ปรับตารางเลือกด่านให้ใหญ่และมีลูกเล่นตอนเมาส์ชี้ */
         #level-select-screen .level-grid {
           gap: 20px !important;
         }
@@ -1279,16 +1165,11 @@
           box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
           border-color: #27ae60 !important;
         }
-/* --- 6. ปรับขยายหน้าคำแนะนำกล้อง (Camera Guide) ให้เต็มตาบนจอคอม --- */
-        
         #camera-guide-screen.active-screen {
           gap: 40px !important;
-          /* ปรับสัดส่วนให้ฝั่งกล้อง (ขวา) กว้างกว่าฝั่งข้อความ (ซ้าย) */
           grid-template-columns: 1fr 1.5fr !important; 
-          align-items: stretch !important; /* บังคับให้พื้นที่ซ้าย-ขวาสูงเท่ากัน */
+          align-items: stretch !important;
         }
-        
-        /* ขยายกล่องคำแนะนำและตัวหนังสือด้านใน */
         #camera-guide-screen > .instruction-box {
           padding: 30px 40px !important;
           display: flex !important;
@@ -1306,16 +1187,12 @@
         #camera-guide-screen > .instruction-box li {
           margin-bottom: 15px !important;
         }
-
-        /* ขยายปุ่มทั้ง 3 ปุ่มฝั่งซ้าย */
         #camera-guide-screen > button {
           font-size: 22px !important;
           padding: 16px 20px !important;
           border-radius: 15px !important;
           margin-top: 15px !important;
         }
-        
-        /* --- ขยายพื้นที่กล้องฝั่งขวาให้เต็ม 100% --- */
         #camera-guide-screen > div:first-child {
           height: 100% !important;
           margin: 0 !important;
@@ -1323,12 +1200,11 @@
           align-items: center !important;
           justify-content: center !important;
         }
-        
         #camera-guide-screen > div:first-child video {
-          width: 100% !important; /* บังคับกว้าง 100% */
-          height: 100% !important; /* บังคับสูง 100% */
-          max-height: none !important; /* ปลดล็อคข้อจำกัดความสูงเดิมทิ้ง */
-          object-fit: cover !important; /* ให้ภาพเต็มกรอบพอดี (ตัดขอบส่วนเกินออกนิดหน่อย) */
+          width: 100% !important;
+          height: 100% !important;
+          max-height: none !important;
+          object-fit: cover !important;
           border-width: 6px !important;
           border-radius: 20px !important;
         }
@@ -1337,6 +1213,7 @@
     </style>
   </head>
   <body>
+    <!-- Audio Elements -->
     <audio id="bgm" src="bgm.mp3" loop></audio>
     <audio id="snd-correct" src="correct.mp3"></audio>
     <audio id="snd-wrong" src="wrong.mp3"></audio>
@@ -1401,7 +1278,7 @@
       </div>
     </div>
 
-    <!-- หน้าคำแนะนำและลองตั้งกล้อง (อยู่ก่อนหน้าเลือกด่าน) -->
+    <!-- หน้าคำแนะนำและลองตั้งกล้อง -->
     <div id="camera-guide-screen" class="screen">
       <div style="position: relative; width: 100%; margin: 0 auto 15px auto">
         <video
@@ -1703,7 +1580,7 @@
       </button>
     </div>
 
-    <!-- หน้าสรุปผลลัพธ์ (หมดเวลา) -->
+    <!-- หน้าสรุปผลลัพธ์ -->
     <div id="result-screen" class="screen">
       <h1 id="resTitle">หมดเวลา! ⏰</h1>
       <h2>คุณ <span id="resName"></span> ทำคะแนนด่านนี้ได้</h2>
@@ -1725,6 +1602,7 @@
     </div>
 
     <script>
+      /* --- 1. ข้อมูลข้อมูลด่าน (LEVEL DATA) --- */
       const LEVELS = [
         {
           level: 1,
@@ -1858,46 +1736,70 @@
         },
       ];
 
-      let currentLevelIdx = 0;
-      let playerName = "";
-      let levelScore = 0;
-      let totalScore = 0;
-      let maxUnlockedLevel = 0;
-      let timeLeft = 20;
-      let gameActive = false;
-      let isCountingDown = false;
-      let isPaused = false;
-      let timerInterval;
-      let isBGMPlaying = false;
-      let cameraInitialized = false;
-      let guideStream = null;
-      let invertHandDetection = false;
-      let lastScoreTime = 0;
-      let lastStepTouchTime = 0;
-      let tapSeqStep = 0;
-      let toggleSubState = null;
-      let holdStartTime = null;
-      let audioCtx = null;
+      /* --- 2. CACHED DOM ELEMENTS (ช่วยลดการ Query หน้าจอซ้ำๆ เพิ่มความเร็ว) --- */
+      const DOM = {
+        screens: {
+          start: document.getElementById("start-screen"),
+          cameraGuide: document.getElementById("camera-guide-screen"),
+          levelSelect: document.getElementById("level-select-screen"),
+          levelInstruction: document.getElementById("level-instruction-screen"),
+          game: document.getElementById("game-screen"),
+          levelClear: document.getElementById("level-clear-screen"),
+          result: document.getElementById("result-screen"),
+        },
+        audio: {
+          bgm: document.getElementById("bgm"),
+          sndCorrect: document.getElementById("snd-correct"),
+          sndWrong: document.getElementById("snd-wrong"),
+          sndInstruction: document.getElementById("snd-instruction"),
+        },
+        video: document.getElementById("video"),
+        guideVideo: document.getElementById("guideVideo"),
+        canvas: document.getElementById("output_canvas"),
+        playerName: document.getElementById("playerName"),
+        resumeInfo: document.getElementById("resumeInfo"),
+        resumeBtn: document.getElementById("resumeBtn"),
+        leaderboardList: document.getElementById("leaderboard-list"),
+        levelGrid: document.getElementById("levelGrid"),
+        
+        // Game UI elements
+        timeDisplay: document.getElementById("timeDisplay"),
+        scoreDisplay: document.getElementById("scoreDisplay"),
+        targetDisplay: document.getElementById("targetDisplay"),
+        feedbackText: document.getElementById("feedbackText"),
+        correctOverlay: document.getElementById("correctOverlay"),
+        countdownOverlay: document.getElementById("countdownOverlay"),
+        countdownText: document.getElementById("countdownText"),
+        pauseBtn: document.getElementById("pauseBtn"),
+      };
 
-      const startScreen = document.getElementById("start-screen");
-      const cameraGuideScreen = document.getElementById("camera-guide-screen");
-      const levelSelectScreen = document.getElementById("level-select-screen");
-      const levelInstructionScreen = document.getElementById(
-        "level-instruction-screen"
-      );
-      const gameScreen = document.getElementById("game-screen");
-      const levelClearScreen = document.getElementById("level-clear-screen");
-      const resultScreen = document.getElementById("result-screen");
-      const videoElement = document.getElementById("video");
-      const canvasElement = document.getElementById("output_canvas");
-      const canvasCtx = canvasElement.getContext("2d");
-      const bgm = document.getElementById("bgm");
-      const sndCorrect = document.getElementById("snd-correct");
-      const sndWrong = document.getElementById("snd-wrong");
-      const correctOverlay = document.getElementById("correctOverlay");
-      const countdownOverlay = document.getElementById("countdownOverlay");
-      const countdownText = document.getElementById("countdownText");
+      const canvasCtx = DOM.canvas.getContext("2d");
 
+      /* --- 3. STATE MANAGEMENT (จัดกลุ่มตัวแปรสถานะของเกม) --- */
+      const state = {
+        currentLevelIdx: 0,
+        playerName: "",
+        levelScore: 0,
+        totalScore: 0,
+        maxUnlockedLevel: 0,
+        timeLeft: 20,
+        gameActive: false,
+        isCountingDown: false,
+        isPaused: false,
+        timerInterval: null,
+        isBGMPlaying: false,
+        cameraInitialized: false,
+        guideStream: null,
+        invertHandDetection: false,
+        lastScoreTime: 0,
+        lastStepTouchTime: 0,
+        tapSeqStep: 0,
+        toggleSubState: null,
+        holdStartTime: null,
+        audioCtx: null,
+      };
+
+      /* --- 4. INITIALIZATION & STORAGE --- */
       window.onload = function () {
         loadUnlockedLevels();
         displayLeaderboard();
@@ -1905,12 +1807,12 @@
       };
 
       function startBGM() {
-        if (!isBGMPlaying) {
-          bgm.volume = 0.2;
-          bgm
+        if (!state.isBGMPlaying) {
+          DOM.audio.bgm.volume = 0.2;
+          DOM.audio.bgm
             .play()
             .then(() => {
-              isBGMPlaying = true;
+              state.isBGMPlaying = true;
             })
             .catch((e) => console.log("BGM play auto-blocked:", e));
         }
@@ -1919,30 +1821,30 @@
 
       function playBeep(freq = 440, duration = 0.15) {
         try {
-          if (!audioCtx)
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          if (audioCtx.state === "suspended") audioCtx.resume();
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
+          if (!state.audioCtx)
+            state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (state.audioCtx.state === "suspended") state.audioCtx.resume();
+          const osc = state.audioCtx.createOscillator();
+          const gain = state.audioCtx.createGain();
           osc.type = "sine";
-          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          osc.frequency.setValueAtTime(freq, state.audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.3, state.audioCtx.currentTime);
           gain.gain.exponentialRampToValueAtTime(
             0.01,
-            audioCtx.currentTime + duration
+            state.audioCtx.currentTime + duration
           );
           osc.connect(gain);
-          gain.connect(audioCtx.destination);
+          gain.connect(state.audioCtx.destination);
           osc.start();
-          osc.stop(audioCtx.currentTime + duration);
+          osc.stop(state.audioCtx.currentTime + duration);
         } catch (e) {
           console.log("Audio play error", e);
         }
       }
 
       function toggleHandSwap() {
-        invertHandDetection = !invertHandDetection;
-        const statusMsg = invertHandDetection
+        state.invertHandDetection = !state.invertHandDetection;
+        const statusMsg = state.invertHandDetection
           ? "🔄 สลับโหมดมือเรียบร้อย!"
           : "🔄 กลับสู่โหมดมือปกติ (ค่าเริ่มต้น) เรียบร้อย!";
         alert(statusMsg);
@@ -1950,100 +1852,91 @@
 
       function getRealHand(rawLabel) {
         const baseHand = rawLabel === "Left" ? "Right" : "Left";
-        if (!invertHandDetection) return baseHand;
+        if (!state.invertHandDetection) return baseHand;
         return baseHand === "Left" ? "Right" : "Left";
       }
 
       function toggleInstructionAudio() {
-        const sndInst = document.getElementById("snd-instruction");
+        const sndInst = DOM.audio.sndInstruction;
         const playBtn = document.getElementById("playAudioBtn");
 
         if (!sndInst.src) return;
 
         if (sndInst.paused) {
           sndInst.play().catch((e) => console.log("Audio play error:", e));
-          bgm.volume = 0.05;
+          DOM.audio.bgm.volume = 0.05;
           playBtn.innerHTML = "⏸️ หยุดฟัง";
           playBtn.classList.replace("btn-blue", "btn-yellow");
         } else {
           sndInst.pause();
-          bgm.volume = 0.2;
+          DOM.audio.bgm.volume = 0.2;
           playBtn.innerHTML = "🔊 ฟังคำอธิบาย";
           playBtn.classList.replace("btn-yellow", "btn-blue");
         }
 
         sndInst.onended = function () {
-          bgm.volume = 0.2;
+          DOM.audio.bgm.volume = 0.2;
           playBtn.innerHTML = "🔊 ฟังคำอธิบาย";
           playBtn.classList.replace("btn-yellow", "btn-blue");
         };
       }
 
       function toggleGuideAudio() {
-        const sndInst = document.getElementById("snd-instruction");
+        const sndInst = DOM.audio.sndInstruction;
         const playBtn = document.getElementById("playGuideAudioBtn");
 
         if (!sndInst.src) return;
 
         if (sndInst.paused) {
           sndInst.play().catch((e) => console.log("Audio play error:", e));
-          bgm.volume = 0.05;
+          DOM.audio.bgm.volume = 0.05;
           playBtn.innerHTML = "⏸️ หยุดฟัง";
           playBtn.classList.replace("btn-blue", "btn-yellow");
         } else {
           sndInst.pause();
-          bgm.volume = 0.2;
+          DOM.audio.bgm.volume = 0.2;
           playBtn.innerHTML = "🔊 ฟังคำแนะนำ";
           playBtn.classList.replace("btn-yellow", "btn-blue");
         }
 
         sndInst.onended = function () {
-          bgm.volume = 0.2;
+          DOM.audio.bgm.volume = 0.2;
           playBtn.innerHTML = "🔊 ฟังคำแนะนำ";
           playBtn.classList.replace("btn-yellow", "btn-blue");
         };
       }
 
       function showScreen(targetScreen) {
-        startScreen.classList.remove("active-screen");
-        cameraGuideScreen.classList.remove("active-screen");
-        levelSelectScreen.classList.remove("active-screen");
-        levelInstructionScreen.classList.remove("active-screen");
-        gameScreen.classList.remove("active-screen");
-        levelClearScreen.classList.remove("active-screen");
-        resultScreen.classList.remove("active-screen");
+        Object.values(DOM.screens).forEach((screen) => screen.classList.remove("active-screen"));
         targetScreen.classList.add("active-screen");
       }
 
       async function startGuideCamera() {
         try {
-          const guideVideo = document.getElementById("guideVideo");
-          if (guideStream) {
-            guideStream.getTracks().forEach((track) => track.stop());
+          if (state.guideStream) {
+            state.guideStream.getTracks().forEach((track) => track.stop());
           }
-          guideStream = await navigator.mediaDevices.getUserMedia({
+          state.guideStream = await navigator.mediaDevices.getUserMedia({
             video: { width: { ideal: 640 }, height: { ideal: 480 } },
           });
-          guideVideo.srcObject = guideStream;
+          DOM.guideVideo.srcObject = state.guideStream;
         } catch (err) {
           console.log("Guide camera error:", err);
         }
       }
 
       function stopGuideCamera() {
-        if (guideStream) {
-          guideStream.getTracks().forEach((track) => track.stop());
-          guideStream = null;
+        if (state.guideStream) {
+          state.guideStream.getTracks().forEach((track) => track.stop());
+          state.guideStream = null;
         }
-        const guideVideo = document.getElementById("guideVideo");
-        if (guideVideo) guideVideo.srcObject = null;
+        if (DOM.guideVideo) DOM.guideVideo.srcObject = null;
       }
 
       function goToCameraGuide() {
         startBGM();
-        playerName =
-          document.getElementById("playerName").value.trim() || "ผู้เล่นนิรนาม";
-        const sndInst = document.getElementById("snd-instruction");
+        state.playerName = DOM.playerName.value.trim() || "ผู้เล่นนิรนาม";
+        const sndInst = DOM.audio.sndInstruction;
         const playBtn = document.getElementById("playGuideAudioBtn");
         sndInst.pause();
         sndInst.currentTime = 0;
@@ -2052,34 +1945,34 @@
         if (playBtn.classList.contains("btn-yellow"))
           playBtn.classList.replace("btn-yellow", "btn-blue");
 
-        showScreen(cameraGuideScreen);
+        showScreen(DOM.screens.cameraGuide);
         startGuideCamera();
       }
 
       function goToLevelSelectFromGuide() {
-        document.getElementById("snd-instruction").pause();
+        DOM.audio.sndInstruction.pause();
         stopGuideCamera();
         renderLevelGrid();
-        showScreen(levelSelectScreen);
+        showScreen(DOM.screens.levelSelect);
       }
 
       function goToStartScreen() {
         stopGuideCamera();
-        document.getElementById("snd-instruction").pause();
-        if (gameActive) {
+        DOM.audio.sndInstruction.pause();
+        if (state.gameActive) {
           saveProgress();
-          if (totalScore > 0) saveScore(playerName, totalScore);
+          if (state.totalScore > 0) saveScore(state.playerName, state.totalScore);
         }
-        gameActive = false;
-        isCountingDown = false;
-        isPaused = false;
-        clearInterval(timerInterval);
-        bgm.pause();
-        isBGMPlaying = false;
-        bgm.currentTime = 0;
-        correctOverlay.classList.remove("show");
-        countdownOverlay.style.display = "none";
-        showScreen(startScreen);
+        state.gameActive = false;
+        state.isCountingDown = false;
+        state.isPaused = false;
+        clearInterval(state.timerInterval);
+        DOM.audio.bgm.pause();
+        state.isBGMPlaying = false;
+        DOM.audio.bgm.currentTime = 0;
+        DOM.correctOverlay.classList.remove("show");
+        DOM.countdownOverlay.style.display = "none";
+        showScreen(DOM.screens.start);
         displayLeaderboard();
         checkResumeAvailable();
       }
@@ -2087,18 +1980,16 @@
       function goToLevelSelect() {
         stopGuideCamera();
         startBGM();
-        playerName =
-          document.getElementById("playerName").value.trim() || "ผู้เล่นนิรนาม";
+        state.playerName = DOM.playerName.value.trim() || "ผู้เล่นนิรนาม";
         renderLevelGrid();
-        showScreen(levelSelectScreen);
+        showScreen(DOM.screens.levelSelect);
       }
 
       function renderLevelGrid() {
-        const grid = document.getElementById("levelGrid");
-        grid.innerHTML = "";
+        DOM.levelGrid.innerHTML = "";
         LEVELS.forEach((lvl, idx) => {
           const card = document.createElement("div");
-          const isUnlocked = idx <= maxUnlockedLevel;
+          const isUnlocked = idx <= state.maxUnlockedLevel;
           card.className = `level-card ${isUnlocked ? "unlocked" : "locked"}`;
           card.innerHTML = `
             <div class="level-card-num">${
@@ -2110,11 +2001,11 @@
           `;
           if (isUnlocked) {
             card.onclick = () => {
-              currentLevelIdx = idx;
-              showLevelInstruction(currentLevelIdx);
+              state.currentLevelIdx = idx;
+              showLevelInstruction(state.currentLevelIdx);
             };
           }
-          grid.appendChild(card);
+          DOM.levelGrid.appendChild(card);
         });
       }
 
@@ -2122,21 +2013,16 @@
         const progress = loadProgress();
         if (!progress) return;
         startBGM();
-        playerName =
-          document.getElementById("playerName").value.trim() ||
-          progress.name ||
-          "ผู้เล่นนิรนาม";
-        currentLevelIdx = progress.levelIdx;
-        totalScore = progress.totalScore;
-        showLevelInstruction(currentLevelIdx);
+        state.playerName = DOM.playerName.value.trim() || progress.name || "ผู้เล่นนิรนาม";
+        state.currentLevelIdx = progress.levelIdx;
+        state.totalScore = progress.totalScore;
+        showLevelInstruction(state.currentLevelIdx);
       }
 
       function showLevelInstruction(levelIdx) {
         stopGuideCamera();
         const lvl = LEVELS[levelIdx];
-        document.getElementById(
-          "instLevelTitle"
-        ).innerText = `คำอธิบายด่านที่ ${lvl.level}/${LEVELS.length}`;
+        document.getElementById("instLevelTitle").innerText = `คำอธิบายด่านที่ ${lvl.level}/${LEVELS.length}`;
         document.getElementById("instLevelDesc").innerText = lvl.desc;
         document.getElementById("instTargetScore").innerText = lvl.targetScore;
         document.getElementById("instTimeLimit").innerText = lvl.timeLimit;
@@ -2148,20 +2034,16 @@
         const gifContainer = document.getElementById("instGifContainer");
         const gifLeft = document.getElementById("instGifLeft");
         const gifRight = document.getElementById("instGifRight");
-
         const syncTime = new Date().getTime();
 
         if (lvl.gifSrcLeft && lvl.gifSrcRight) {
-          // เปิดกล่อง Container ไว้ก่อน
           gifLeft.style.display = "block";
           gifRight.style.display = "block";
           gifContainer.style.display = "flex";
           
-          // เคลียร์ภาพเก่าออกเพื่อรีเซ็ตเฟรม
           gifLeft.src = ""; 
           gifRight.src = "";
           
-          // โหลดภาพทั้งสองไว้เบื้องหลัง (Preload)
           let loadedCount = 0;
           const tempImgL = new Image();
           const tempImgR = new Image();
@@ -2169,7 +2051,6 @@
           const onBothLoaded = () => {
             loadedCount++;
             if (loadedCount === 2) {
-              // เมื่อโหลดเสร็จครบ 2 ภาพ ค่อยใส่ src ให้หน้าจอพร้อมกันเป๊ะๆ
               gifLeft.src = tempImgL.src;
               gifRight.src = tempImgR.src;
             }
@@ -2189,7 +2070,7 @@
           gifContainer.style.display = "none";
         }
 
-        const sndInst = document.getElementById("snd-instruction");
+        const sndInst = DOM.audio.sndInstruction;
         const playBtn = document.getElementById("playAudioBtn");
         sndInst.pause();
         sndInst.currentTime = 0;
@@ -2202,37 +2083,34 @@
         } else {
           playBtn.style.display = "none";
         }
-        showScreen(levelInstructionScreen);
+        showScreen(DOM.screens.levelInstruction);
       }
 
       async function startCurrentLevel() {
-        document.getElementById("snd-instruction").pause();
+        DOM.audio.sndInstruction.pause();
         startBGM();
-        const lvl = LEVELS[currentLevelIdx];
-        levelScore = 0;
-        timeLeft = lvl.timeLimit;
-        tapSeqStep = 0;
-        toggleSubState = null;
-        holdStartTime = null;
-        lastScoreTime = 0;
+        const lvl = LEVELS[state.currentLevelIdx];
+        state.levelScore = 0;
+        state.timeLeft = lvl.timeLimit;
+        state.tapSeqStep = 0;
+        state.toggleSubState = null;
+        state.holdStartTime = null;
+        state.lastScoreTime = 0;
 
-        document.getElementById(
-          "levelBadge"
-        ).innerText = `ด่านที่ ${lvl.level}/${LEVELS.length}`;
+        document.getElementById("levelBadge").innerText = `ด่านที่ ${lvl.level}/${LEVELS.length}`;
         document.getElementById("gameEmojiLeft").innerHTML = lvl.emojiLeft;
         document.getElementById("gameLabelLeft").innerText = lvl.labelLeft;
         document.getElementById("gameEmojiRight").innerHTML = lvl.emojiRight;
         document.getElementById("gameLabelRight").innerText = lvl.labelRight;
-        document.getElementById("scoreDisplay").innerText = levelScore;
-        document.getElementById("targetDisplay").innerText = lvl.targetScore;
-        document.getElementById("timeDisplay").innerText = timeLeft;
-        document.getElementById("feedbackText").innerText = "เตรียมพร้อม...";
+        DOM.scoreDisplay.innerText = state.levelScore;
+        DOM.targetDisplay.innerText = lvl.targetScore;
+        DOM.timeDisplay.innerText = state.timeLeft;
+        DOM.feedbackText.innerText = "เตรียมพร้อม...";
 
         const gameGifContainer = document.getElementById("gameGifContainer");
         const gameGifLeft = document.getElementById("gameGifLeft");
         const gameGifRight = document.getElementById("gameGifRight");
-
-       const syncTime = new Date().getTime();
+        const syncTime = new Date().getTime();
 
         if (lvl.gifSrcLeft && lvl.gifSrcRight) {
           gameGifLeft.style.width = "48%";
@@ -2241,11 +2119,9 @@
           gameGifRight.style.display = "block";
           gameGifContainer.style.display = "flex";
           
-          // เคลียร์ภาพเก่าออกเพื่อรีเซ็ตเฟรม
           gameGifLeft.src = ""; 
           gameGifRight.src = "";
           
-          // โหลดภาพทั้งสองไว้เบื้องหลัง (Preload)
           let loadedCount = 0;
           const tempImgL = new Image();
           const tempImgR = new Image();
@@ -2253,7 +2129,6 @@
           const onBothLoaded = () => {
             loadedCount++;
             if (loadedCount === 2) {
-              // เมื่อโหลดเสร็จครบ 2 ภาพ ค่อยใส่ src ให้หน้าจอพร้อมกัน
               gameGifLeft.src = tempImgL.src;
               gameGifRight.src = tempImgR.src;
             }
@@ -2274,69 +2149,67 @@
           gameGifContainer.style.display = "none";
         }
 
-        showScreen(gameScreen);
+        showScreen(DOM.screens.game);
 
-        if (!cameraInitialized) {
+        if (!state.cameraInitialized) {
           initCameraAndMediaPipe();
         }
 
         runCountdown(() => {
-          gameActive = true;
-          isPaused = false;
-          document.getElementById("feedbackText").innerText =
-            "ลุยเลย! ชูมือให้กล้องเห็นนะคะ";
+          state.gameActive = true;
+          state.isPaused = false;
+          DOM.feedbackText.innerText = "ลุยเลย! ชูมือให้กล้องเห็นนะคะ";
           startTimer();
         });
       }
 
       function runCountdown(onComplete) {
-        isCountingDown = true;
-        gameActive = false;
-        countdownOverlay.style.display = "flex";
+        state.isCountingDown = true;
+        state.gameActive = false;
+        DOM.countdownOverlay.style.display = "flex";
         let count = 3;
-        countdownText.innerText = count;
+        DOM.countdownText.innerText = count;
         playBeep(440, 0.15);
 
         const countInterval = setInterval(() => {
           count--;
           if (count > 0) {
-            countdownText.innerText = count;
+            DOM.countdownText.innerText = count;
             playBeep(440, 0.15);
           } else if (count === 0) {
-            countdownText.innerText = "เริ่มเลย!";
+            DOM.countdownText.innerText = "เริ่มเลย!";
             playBeep(880, 0.3);
           } else {
             clearInterval(countInterval);
-            countdownOverlay.style.display = "none";
-            isCountingDown = false;
+            DOM.countdownOverlay.style.display = "none";
+            state.isCountingDown = false;
             if (onComplete) onComplete();
           }
         }, 1000);
       }
 
       function startTimer() {
-        clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-          if (!gameActive || isPaused || isCountingDown) return;
-          timeLeft--;
-          document.getElementById("timeDisplay").innerText = timeLeft;
-          if (timeLeft <= 0) {
-            clearInterval(timerInterval);
+        clearInterval(state.timerInterval);
+        state.timerInterval = setInterval(() => {
+          if (!state.gameActive || state.isPaused || state.isCountingDown) return;
+          state.timeLeft--;
+          DOM.timeDisplay.innerText = state.timeLeft;
+          if (state.timeLeft <= 0) {
+            clearInterval(state.timerInterval);
             handleTimeOut();
           }
         }, 1000);
       }
 
       function togglePause() {
-        if (isCountingDown) return;
-        isPaused = !isPaused;
-        const btn = document.getElementById("pauseBtn");
-        if (isPaused) {
-          btn.innerText = "▶️ เล่นต่อ";
-          document.getElementById("feedbackText").innerText = "พักชั่วคราว...";
+        if (state.isCountingDown) return;
+        state.isPaused = !state.isPaused;
+        if (state.isPaused) {
+          DOM.pauseBtn.innerText = "▶️ เล่นต่อ";
+          DOM.feedbackText.innerText = "พักชั่วคราว...";
         } else {
-          btn.innerText = "⏸️ พัก";
-          document.getElementById("feedbackText").innerText = "ลุยต่อเลยค่ะ!";
+          DOM.pauseBtn.innerText = "⏸️ พัก";
+          DOM.feedbackText.innerText = "ลุยต่อเลยค่ะ!";
         }
       }
 
@@ -2353,25 +2226,25 @@
         });
         hands.onResults(onResults);
 
-        const camera = new Camera(videoElement, {
+        const camera = new Camera(DOM.video, {
           onFrame: async () => {
-            if ((gameActive || isCountingDown) && !isPaused) {
-              await hands.send({ image: videoElement });
+            if ((state.gameActive || state.isCountingDown) && !state.isPaused) {
+              await hands.send({ image: DOM.video });
             }
           },
           width: 640,
           height: 480,
         });
         camera.start();
-        cameraInitialized = true;
+        state.cameraInitialized = true;
       }
 
+      /* --- 5. MATH & GESTURE UTILITIES --- */
       function dist(p1, p2) {
         return Math.hypot(p1.x - p2.x, p1.y - p2.y);
       }
 
       function handScale(lm) {
-        // ระยะจากข้อมือ (0) ถึงโคนนิ้วกลาง (9) ช่วยปรับเกณฑ์ตามระยะใกล้/ไกลของมือผู้เล่น
         return dist(lm[0], lm[9]);
       }
 
@@ -2380,7 +2253,6 @@
         return dist(lm[4], lm[fingerIdx]) < scale * thresholdFactor;
       }
 
-// ฟังก์ชันคำนวณระยะห่างระหว่างจุด 2 จุด (Euclidean Distance)
       function getDistance(p1, p2) {
         const dx = p1.x - p2.x;
         const dy = p1.y - p2.y;
@@ -2388,43 +2260,37 @@
       }
 
       function isFingerClosed(lm, tipIndex, baseIndex) {
-        const distance = getDistance(lm[tipIndex], lm[baseIndex]);
-        const threshold = 0.1; // ปรับค่านี้ได้ตามความเหมาะสมของขนาดมือ/กล้อง
-        return distance < threshold;
+        return getDistance(lm[tipIndex], lm[baseIndex]) < 0.1;
       }
 
       function isThumbUp(lm) {
         return (
           lm[4].y < lm[3].y &&
           lm[3].y < lm[2].y &&
-      
-          isFingerClosed(lm, 8, 5) &&   // นิ้วชี้ (ปลายนิ้ว 8, โคนนิ้ว 5)
-          isFingerClosed(lm, 12, 9) &&  // นิ้วกลาง (ปลายนิ้ว 12, โคนนิ้ว 9)
-          isFingerClosed(lm, 16, 13) && // นิ้วนาง (ปลายนิ้ว 16, โคนนิ้ว 13)
-          isFingerClosed(lm, 20, 17)    // นิ้วก้อย (ปลายนิ้ว 20, โคนนิ้ว 17)
+          isFingerClosed(lm, 8, 5) &&
+          isFingerClosed(lm, 12, 9) &&
+          isFingerClosed(lm, 16, 13) &&
+          isFingerClosed(lm, 20, 17)
         );
       }
 
       function isPinkyUp(lm) {
-         // เช็คว่านิ้วก้อยตั้งตรง (รองรับทิศทางตั้งขึ้นหรือกลับหัวด้วยเวกเตอร์ระยะห่างระหว่างปลายนิ้ว 20 กับโคนนิ้ว 17)
-         const isPinkyExtended = getDistance(lm[20], lm[17]) > 0.13;
-
          return (
-           isPinkyExtended &&
-           isFingerClosed(lm, 4, 2) &&   // นิ้วโป้งพับ
-           isFingerClosed(lm, 8, 5) &&   // นิ้วชี้พับ
-           isFingerClosed(lm, 12, 9) &&  // นิ้วกลางพับ
-           isFingerClosed(lm, 16, 13)    // นิ้วนางพับ
+           getDistance(lm[20], lm[17]) > 0.13 &&
+           isFingerClosed(lm, 4, 2) &&
+           isFingerClosed(lm, 8, 5) &&
+           isFingerClosed(lm, 12, 9) &&
+           isFingerClosed(lm, 16, 13)
          );
       }
 
       function isJieb(lm) {
         const scale = handScale(lm);
         return (
-          dist(lm[4], lm[8]) < scale * 0.55 && // นิ้วโป้ง (4) กับ นิ้วชี้ (8) แตะกันเป็นวงจีบ
-          lm[12].y < lm[10].y && // นิ้วกลาง (ปลายนิ้ว 12 ชูสูงกว่าข้อต่อ 10)
-          lm[16].y < lm[14].y && // นิ้วนาง (ปลายนิ้ว 16 ชูสูงกว่าข้อต่อ 14)
-          lm[20].y < lm[18].y    // นิ้วก้อย (ปลายนิ้ว 20 ชูสูงกว่าข้อต่อ 18)
+          dist(lm[4], lm[8]) < scale * 0.55 &&
+          lm[12].y < lm[10].y &&
+          lm[16].y < lm[14].y &&
+          lm[20].y < lm[18].y
         );
       }
 
@@ -2439,15 +2305,16 @@
         );
       }
 
+      /* --- 6. GAME LOOP & GESTURE DETECTION ENGINE --- */
       function onResults(results) {
         canvasCtx.save();
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.clearRect(0, 0, DOM.canvas.width, DOM.canvas.height);
         canvasCtx.drawImage(
           results.image,
           0,
           0,
-          canvasElement.width,
-          canvasElement.height
+          DOM.canvas.width,
+          DOM.canvas.height
         );
 
         if (results.multiHandLandmarks) {
@@ -2465,22 +2332,96 @@
         }
         canvasCtx.restore();
 
-        if (gameActive && !isPaused && !isCountingDown) {
+        if (state.gameActive && !state.isPaused && !state.isCountingDown) {
           checkLevelGesture(results);
         }
       }
 
-      function checkLevelGesture(results) {
-        const lvl = LEVELS[currentLevelIdx];
+      // Modular Helper สำหรับการแตะนิ้วต่อเนื่อง (ด่าน 1, 2, 7)
+      function processTapSequence(leftHand, rightHand, isDualHand = false) {
         const now = Date.now();
-        if (now - lastScoreTime < 600) return;
+        const targetFingers = [8, 12, 16, 20];
+        const targetNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
+        const currentTargetIndex = targetFingers[state.tapSeqStep];
 
-        if (
-          !results.multiHandLandmarks ||
-          results.multiHandLandmarks.length === 0
-        ) {
-          document.getElementById("feedbackText").innerText =
-            "กรุณาชูมือให้เห็นในกล้องนะคะ";
+        let isTouched = false;
+        if (isDualHand) {
+          isTouched = leftHand && rightHand && 
+                      isFingerTouching(leftHand, currentTargetIndex) && 
+                      isFingerTouching(rightHand, currentTargetIndex);
+        } else {
+          const targetHand = leftHand || rightHand;
+          isTouched = targetHand && isFingerTouching(targetHand, currentTargetIndex);
+        }
+
+        if (isTouched) {
+          if (now - state.lastStepTouchTime > 300) {
+            state.tapSeqStep++;
+            state.lastStepTouchTime = now;
+            if (state.tapSeqStep >= 4) {
+              state.tapSeqStep = 0;
+              triggerCorrectAnswer();
+            } else {
+              DOM.feedbackText.innerText = `เยี่ยม! ต่อไปแตะ ${targetNames[state.tapSeqStep]}${isDualHand ? " พร้อมกันทั้ง 2 ข้าง" : ""}`;
+            }
+          }
+        } else {
+          DOM.feedbackText.innerText = `แตะนิ้วโป้งกับ ${targetNames[state.tapSeqStep]}${isDualHand ? " ทั้งสองข้างพร้อมกัน" : ""}`;
+        }
+      }
+
+      // Modular Helper สำหรับการสลับทำ 2 ท่าทาง (ด่าน 3, 4, 5, 6)
+      function processTogglePose(hand, checkPose1, checkPose2, msg1, msg2) {
+        if (state.toggleSubState === null || state.toggleSubState === 2) {
+          if (checkPose1(hand)) {
+            state.toggleSubState = 1;
+            DOM.feedbackText.innerText = msg1;
+          } else {
+            DOM.feedbackText.innerText = msg2.p1;
+          }
+        } else if (state.toggleSubState === 1) {
+          if (checkPose2(hand)) {
+            state.toggleSubState = 2;
+            triggerCorrectAnswer();
+          } else {
+            DOM.feedbackText.innerText = msg2.p2;
+          }
+        }
+      }
+
+      // Modular Helper สำหรับท่าทาง 2 มือ สลับฝั่งกัน (ด่าน 8, 9, 10)
+      function processDualHandToggle(leftHand, rightHand, checkCond1, checkCond2, msgToggle1, msgToggle2) {
+        const now = Date.now();
+        let matched = false;
+        
+        if (state.toggleSubState === null || state.toggleSubState === 2) {
+          if (checkCond1(leftHand, rightHand)) matched = true;
+        } else if (state.toggleSubState === 1) {
+          if (checkCond2(leftHand, rightHand)) matched = true;
+        }
+
+        if (matched) {
+          if (!state.holdStartTime) state.holdStartTime = now;
+          if (now - state.holdStartTime >= 500) {
+            state.holdStartTime = null;
+            state.toggleSubState = state.toggleSubState === 1 ? 2 : 1;
+            triggerCorrectAnswer();
+          } else {
+            DOM.feedbackText.innerText = "ค้างท่าไว้สักครู่...";
+          }
+        } else {
+          state.holdStartTime = null;
+          DOM.feedbackText.innerText = state.toggleSubState === 1 ? msgToggle1 : msgToggle2;
+        }
+      }
+
+      function checkLevelGesture(results) {
+        const lvl = LEVELS[state.currentLevelIdx];
+        const now = Date.now();
+        if (now - state.lastScoreTime < 600) return;
+
+        if (!results.multiHandLandmarks || results.multiHandLandmarks.length === 0) {
+          DOM.feedbackText.innerText = "กรุณาชูมือให้เห็นในกล้องนะคะ";
           return;
         }
 
@@ -2494,361 +2435,169 @@
         const rightHand = handsDict["Right"];
         const leftHand = handsDict["Left"];
 
-        if (lvl.level === 1) {
-          if (!rightHand) {
-            document.getElementById("feedbackText").innerText =
-              "โปรดใช้มือขวาเล่นนะคะ";
-            return;
-          }
-          const targetFingers = [8, 12, 16, 20];
-          const targetNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
-          const currentTargetIndex = targetFingers[tapSeqStep];
-
-          if (isFingerTouching(rightHand, currentTargetIndex)) {
-            if (now - lastStepTouchTime > 300) {
-              tapSeqStep++;
-              lastStepTouchTime = now;
-              if (tapSeqStep >= 4) {
-                tapSeqStep = 0;
-                triggerCorrectAnswer();
-              } else {
-                document.getElementById(
-                  "feedbackText"
-                ).innerText = `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]}`;
-              }
-            }
-          } else {
-            document.getElementById(
-              "feedbackText"
-            ).innerText = `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]}`;
-          }
-        } else if (lvl.level === 2) {
-          if (!leftHand) {
-            document.getElementById("feedbackText").innerText =
-              "โปรดใช้มือซ้ายเล่นนะคะ";
-            return;
-          }
-          const targetFingers = [8, 12, 16, 20];
-          const targetNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
-          const currentTargetIndex = targetFingers[tapSeqStep];
-
-          if (isFingerTouching(leftHand, currentTargetIndex)) {
-            if (now - lastStepTouchTime > 300) {
-              tapSeqStep++;
-              lastStepTouchTime = now;
-              if (tapSeqStep >= 4) {
-                tapSeqStep = 0;
-                triggerCorrectAnswer();
-              } else {
-                document.getElementById(
-                  "feedbackText"
-                ).innerText = `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]}`;
-              }
-            }
-          } else {
-            document.getElementById(
-              "feedbackText"
-            ).innerText = `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]}`;
-          }
-        } else if (lvl.level === 3) {
-          if (!rightHand) {
-            document.getElementById("feedbackText").innerText =
-              "โปรดใช้มือขวาเล่นนะคะ";
-            return;
-          }
-          if (toggleSubState === null || toggleSubState === 2) {
-            if (isThumbUp(rightHand)) {
-              toggleSubState = 1;
-              document.getElementById("feedbackText").innerText =
-                "เก่งมาก! ต่อไปเปลี่ยนเป็นชูก้อย";
-            } else {
-              document.getElementById("feedbackText").innerText =
-                "ชูนิ้วโป้งมือขวา";
-            }
-          } else if (toggleSubState === 1) {
-            if (isPinkyUp(rightHand)) {
-              toggleSubState = 2;
-              triggerCorrectAnswer();
-            } else {
-              document.getElementById("feedbackText").innerText =
-                "สลับไปชูนิ้วก้อยมือขวา";
-            }
-          }
-        } else if (lvl.level === 4) {
-          if (!leftHand) {
-            document.getElementById("feedbackText").innerText =
-              "โปรดใช้มือซ้ายเล่นนะคะ";
-            return;
-          }
-          if (toggleSubState === null || toggleSubState === 2) {
-            if (isThumbUp(leftHand)) {
-              toggleSubState = 1;
-              document.getElementById("feedbackText").innerText =
-                "เก่งมาก! ต่อไปเปลี่ยนเป็นชูก้อย";
-            } else {
-              document.getElementById("feedbackText").innerText =
-                "ชูนิ้วโป้งมือซ้าย";
-            }
-          } else if (toggleSubState === 1) {
-            if (isPinkyUp(leftHand)) {
-              toggleSubState = 2;
-              triggerCorrectAnswer();
-            } else {
-              document.getElementById("feedbackText").innerText =
-                "สลับไปชูนิ้วก้อยมือซ้าย";
-            }
-          }
-        } else if (lvl.level === 5) {
-          if (!rightHand) {
-            document.getElementById("feedbackText").innerText =
-              "โปรดใช้มือขวาเล่นนะคะ";
-            return;
-          }
-          if (toggleSubState === null || toggleSubState === 2) {
-            if (isJieb(rightHand)) {
-              toggleSubState = 1;
-              document.getElementById("feedbackText").innerText =
-                "เก่งมาก! ต่อไปเปลี่ยนเป็นทำตัว L";
-            } else {
-              document.getElementById("feedbackText").innerText =
-                "ทำท่าจีบมือขวา";
-            }
-          } else if (toggleSubState === 1) {
-            if (isLPose(rightHand)) {
-              toggleSubState = 2;
-              triggerCorrectAnswer();
-            } else {
-              document.getElementById("feedbackText").innerText =
-                "สลับไปทำตัว L มือขวา";
-            }
-          }
-        } else if (lvl.level === 6) {
-          if (!leftHand) {
-            document.getElementById("feedbackText").innerText =
-              "โปรดใช้มือซ้ายเล่นนะคะ";
-            return;
-          }
-          if (toggleSubState === null || toggleSubState === 2) {
-            if (isJieb(leftHand)) {
-              toggleSubState = 1;
-              document.getElementById("feedbackText").innerText =
-                "เก่งมาก! ต่อไปเปลี่ยนเป็นทำตัว L";
-            } else {
-              document.getElementById("feedbackText").innerText =
-                "ทำท่าจีบมือซ้าย";
-            }
-          } else if (toggleSubState === 1) {
-            if (isLPose(leftHand)) {
-              toggleSubState = 2;
-              triggerCorrectAnswer();
-            } else {
-              document.getElementById("feedbackText").innerText =
-                "สลับไปทำตัว L มือซ้าย";
-            }
-          }
-        } else if (lvl.level === 7) {
-          if (!leftHand || !rightHand) {
-            document.getElementById("feedbackText").innerText =
-              "โปรดชูมือทั้งสองข้างขึ้นมานะคะ";
-            return;
-          }
-          const targetFingers = [8, 12, 16, 20];
-          const targetNames = ["นิ้วชี้", "นิ้วกลาง", "นิ้วนาง", "นิ้วก้อย"];
-          const currentTargetIndex = targetFingers[tapSeqStep];
-
-          if (
-            isFingerTouching(leftHand, currentTargetIndex) &&
-            isFingerTouching(rightHand, currentTargetIndex)
-          ) {
-            if (now - lastStepTouchTime > 300) {
-              tapSeqStep++;
-              lastStepTouchTime = now;
-              if (tapSeqStep >= 4) {
-                tapSeqStep = 0;
-                triggerCorrectAnswer();
-              } else {
-                document.getElementById(
-                  "feedbackText"
-                ).innerText = `เยี่ยม! ต่อไปแตะ ${targetNames[tapSeqStep]} พร้อมกันทั้ง 2 ข้าง`;
-              }
-            }
-          } else {
-            document.getElementById(
-              "feedbackText"
-            ).innerText = `แตะนิ้วโป้งกับ ${targetNames[tapSeqStep]} ทั้งสองข้างพร้อมกัน`;
-          }
-        } else if (lvl.level === 8) {
-          if (!leftHand || !rightHand) {
-            document.getElementById("feedbackText").innerText =
-              "โปรดชูมือทั้งสองข้างขึ้นมานะคะ";
-            return;
-          }
-          let matched = false;
-          if (toggleSubState === null || toggleSubState === 2) {
-            if (isPinkyUp(leftHand) && isThumbUp(rightHand)) matched = true;
-          } else if (toggleSubState === 1) {
-            if (isThumbUp(leftHand) && isPinkyUp(rightHand)) matched = true;
-          }
-
-          if (matched) {
-            if (!holdStartTime) holdStartTime = now;
-            if (now - holdStartTime >= 500) {
-              holdStartTime = null;
-              toggleSubState = toggleSubState === 1 ? 2 : 1;
-              triggerCorrectAnswer();
-            } else {
-              document.getElementById("feedbackText").innerText =
-                "ค้างท่าไว้สักครู่...";
-            }
-          } else {
-            holdStartTime = null;
-            document.getElementById("feedbackText").innerText =
-              toggleSubState === 1
-                ? "สลับฝั่ง: ซ้ายโป้ง - ขวาก้อย"
-                : "ทำท่า: ซ้ายก้อย - ขวาโป้ง";
-          }
-        } else if (lvl.level === 9 || lvl.level === 10) {
-          if (!leftHand || !rightHand) {
-            document.getElementById("feedbackText").innerText =
-              "โปรดชูมือทั้งสองข้างขึ้นมานะคะ";
-            return;
-          }
-          let matched = false;
-          if (toggleSubState === null || toggleSubState === 2) {
-            if (isJieb(leftHand) && isLPose(rightHand)) matched = true;
-          } else if (toggleSubState === 1) {
-            if (isLPose(leftHand) && isJieb(rightHand)) matched = true;
-          }
-
-          if (matched) {
-            if (!holdStartTime) holdStartTime = now;
-            if (now - holdStartTime >= 500) {
-              holdStartTime = null;
-              toggleSubState = toggleSubState === 1 ? 2 : 1;
-              triggerCorrectAnswer();
-            } else {
-              document.getElementById("feedbackText").innerText =
-                "ค้างท่าไว้สักครู่...";
-            }
-          } else {
-            holdStartTime = null;
-            document.getElementById("feedbackText").innerText =
-              toggleSubState === 1
-                ? "สลับฝั่ง: ซ้าย L - ขวาจีบ"
-                : "ทำท่า: ซ้ายจีบ - ขวา L";
-          }
+        switch (lvl.level) {
+          case 1:
+            if (!rightHand) { DOM.feedbackText.innerText = "โปรดใช้มือขวาเล่นนะคะ"; return; }
+            processTapSequence(null, rightHand, false);
+            break;
+          case 2:
+            if (!leftHand) { DOM.feedbackText.innerText = "โปรดใช้มือซ้ายเล่นนะคะ"; return; }
+            processTapSequence(leftHand, null, false);
+            break;
+          case 3:
+            if (!rightHand) { DOM.feedbackText.innerText = "โปรดใช้มือขวาเล่นนะคะ"; return; }
+            processTogglePose(rightHand, isThumbUp, isPinkyUp, 
+              "เก่งมาก! ต่อไปเปลี่ยนเป็นชูก้อย", 
+              { p1: "ชูนิ้วโป้งมือขวา", p2: "สลับไปชูนิ้วก้อยมือขวา" }
+            );
+            break;
+          case 4:
+            if (!leftHand) { DOM.feedbackText.innerText = "โปรดใช้มือซ้ายเล่นนะคะ"; return; }
+            processTogglePose(leftHand, isThumbUp, isPinkyUp, 
+              "เก่งมาก! ต่อไปเปลี่ยนเป็นชูก้อย", 
+              { p1: "ชูนิ้วโป้งมือซ้าย", p2: "สลับไปชูนิ้วก้อยมือซ้าย" }
+            );
+            break;
+          case 5:
+            if (!rightHand) { DOM.feedbackText.innerText = "โปรดใช้มือขวาเล่นนะคะ"; return; }
+            processTogglePose(rightHand, isJieb, isLPose, 
+              "เก่งมาก! ต่อไปเปลี่ยนเป็นทำตัว L", 
+              { p1: "ทำท่าจีบมือขวา", p2: "สลับไปทำตัว L มือขวา" }
+            );
+            break;
+          case 6:
+            if (!leftHand) { DOM.feedbackText.innerText = "โปรดใช้มือซ้ายเล่นนะคะ"; return; }
+            processTogglePose(leftHand, isJieb, isLPose, 
+              "เก่งมาก! ต่อไปเปลี่ยนเป็นทำตัว L", 
+              { p1: "ทำท่าจีบมือซ้าย", p2: "สลับไปทำตัว L มือซ้าย" }
+            );
+            break;
+          case 7:
+            if (!leftHand || !rightHand) { DOM.feedbackText.innerText = "โปรดชูมือทั้งสองข้างขึ้นมานะคะ"; return; }
+            processTapSequence(leftHand, rightHand, true);
+            break;
+          case 8:
+            if (!leftHand || !rightHand) { DOM.feedbackText.innerText = "โปรดชูมือทั้งสองข้างขึ้นมานะคะ"; return; }
+            processDualHandToggle(leftHand, rightHand,
+              (l, r) => isPinkyUp(l) && isThumbUp(r),
+              (l, r) => isThumbUp(l) && isPinkyUp(r),
+              "สลับฝั่ง: ซ้ายโป้ง - ขวาก้อย", "ทำท่า: ซ้ายก้อย - ขวาโป้ง"
+            );
+            break;
+          case 9:
+          case 10:
+            if (!leftHand || !rightHand) { DOM.feedbackText.innerText = "โปรดชูมือทั้งสองข้างขึ้นมานะคะ"; return; }
+            processDualHandToggle(leftHand, rightHand,
+              (l, r) => isJieb(l) && isLPose(r),
+              (l, r) => isLPose(l) && isJieb(r),
+              "สลับฝั่ง: ซ้าย L - ขวาจีบ", "ทำท่า: ซ้ายจีบ - ขวา L"
+            );
+            break;
         }
       }
 
+      /* --- 7. GAME RESULT & SCORING HANDLERS --- */
       function triggerCorrectAnswer() {
-        lastScoreTime = Date.now();
-        levelScore++;
-        totalScore++;
-        document.getElementById("scoreDisplay").innerText = levelScore;
+        state.lastScoreTime = Date.now();
+        state.levelScore++;
+        state.totalScore++;
+        DOM.scoreDisplay.innerText = state.levelScore;
 
         try {
-          sndCorrect.currentTime = 0;
-          sndCorrect.play().catch((e) => playBeep(880, 0.2));
+          DOM.audio.sndCorrect.currentTime = 0;
+          DOM.audio.sndCorrect.play().catch((e) => playBeep(880, 0.2));
         } catch (e) {
           playBeep(880, 0.2);
         }
 
-        correctOverlay.classList.add("show");
+        DOM.correctOverlay.classList.add("show");
         setTimeout(() => {
-          correctOverlay.classList.remove("show");
+          DOM.correctOverlay.classList.remove("show");
         }, 500);
 
-        const lvl = LEVELS[currentLevelIdx];
-        if (levelScore >= lvl.targetScore) {
+        const lvl = LEVELS[state.currentLevelIdx];
+        if (state.levelScore >= lvl.targetScore) {
           handleLevelClear();
         } else {
-          document.getElementById("feedbackText").innerText =
-            "ถูกต้อง! 🎉 สู้ๆ ทำต่อเลย!";
+          DOM.feedbackText.innerText = "ถูกต้อง! 🎉 สู้ๆ ทำต่อเลย!";
         }
       }
 
       function handleLevelClear() {
-        gameActive = false;
-        clearInterval(timerInterval);
+        state.gameActive = false;
+        clearInterval(state.timerInterval);
 
-        if (currentLevelIdx + 1 > maxUnlockedLevel) {
-          maxUnlockedLevel = currentLevelIdx + 1;
+        if (state.currentLevelIdx + 1 > state.maxUnlockedLevel) {
+          state.maxUnlockedLevel = state.currentLevelIdx + 1;
           saveUnlockedLevels();
         }
 
         saveProgress();
-        saveScore(playerName, totalScore);
+        saveScore(state.playerName, state.totalScore);
 
-        const lvl = LEVELS[currentLevelIdx];
-        document.getElementById(
-          "clearLevelName"
-        ).innerText = `คุณผ่าน ${lvl.title} เรียบร้อย!`;
-        document.getElementById("clearLevelScore").innerText = levelScore;
+        const lvl = LEVELS[state.currentLevelIdx];
+        document.getElementById("clearLevelName").innerText = `คุณผ่าน ${lvl.title} เรียบร้อย!`;
+        document.getElementById("clearLevelScore").innerText = state.levelScore;
         document.getElementById("clearTargetScore").innerText = lvl.targetScore;
-        document.getElementById("clearTotalScore").innerText = totalScore;
+        document.getElementById("clearTotalScore").innerText = state.totalScore;
 
         const nextBtn = document.getElementById("nextLevelBtn");
-        if (currentLevelIdx + 1 >= LEVELS.length) {
+        if (state.currentLevelIdx + 1 >= LEVELS.length) {
           nextBtn.innerText = "🏆 คุณผ่านครบทุกด่านแล้ว!";
         } else {
           nextBtn.innerText = "ไปด่านถัดไป ➔";
         }
 
-        showScreen(levelClearScreen);
+        showScreen(DOM.screens.levelClear);
       }
 
       function handleTimeOut() {
-        gameActive = false;
+        state.gameActive = false;
         try {
-          sndWrong.currentTime = 0;
-          sndWrong.play().catch((e) => playBeep(220, 0.3));
+          DOM.audio.sndWrong.currentTime = 0;
+          DOM.audio.sndWrong.play().catch((e) => playBeep(220, 0.3));
         } catch (e) {
           playBeep(220, 0.3);
         }
 
-        saveScore(playerName, totalScore);
+        saveScore(state.playerName, state.totalScore);
 
-        const lvl = LEVELS[currentLevelIdx];
-        document.getElementById("resName").innerText = playerName;
-        document.getElementById("resScore").innerText = levelScore;
-        document.getElementById(
-          "resFeedback"
-        ).innerText = `เป้าหมายด่านนี้คือ ${lvl.targetScore} คะแนน ลองใหม่อีกครั้งนะคะ!`;
+        const lvl = LEVELS[state.currentLevelIdx];
+        document.getElementById("resName").innerText = state.playerName;
+        document.getElementById("resScore").innerText = state.levelScore;
+        document.getElementById("resFeedback").innerText = `เป้าหมายด่านนี้คือ ${lvl.targetScore} คะแนน ลองใหม่อีกครั้งนะคะ!`;
 
-        showScreen(resultScreen);
+        showScreen(DOM.screens.result);
       }
 
       function proceedToNextLevelInstruction() {
-        if (currentLevelIdx + 1 < LEVELS.length) {
-          currentLevelIdx++;
-          showLevelInstruction(currentLevelIdx);
+        if (state.currentLevelIdx + 1 < LEVELS.length) {
+          state.currentLevelIdx++;
+          showLevelInstruction(state.currentLevelIdx);
         } else {
           goToLevelSelect();
         }
       }
 
       function retryCurrentLevel() {
-        showLevelInstruction(currentLevelIdx);
+        showLevelInstruction(state.currentLevelIdx);
       }
 
+      /* --- 8. LOCAL STORAGE HELPERS --- */
       function saveUnlockedLevels() {
-        localStorage.setItem("muanhand_maxUnlocked", maxUnlockedLevel);
+        localStorage.setItem("muanhand_maxUnlocked", state.maxUnlockedLevel);
       }
 
       function loadUnlockedLevels() {
         const saved = localStorage.getItem("muanhand_maxUnlocked");
-        if (saved !== null) {
-          maxUnlockedLevel = parseInt(saved, 10);
-        } else {
-          maxUnlockedLevel = 0;
-        }
+        state.maxUnlockedLevel = saved !== null ? parseInt(saved, 10) : 0;
       }
 
       function saveProgress() {
         const progress = {
-          name: playerName,
-          levelIdx: currentLevelIdx,
-          totalScore: totalScore,
+          name: state.playerName,
+          levelIdx: state.currentLevelIdx,
+          totalScore: state.totalScore,
           time: new Date().toLocaleString("th-TH"),
         };
         localStorage.setItem("muanhand_progress", JSON.stringify(progress));
@@ -2856,29 +2605,24 @@
 
       function loadProgress() {
         const saved = localStorage.getItem("muanhand_progress");
-        if (saved) return JSON.parse(saved);
-        return null;
+        return saved ? JSON.parse(saved) : null;
       }
 
       function checkResumeAvailable() {
         const progress = loadProgress();
-        const resumeBox = document.getElementById("resumeInfo");
-        const resumeBtn = document.getElementById("resumeBtn");
         if (progress && progress.levelIdx < LEVELS.length) {
-          resumeBox.style.display = "block";
-          resumeBox.innerHTML = `📌 <b>พบประวัติการเล่นเดิม:</b> คุณ ${progress.name}<br>ค้างไว้ที่ ด่านที่ ${progress.levelIdx + 1} (คะแนนรวม: ${progress.totalScore} ⭐)`;
-          resumeBtn.style.display = "inline-block";
+          DOM.resumeInfo.style.display = "block";
+          DOM.resumeInfo.innerHTML = `📌 <b>พบประวัติการเล่นเดิม:</b> คุณ ${progress.name}<br>ค้างไว้ที่ ด่านที่ ${progress.levelIdx + 1} (คะแนนรวม: ${progress.totalScore} ⭐)`;
+          DOM.resumeBtn.style.display = "inline-block";
         } else {
-          resumeBox.style.display = "none";
-          resumeBtn.style.display = "none";
+          DOM.resumeInfo.style.display = "none";
+          DOM.resumeBtn.style.display = "none";
         }
       }
 
       function saveScore(name, score) {
         if (!name || score <= 0) return;
-        let scores = JSON.parse(
-          localStorage.getItem("muanhand_scores") || "[]"
-        );
+        let scores = JSON.parse(localStorage.getItem("muanhand_scores") || "[]");
         scores.push({
           name: name,
           score: score,
@@ -2890,55 +2634,37 @@
       }
 
       function displayLeaderboard() {
-        const list = document.getElementById("leaderboard-list");
-        const scores = JSON.parse(
-          localStorage.getItem("muanhand_scores") || "[]"
-        );
+        const scores = JSON.parse(localStorage.getItem("muanhand_scores") || "[]");
         if (scores.length === 0) {
-          list.innerHTML =
-            '<p style="color:#aaa; text-align:center;">ยังไม่มีประวัติการเล่น</p>';
+          DOM.leaderboardList.innerHTML = '<p style="color:#aaa; text-align:center;">ยังไม่มีประวัติการเล่น</p>';
           return;
         }
         let html = "";
         scores.forEach((s, idx) => {
-          const medal =
-            idx === 0
-              ? "🥇"
-              : idx === 1
-              ? "🥈"
-              : idx === 2
-              ? "🥉"
-              : `${idx + 1}.`;
+          const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx + 1}.`;
           html += `<div class="score-item"><span>${medal} ${s.name}</span><b>${s.score} ⭐</b></div>`;
         });
-        list.innerHTML = html;
+        DOM.leaderboardList.innerHTML = html;
       }
 
       function resetLeaderboard() {
         if (confirm("คุณต้องการล้างคะแนนทั้งหมดใช่หรือไม่?")) {
           localStorage.removeItem("muanhand_scores");
-          localStorage.removeItem("muanhand_progress");
           displayLeaderboard();
-          checkResumeAvailable();
         }
       }
-      // --- ระบบ Admin ---
+
       function unlockAdmin() {
-        const password = prompt("กรุณาใส่รหัสผ่านสำหรับ Admin:");
-        
-        // ตั้งรหัสผ่านที่ต้องการ
-        if (password === "9999") { 
-          maxUnlockedLevel = LEVELS.length - 1; // ปลดล็อคถึงด่านสุดท้าย
+        const pass = prompt("กรุณากรอกรหัสผ่านแอดมิน:");
+        if (pass === "1234") {
+          state.maxUnlockedLevel = LEVELS.length - 1;
           saveUnlockedLevels();
-          alert("✅ เข้าสู่โหมด Admin: ปลดล็อคทุกด่านเรียบร้อยแล้ว!");
-          
-          // ทำการรีเฟรชหน้าเลือกด่านให้เป็นสีเขียวทั้งหมดทันที
-          renderLevelGrid(); 
-        } else if (password !== null && password !== "") {
+          alert("🔓 ปลดล็อคทุกด่านเรียบร้อยแล้ว!");
+          renderLevelGrid();
+        } else if (pass !== null) {
           alert("❌ รหัสผ่านไม่ถูกต้อง");
         }
       }
-      // -----------------
     </script>
   </body>
 </html>
