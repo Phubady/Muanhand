@@ -2239,73 +2239,68 @@
         state.cameraInitialized = true;
       }
 
-      /* --- 5. MATH & GESTURE UTILITIES --- */
-      function dist(p1, p2) {
-        return Math.hypot(p1.x - p2.x, p1.y - p2.y);
-      }
+// 1. ใช้ฟังก์ชันคำนวณระยะทางเพียงอันเดียว
+			function dist(p1, p2) {
+				return Math.hypot(p1.x - p2.x, p1.y - p2.y);
+			}
 
-      function handScale(lm) {
-        return dist(lm[0], lm[9]);
-      }
+			// 2. หาขนาดฝ่ามืออ้างอิง
+			function handScale(lm) {
+				return dist(lm[0], lm[9]);
+			}
 
-      function isFingerTouching(lm, fingerIdx, thresholdFactor = 0.45) {
-        const scale = handScale(lm);
-        return dist(lm[4], lm[fingerIdx]) < scale * thresholdFactor;
-      }
+			// 3. รับ scale เข้ามาตรงๆ เพื่อลดการคำนวณซ้ำ (หรือใช้ค่าเริ่มต้นถ้าไม่ได้ส่งมา)
+			function isFingerClosed(lm, tipIndex, baseIndex, scale = handScale(lm), thresholdFactor = 0.35) {
+				return dist(lm[tipIndex], lm[baseIndex]) < scale * thresholdFactor;
+			}
 
-      function getDistance(p1, p2) {
-        const dx = p1.x - p2.x;
-        const dy = p1.y - p2.y;
-        return Math.sqrt(dx * dx + dy * dy);
-      }
+			function isFingerTouching(lm, fingerIdx, scale = handScale(lm), thresholdFactor = 0.45) {
+				return dist(lm[4], lm[fingerIdx]) < scale * thresholdFactor;
+			}
 
-      function isFingerClosed(lm, tipIndex, baseIndex, thresholdFactor = 0.35) {
-        const scale = handScale(lm);
-        return getDistance(lm[tipIndex], lm[baseIndex]) < scale * thresholdFactor;
-      }
+			function isThumbUp(lm) {
+				const scale = handScale(lm); // คำนวณครั้งเดียวแล้วส่งต่อ
+				return (
+					lm[4].y < lm[3].y &&
+					lm[3].y < lm[2].y &&
+					isFingerClosed(lm, 8, 5, scale) &&
+					isFingerClosed(lm, 12, 9, scale) &&
+					isFingerClosed(lm, 16, 13, scale) &&
+					isFingerClosed(lm, 20, 17, scale)
+				);
+			}
 
-      function isThumbUp(lm) {
-        return (
-          lm[4].y < lm[3].y &&
-          lm[3].y < lm[2].y &&
-          isFingerClosed(lm, 8, 5) &&
-          isFingerClosed(lm, 12, 9) &&
-          isFingerClosed(lm, 16, 13) &&
-          isFingerClosed(lm, 20, 17)
-        );
-      }
+			function isPinkyUp(lm) {
+				const scale = handScale(lm);
+				return (
+					dist(lm[20], lm[17]) > scale * 0.45 &&
+					isFingerClosed(lm, 4, 2, scale) &&
+					isFingerClosed(lm, 8, 5, scale) &&
+					isFingerClosed(lm, 12, 9, scale) &&
+					isFingerClosed(lm, 16, 13, scale)
+				);
+			}
 
-      function isPinkyUp(lm) {
-        const scale = handScale(lm);
-        return (
-          getDistance(lm[20], lm[17]) > scale * 0.45 && // ปรับนิ้วก้อยกางให้ยืดหยุ่นตาม scale ด้วย
-          isFingerClosed(lm, 4, 2) &&
-          isFingerClosed(lm, 8, 5) &&
-          isFingerClosed(lm, 12, 9) &&
-          isFingerClosed(lm, 16, 13)
-        );
-      }
+			function isJieb(lm) {
+				const scale = handScale(lm);
+				return (
+					dist(lm[4], lm[8]) < scale * 0.55 &&
+					lm[12].y < lm[10].y &&
+					lm[16].y < lm[14].y &&
+					lm[20].y < lm[18].y
+				);
+			}
 
-      function isJieb(lm) {
-        const scale = handScale(lm);
-        return (
-          dist(lm[4], lm[8]) < scale * 0.55 &&
-          lm[12].y < lm[10].y &&
-          lm[16].y < lm[14].y &&
-          lm[20].y < lm[18].y
-        );
-      }
-
-      function isLPose(lm) {
-        const scale = handScale(lm);
-        return (
-          lm[8].y < lm[6].y &&
-          dist(lm[4], lm[17]) > scale * 0.8 &&
-          lm[12].y > lm[10].y &&
-          lm[16].y > lm[14].y &&
-          lm[20].y > lm[18].y
-        );
-      }
+			function isLPose(lm) {
+				const scale = handScale(lm);
+				return (
+					lm[8].y < lm[6].y &&
+					dist(lm[4], lm[17]) > scale * 0.8 &&
+					lm[12].y > lm[10].y &&
+					lm[16].y > lm[14].y &&
+					lm[20].y > lm[18].y
+				);
+			}
 
       /* --- 6. GAME LOOP & GESTURE DETECTION ENGINE --- */
       function onResults(results) {
